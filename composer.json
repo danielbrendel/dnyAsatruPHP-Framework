@@ -1,0 +1,23 @@
+{
+    "name": "danielbrendel/asatru-php-framework",
+	"version": "0.1",
+    "description": "A lightweight PHP framework",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Brendel",
+            "email": "dbrendel1988@yahoo.com"
+        }
+    ],
+    "keywords": [
+        "asatru",
+        "framework",
+        "php"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+	"require": {
+        "php": ">=7.3.8"
+    }
+}
