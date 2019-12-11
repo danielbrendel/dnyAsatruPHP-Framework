@@ -91,6 +91,58 @@ namespace Asatru\Database {
         }
     }
 
+    //This component represents a database query result collection
+    class Collection {
+        private $items = array();
+
+        public function __construct($arr)
+        {
+            //Construct object
+
+            $this->createFromArray($arr);
+        }
+
+        private function createFromArray($arr)
+        {
+            //Create collection from array
+            
+            foreach ($arr as $key => $value) {
+                if (is_array($value)) {
+                    $this->items[$key] = new Collection($value);
+                } else {
+                    $this->items[$key] = $value;
+                }
+            }
+        }
+
+        public function count()
+        {
+            //Return amount of items
+
+            return count($this->items);
+        }
+
+        public function get($ident)
+        {
+            //Query item entry value
+
+            if (isset($this->items[$ident])) {
+                return $this->items[$ident];
+            }
+
+            return null;
+        }
+
+        public function each($callback)
+        {
+            //Iterate through entries and inform a callback function
+
+            foreach ($this->items as $ident => $item) {
+                call_user_func_array($callback, array($ident, $item));
+            }
+        }
+    }
+
     //This component handles the models
     abstract class Model {
         private static $instance = null;
@@ -170,7 +222,21 @@ namespace Asatru\Database {
                 throw new \Exception('SQL error: ' . $error[0] . ':' . $error[1] . ' -> ' . $error[2]);
             }
 
-            return $prp->fetchAll();
+            $opResult = $prp->fetchAll();
+            
+            if (self::$getcount === true) {
+                return $opResult[0]['count'];
+            } else if (self::$update !== '') {
+                return ($error[0] === '00000') ? true : false;
+            } else if (count(self::$insert) > 0) {
+                return ($error[0] === '00000') ? true : false;
+            } else if (strpos($qry, 'DELETE') === 0) {
+                return ($error[0] === '00000') ? true : false;
+            } else {
+                return new Collection($opResult);
+            }
+
+            return false;
         }
 
         public static function all()
