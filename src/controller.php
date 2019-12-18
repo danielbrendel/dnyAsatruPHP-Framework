@@ -171,10 +171,16 @@ class ControllerHandler {
 		$this->routes = require_once($routesFile);
 	}
 
-	private function urlMatches($url, $route, $ctrlArgs)
+	private function urlMatches($url, $method, $route, $ctrlArgs)
 	{
-		//Determine whether this route matches the given URL
+		//Determine whether this route matches the given URL for the given request method
 		
+		if (strtolower($method) !== 'any') {
+			if (strtolower($method) !== strtolower($_SERVER['REQUEST_METHOD'])) {
+				return false;
+			}
+		}
+
 		if (strpos($route, '{') !== false) {
 			$spl1 = explode('/', substr($route, 1));
 			$spl2 = explode('/', substr($url, 1));
@@ -218,12 +224,12 @@ class ControllerHandler {
 		
 		//Check each registered route if it matches with the desired route
 		foreach ($this->routes as $key => $value) {
-			if (($key[0] != '$') && ($this->urlMatches($url, $key, $ctrl))) {
+			if (($key[0] != '$') && ($this->urlMatches($url, $value[0], $key, $ctrl))) {
 				//Query controller file and handler function name and acquire and call. At last return the view object
 
-				$items = explode('@', $value);
+				$items = explode('@', $value[1]);
 				if (count($items) != 2) {
-					throw new \Exception('Erroneous handler specified: ' . $value);
+					throw new \Exception('Erroneous handler specified: ' . $value[1]);
 				}
 				
 				require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
@@ -244,9 +250,9 @@ class ControllerHandler {
 		
 		//No handler found
 		header("HTTP/1.0 404 Not Found");
-		$items = explode('@', $this->routes['$404']);
+		$items = explode('@', $this->routes['$404'][1]);
 		if (count($items) != 2) {
-			throw new \Exception('Erroneous handler specified: ' . $value);
+			throw new \Exception('Erroneous handler specified: ' . $this->routes['$404'][1]);
 		}
 		require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
 		require_once "view.php";

@@ -148,9 +148,11 @@ namespace Asatru\Database {
         private static $instance = null;
         private static $handle = null;
         private static $where = '';
+        private static $whereBetween = '';
         private static $limit = '';
         private static $orderBy = '';
         private static $groupBy = '';
+        private static $aggregate = '';
         private static $update = '';
         private static $insert = array();
         private static $getcount = false;
@@ -294,6 +296,38 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        public static function whereBetween($name, $value1, $value2)
+        {
+            //Create a and-where between clause
+
+            if (self::$whereBetween === '') {
+                self::$whereBetween = 'WHERE ' . $name . ' BETWEEN ? AND ?';
+            } else {
+                self::$whereBetween .= ' AND ' . $name . ' BETWEEN ? and ?';
+            }
+
+            array_push(self::$params, $value1);
+            array_push(self::$params, $value2);
+
+            return self::getInstance();
+        }
+
+        public static function whereBetweenOr($name, $value1, $value2)
+        {
+            //Create a or-where between clause
+
+            if (self::$whereBetween === '') {
+                self::$whereBetween = 'WHERE ' . $name . ' BETWEEN ? AND ?';
+            } else {
+                self::$whereBetween .= ' OR ' . $name . ' BETWEEN ? and ?';
+            }
+
+            array_push(self::$params, $value1);
+            array_push(self::$params, $value2);
+
+            return self::getInstance();
+        }
+
         public static function limit($value)
         {
             //Create a limit clause
@@ -331,17 +365,36 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        public static function aggregate($type, $column, $name = null)
+        {
+            //Add an aggregate query
+
+            if ($name === null) {
+                $name = $column;
+            }
+
+            if (self::$aggregate === '') {
+                self::$aggregate = $type . '(' . $column . ') as ' . $name;
+            } else {
+                self::$aggregate .= ', ' . $type . '(' . $column . ') as ' . $name;
+            }
+
+            return self::getInstance();
+        }
+
         public static function first()
         {
             //Perform database query and get first entry
 
-            $query = 'SELECT * FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
+            $query = 'SELECT * FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$whereBetween . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
 
             $result = self::raw($query, self::$params);
 
             self::$where = '';
+            self::$whereBetween = '';
             self::$groupBy = '';
             self::$orderBy = '';
+            self::$aggregate = '';
             self::$params = array();
 
             return $result;
@@ -351,14 +404,25 @@ namespace Asatru\Database {
         {
             //Perform database query
 
-            $query = 'SELECT ' . ((self::$getcount === false) ? '*' : 'COUNT(*) as count') . ' FROM ' . static::tableName() . ' ' . self::$where . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
+            $select = '';
+            if (self::$getcount !== false) {
+                $select = 'COUNT(*) as count';
+            } else if (self::$aggregate !== '') {
+                $select = self::$aggregate;
+            } else {
+                $select = '*';
+            }
+
+            $query = 'SELECT ' . $select . ' FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$whereBetween . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
 
             $result = self::raw($query, self::$params);
 
             self::$where = '';
+            self::$whereBetween = '';
             self::$groupBy = '';
             self::$orderBy = '';
             self::$limit = '';
+            self::$aggregate = '';
             self::$getcount = false;
             self::$params = array();
 
