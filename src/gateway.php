@@ -60,6 +60,9 @@ require_once 'locale.php';
 //Require database management
 require_once 'database.php';
 
+//Require event manager
+require_once 'events.php';
+
 //Perform autoloading
 $auto = new Asatru\Autoload\Autoloader(__DIR__ . '/../../../../app/config/autoload.php');
 $auto->load();

@@ -26,6 +26,7 @@ This product is a lightweight PHP framework which can be used to create your own
 + .env parser
 + Localization
 + Exception handling
++ Events
 + Helpers
 + Autoloading
 + Security
