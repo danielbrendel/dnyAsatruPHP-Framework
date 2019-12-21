@@ -95,6 +95,69 @@ class ControllerArg {
 	}
 }
 
+//This class defines the layout of a validator class
+abstract class BaseValidator {
+	//Shall return the name of this validator
+	abstract public function getIdent();
+
+	//Shall validate a token
+	abstract public function verify($value, $args = null);
+
+	//Shall return an error description if any
+	abstract public function getError();
+
+	//This is just a helper to split provided arguments
+	public function args($args)
+	{
+		return explode(',', $args);
+	}
+}
+
+//This component manages custom post validators
+class CustomPostValidators {
+	static $validators;
+
+	public static function load($dir)
+	{
+		//Load all validators
+
+		static::$validators = array();
+
+		if (!is_dir($dir)) {
+			return;
+		}
+
+		$list = scandir($dir); //Get all items of the directory
+		foreach ($list as $item) { //Iterate through that directory
+			if ((!is_dir($dir . '/' . $item)) && (pathinfo($dir . '/' . $item, PATHINFO_EXTENSION) === 'php')) { //If it is a PHP script file
+				//Require the script file
+				require_once $dir . '/' . $item;
+
+				//Instance validator class and store validator ident
+				$className = ucfirst(pathinfo($item, PATHINFO_FILENAME)) . 'Validator';
+				$validator['instance'] = new $className;
+				$validator['ident'] = $validator['instance']->getIdent();
+
+				//Add to list
+				array_push(static::$validators, $validator);
+			}
+		}
+	}
+
+	public static function findValidator($ident)
+	{
+		//Find validator by its ident
+
+		foreach (static::$validators as $validator) {
+			if ($validator['ident'] === $ident) {
+				return $validator;
+			}
+		}
+
+		return null;
+	}
+}
+
 //This components handles POST data validation
 class PostValidator {
 	private $attributes = [];
@@ -129,20 +192,44 @@ class PostValidator {
 						$this->errmsg = 'Item ' . $key . ' is required.';
 						return false;
 					}
-				} else if ($token == 'email') {
+				} else if ($token == 'email') { //Check for valid E-mail address
 					if ((!isset($_POST[$key]) || (filter_var($_POST[$key], FILTER_VALIDATE_EMAIL) === false))) {
 						$this->errmsg = 'Item ' . $key . ' must be a valid E-Mail address';
 						return false;
 					}
-				} else if (strpos($token, 'min:') === 0) {
+				} else if (strpos($token, 'min:') === 0) { //Check for minimum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) < strval(substr($token, 4)))) {
 						$this->errmsg = 'Item length of ' . $key . ' must be greater than ' . substr($token, 4);
 						return false;
 					}
-				} else if (strpos($token, 'max:') === 0) {
+				} else if (strpos($token, 'max:') === 0) { //Check for maximum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) > strval(substr($token, 4)))) {
 						$this->errmsg = 'Item length of ' . $key . ' must be less than ' . substr($token, 4);
 						return false;
+					}
+				} else if (strpos($token, 'datetime:') === 0) { //Check for valid date/time
+					if (isset($_POST[$key])) {
+						$format = substr($token, 5);
+						$dt = \DateTime::createFromFormat($format, $_POST[$key]);
+						if ((!$dt) || ($dt->format($format) !== $_POST[$key])) {
+							$this->errmsg = 'Item ' . $key . ' is not a valid datetime object';
+							return false;
+						}
+					}
+				} else if ($token == 'number') { //Check for valid number
+					if ((!isset($_POST[$key])) || (!is_numeric($_POST[$key]))) {
+						$this->errmsg = 'Item ' . $key . ' is not a valid number';
+						return false;
+					}
+				} else { //Handle custom validation if found
+					$valIdent = (strpos($token, ':') !== false) ? substr($token, 0, strpos($token, ':')) : $token;
+					$validator = CustomPostValidators::findValidator($valIdent);
+					if ($validator !== null) {
+						$args = (strpos($token, ':') !== false) ? substr($token, strpos($token, ':') + 1) : null;
+						if (!$validator['instance']->verify($_POST[$key], $args)) {
+							$this->errmsg = $validator['instance']->getError();
+							return false;
+						}
 					}
 				}
 			}
@@ -205,8 +292,21 @@ class ControllerHandler {
 				return false;
 			}
 		}
-
+		
 		return $route === $url;
+	}
+
+	private function get404Handler()
+	{
+		//Get 404 handler if exists
+
+		for ($i = 0; $i < count($this->routes); $i++) {
+			if ($this->routes[$i][0] === '$404') {
+				return $this->routes[$i];
+			}
+		}
+
+		return null;
 	}
 	
 	public function parse($url)
@@ -223,13 +323,13 @@ class ControllerHandler {
 		$ctrl = new ControllerArg($url);
 		
 		//Check each registered route if it matches with the desired route
-		foreach ($this->routes as $key => $value) {
-			if (($key[0] != '$') && ($this->urlMatches($url, $value[0], $key, $ctrl))) {
+		for ($i = 0; $i < count($this->routes); $i++) {
+			if (($this->routes[$i][0][0] != '$') && ($this->urlMatches($url, $this->routes[$i][1], $this->routes[$i][0], $ctrl))) {
 				//Query controller file and handler function name and acquire and call. At last return the view object
 
-				$items = explode('@', $value[1]);
+				$items = explode('@', $this->routes[$i][2]);
 				if (count($items) != 2) {
-					throw new \Exception('Erroneous handler specified: ' . $value[1]);
+					throw new \Exception('Erroneous handler specified: ' . $this->routes[$i][2]);
 				}
 				
 				require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
@@ -250,18 +350,22 @@ class ControllerHandler {
 		
 		//No handler found
 		header("HTTP/1.0 404 Not Found");
-		$items = explode('@', $this->routes['$404'][1]);
-		if (count($items) != 2) {
-			throw new \Exception('Erroneous handler specified: ' . $this->routes['$404'][1]);
-		}
-		require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
-		require_once "view.php";
-		$className = ucfirst($items[0]) . 'Controller';
-		$obj = new $className();
-		if (method_exists($obj, $items[1])) {
-			$result = call_user_func(array($obj, $items[1]), $ctrl);
-		} else {
-			throw new \Exception('Controller handler ' . $items[1]. ' not found');
+		$err404Handler = $this->get404Handler();
+		$result = 'The requested resource is not found on the server.';
+		if ($err404Handler !== null) {
+			$items = explode('@', $err404Handler[2]);
+			if (count($items) != 2) {
+				throw new \Exception('Erroneous handler specified: ' . $err404Handler[2]);
+			}
+			require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
+			require_once "view.php";
+			$className = ucfirst($items[0]) . 'Controller';
+			$obj = new $className();
+			if (method_exists($obj, $items[1])) {
+				$result = call_user_func(array($obj, $items[1]), $ctrl);
+			} else {
+				throw new \Exception('Controller handler ' . $items[1]. ' not found');
+			}
 		}
 		return $result;
 	}

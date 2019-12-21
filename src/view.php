@@ -249,6 +249,27 @@ namespace Asatru\View {
 		}
 	}
 
+	//This component handles an xml result
+	class XmlHandler implements ViewInterface {
+		private $content = null;
+
+		public function __construct($content = '')
+		{
+			//Construct with content
+
+			$this->content = $content;
+		}
+
+		public function out()
+		{
+			//Render the content as json
+
+			header('Content-type: text/xml');
+
+			echo $this->content;
+		}
+	}
+
 	//This component handles a plain result
 	class PlainHandler implements ViewInterface {
 		private $content = null;

@@ -125,6 +125,45 @@ function createLang($ident)
     return true;
 }
 
+function createValidator($name, $ident)
+{
+    if (!is_dir(__DIR__ . '/../../../../app/validators')) {
+        mkdir(__DIR__ . '/../../../../app/validators');
+    }
+
+    $content = "<?php
+
+        /*
+            Asatru PHP - Validator for validation ident " . $ident . "
+        */
+
+        class " . ucfirst($name) . "Validator extends Asatru\Controller\BaseValidator {
+            protected \$error;
+
+            public function getIdent()
+            {
+                return '" . $ident . "';
+            }
+
+            public function verify(\$value, \$args = null)
+            {
+                return true;
+            }
+
+            public function getError()
+            {
+                return \$this->error;
+            }
+        }
+    ";
+
+    if (!file_put_contents(__DIR__ . '/../../../../app/validators/' . strtolower($name) . '.php', $content)) {
+        return false;
+    }
+
+    return true;
+}
+
 function handleInput($argv)
 {
     //Handle console input
@@ -136,6 +175,7 @@ function handleInput($argv)
         echo "+ make:model <name> <table>: Creates a new model with migration\n";
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
+        echo "+ make:validator <name> <ident>: Creates a new validator\n";
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
         echo "+ migrate:list: Creates only all new created migrations\n";
         echo "+ migrate:drop: Drops all migrations\n";
@@ -172,6 +212,17 @@ function handleInput($argv)
             echo "\033[31mFailed to create the language content\033[39m\n";
         } else {
             echo "\033[32mThe language content has been created!\033[39m\n";
+        }
+    } else if ($argv[1] === 'make:validator') {
+        if ((!isset($argv[2])) || (!isset($argv[3]))) {
+            echo "\033[31mYou must the name of the validator and also its identifier\033[39m\n";
+            exit(0);
+        }
+
+        if (!createValidator($argv[2], $argv[3])) {
+            echo "\033[31mFailed to create the validator\033[39m\n";
+        } else {
+            echo "\033[32mThe validator has been created!\033[39m\n";
         }
     } else if ($argv[1] === 'migrate:fresh') {
         migrate_fresh();

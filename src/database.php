@@ -565,7 +565,7 @@ namespace Asatru\Database {
 
             $files = scandir(__DIR__ . '/../../../../app/migrations');
             if ($files === false) {
-                throw new Exception('Migration folder not found');
+                throw new \Exception('Migration folder not found');
             }
 
             $list = $this->loadMigrationList();
@@ -581,7 +581,7 @@ namespace Asatru\Database {
                         if (method_exists($obj, 'up')) {
                             $result = call_user_func(array($obj, 'up'));
                         } else {
-                            throw new Exception('method up() not found in migration ' . $className);
+                            throw new \Exception('method up() not found in migration ' . $className);
                         }
 
                         array_push($list, hash('sha512', $file));
@@ -598,7 +598,7 @@ namespace Asatru\Database {
 
             $files = scandir(__DIR__ . '/../../../../app/migrations');
             if ($files === false) {
-                throw new Exception('Migration folder not found');
+                throw new \Exception('Migration folder not found');
             }
 
             foreach ($files as $file) {
@@ -611,7 +611,7 @@ namespace Asatru\Database {
                     if (method_exists($obj, 'down')) {
                         call_user_func(array($obj, 'down'));
                     } else {
-                        throw new Exception('method down() not found in migration ' . $className);
+                        throw new \Exception('method down() not found in migration ' . $className);
                     }
                 }
             }

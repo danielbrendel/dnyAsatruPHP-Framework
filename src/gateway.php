@@ -67,6 +67,9 @@ require_once 'events.php';
 $auto = new Asatru\Autoload\Autoloader(__DIR__ . '/../../../../app/config/autoload.php');
 $auto->load();
 
+//Load validators if any
+Asatru\Controller\CustomPostValidators::load(__DIR__ . '/../../../../app/validators');
+
 //Create a new controller instance and handle the current URL
 $controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
 $viewComp = $controller->parse($_SERVER['REQUEST_URI']);
