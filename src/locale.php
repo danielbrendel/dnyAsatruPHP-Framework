@@ -33,18 +33,18 @@ namespace Asatru\Lang {
             
             $this->lang = [];
 
-            $files = scandir(__DIR__ . '/../../../../app/lang/' . $locale);
+            $files = scandir(__DIR__ . '/../../../../app/lang/' . $locale); //Get all files of directory
             foreach($files as $file) {
-                if (!is_dir(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file)) {
-                    if (pathinfo(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file, PATHINFO_EXTENSION) === 'php') {
-                        $item = array('file' => pathinfo($file, PATHINFO_FILENAME), 'phrases' => require_once(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file));
-                        array_push($this->lang, $item);
+                if (!is_dir(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file)) { //If it's not a directory
+                    if (pathinfo(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file, PATHINFO_EXTENSION) === 'php') { //If it's a PHP script
+                        $item = array('file' => pathinfo($file, PATHINFO_FILENAME), 'phrases' => require_once(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file)); //Create item with the phrases
+                        array_push($this->lang, $item); //Add to array
                     }
                 }
             }
         }
 
-        public function query($qry)
+        public function query($qry, $params = null)
         {
             //Query phrase from array
             
@@ -55,7 +55,18 @@ namespace Asatru\Lang {
                         if ($item['file'] == $spl[0]) { //Check for the name
                             foreach ($item['phrases'] as $ident => $phrase) { //If matched then loop through the phrases
                                 if ($ident == $spl[1]) { //Check for the requested phrase
-                                    return $phrase;
+                                    $result = $phrase;
+
+                                    //Replace variables if any
+                                    if (is_array($params)) {
+                                        foreach ($params as $key => $value) {
+                                            if (strpos($result, '{' . $key . '}') !== false) {
+                                                $result = str_replace('{' . $key . '}', $value, $result);
+                                            }
+                                        }
+                                    }
+
+                                    return $result;
                                 }
                             }
                         }
@@ -116,10 +127,10 @@ namespace {
 
     //Create the shortcut language query function
     if (!function_exists('__')) {
-        function __($phrase)
+        function __($phrase, $params = null)
         {
             global $objLanguage;
-            return $objLanguage->query($phrase);
+            return $objLanguage->query($phrase, $params);
         }
     }
 

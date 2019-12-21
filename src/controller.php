@@ -161,18 +161,21 @@ class CustomPostValidators {
 //This components handles POST data validation
 class PostValidator {
 	private $attributes = [];
-	private $errmsg = [];
+	private $errmsg = '';
+	private $isValid = false;
 
 	public function __construct($attribs)
 	{
 		//Pass attribute array
 
 		$this->attributes = $attribs;
+
+		$this->isValid = $this->validate();
 	}
 
-	public function isValid()
+	private function validate()
 	{
-		//Indicate whether the POST data is valid. Also check csrf token
+		//Validate whether the POST data is valid. Also check csrf token
 
 		//Check csrf token first
 		if ((!isset($_POST['csrf_token'])) || ($_POST['csrf_token'] !== $_SESSION['csrf_token'])) {
@@ -189,22 +192,22 @@ class PostValidator {
 			foreach ($tokens as $token) {
 				if ($token == 'required') { //Specify that this POST data object must be provided
 					if (!isset($_POST[$key])) {
-						$this->errmsg = sprintf(__('errors.item_required'), $key);
+						$this->errmsg = __('errors.item_required', ['key' => $key]);
 						return false;
 					}
 				} else if ($token == 'email') { //Check for valid E-mail address
 					if ((!isset($_POST[$key]) || (filter_var($_POST[$key], FILTER_VALIDATE_EMAIL) === false))) {
-						$this->errmsg = sprintf(__('errors.item_email'), $key);
+						$this->errmsg = __('errors.item_email', ['key' => $key]);
 						return false;
 					}
 				} else if (strpos($token, 'min:') === 0) { //Check for minimum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) < strval(substr($token, 4)))) {
-						$this->errmsg = sprintf(__('errors.item_too_short'), $key, substr($token, 4));
+						$this->errmsg = __('errors.item_too_short', ['key' => $key, 'min' => substr($token, 4)]);
 						return false;
 					}
 				} else if (strpos($token, 'max:') === 0) { //Check for maximum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) > strval(substr($token, 4)))) {
-						$this->errmsg = sprintf(__('errors.item_too_large'), $key, substr($token, 4));
+						$this->errmsg = __('errors.item_too_large', ['key' => $key, 'max' => substr($token, 4)]);
 						return false;
 					}
 				} else if (strpos($token, 'datetime:') === 0) { //Check for valid date/time
@@ -212,13 +215,13 @@ class PostValidator {
 						$format = substr($token, 5);
 						$dt = \DateTime::createFromFormat($format, $_POST[$key]);
 						if ((!$dt) || ($dt->format($format) !== $_POST[$key])) {
-							$this->errmsg = sprintf(__('errors.item_datetime'), $key);
+							$this->errmsg = __('errors.item_datetime', ['key' => $key]);
 							return false;
 						}
 					}
 				} else if ($token == 'number') { //Check for valid number
 					if ((!isset($_POST[$key])) || (!is_numeric($_POST[$key]))) {
-						$this->errmsg = sprintf(__('errors.item_number'), $key);
+						$this->errmsg = __('errors.item_number', ['key' => $key]);
 						return false;
 					}
 				} else { //Handle custom validation if found
@@ -236,6 +239,13 @@ class PostValidator {
 		}
 
 		return true;
+	}
+
+	public function isValid()
+	{
+		//Indicate validation result
+
+		return $this->isValid;
 	}
 
 	public function errorMsg()
