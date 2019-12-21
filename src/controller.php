@@ -169,18 +169,19 @@ class PostValidator {
 		//Pass attribute array
 
 		$this->attributes = $attribs;
-		$this->errmsgs = [];
-		$this->isValid = $this->validate();
+		$this->validate();
 	}
 
 	private function validate()
 	{
 		//Validate whether the POST data is valid. Also check csrf token
 
+		//Clear array
+		$this->errmsgs = [];
+
 		//Check csrf token first
 		if ((!isset($_POST['csrf_token'])) || ($_POST['csrf_token'] !== $_SESSION['csrf_token'])) {
 			$this->errmsgs[] = __('errors.csrf_token_invalid');
-			return false;
 		}
 
 		//Next check the rest
@@ -193,22 +194,18 @@ class PostValidator {
 				if ($token == 'required') { //Specify that this POST data object must be provided
 					if (!isset($_POST[$key])) {
 						$this->errmsgs[] = __('errors.item_required', ['key' => $key]);
-						return false;
 					}
 				} else if ($token == 'email') { //Check for valid E-mail address
 					if ((!isset($_POST[$key]) || (filter_var($_POST[$key], FILTER_VALIDATE_EMAIL) === false))) {
 						$this->errmsgs[] = __('errors.item_email', ['key' => $key]);
-						return false;
 					}
 				} else if (strpos($token, 'min:') === 0) { //Check for minimum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) < strval(substr($token, 4)))) {
 						$this->errmsgs[] = __('errors.item_too_short', ['key' => $key, 'min' => substr($token, 4)]);
-						return false;
 					}
 				} else if (strpos($token, 'max:') === 0) { //Check for maximum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) > strval(substr($token, 4)))) {
 						$this->errmsgs[] = __('errors.item_too_large', ['key' => $key, 'max' => substr($token, 4)]);
-						return false;
 					}
 				} else if (strpos($token, 'datetime:') === 0) { //Check for valid date/time
 					if (isset($_POST[$key])) {
@@ -216,13 +213,11 @@ class PostValidator {
 						$dt = \DateTime::createFromFormat($format, $_POST[$key]);
 						if ((!$dt) || ($dt->format($format) !== $_POST[$key])) {
 							$this->errmsgs[] = __('errors.item_datetime', ['key' => $key]);
-							return false;
 						}
 					}
 				} else if ($token == 'number') { //Check for valid number
 					if ((!isset($_POST[$key])) || (!is_numeric($_POST[$key]))) {
 						$this->errmsgs[] = __('errors.item_number', ['key' => $key]);
-						return false;
 					}
 				} else { //Handle custom validation if found
 					$valIdent = (strpos($token, ':') !== false) ? substr($token, 0, strpos($token, ':')) : $token;
@@ -231,21 +226,18 @@ class PostValidator {
 						$args = (strpos($token, ':') !== false) ? substr($token, strpos($token, ':') + 1) : null;
 						if (!$validator['instance']->verify($_POST[$key], $args)) {
 							$this->errmsgs[] = $validator['instance']->getError();
-							return false;
 						}
 					}
 				}
 			}
 		}
-
-		return true;
 	}
 
 	public function isValid()
 	{
 		//Indicate validation result
 
-		return $this->isValid;
+		return count($this->errmsgs) === 0;
 	}
 
 	public function errorMsgs()

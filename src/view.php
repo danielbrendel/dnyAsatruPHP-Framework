@@ -112,6 +112,12 @@ namespace Asatru\View {
 				$fileToInclude = str_replace('\'', '', $fileToInclude);
 				$cont = $this->renderCode(file_get_contents(\Asatru\Helper\app_path() . '/views/' . $fileToInclude));
 				return str_replace($code, $cont, $code);
+			} else if ($this->hasCmd($code, 'isset')) {
+				return str_replace('@isset', '<?php if (isset(', $code) . ')) { ?>';
+			} else if ($this->hasCmd($code, 'isnotset')) {
+				return str_replace('@isnotset', '<?php if (!isset(', $code) . ')) { ?>';
+			} else if ($this->hasCmd($code, 'endset')) {
+				return str_replace('@endset', '<?php } ?>', $code);
 			}
 
 			return $code;
