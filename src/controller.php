@@ -176,7 +176,7 @@ class PostValidator {
 
 		//Check csrf token first
 		if ((!isset($_POST['csrf_token'])) || ($_POST['csrf_token'] !== $_SESSION['csrf_token'])) {
-			$this->errmsg = 'CSRF token is missing or invalid';
+			$this->errmsg = __('errors.csrf_token_invalid');
 			return false;
 		}
 
@@ -189,22 +189,22 @@ class PostValidator {
 			foreach ($tokens as $token) {
 				if ($token == 'required') { //Specify that this POST data object must be provided
 					if (!isset($_POST[$key])) {
-						$this->errmsg = 'Item ' . $key . ' is required.';
+						$this->errmsg = sprintf(__('errors.item_required'), $key);
 						return false;
 					}
 				} else if ($token == 'email') { //Check for valid E-mail address
 					if ((!isset($_POST[$key]) || (filter_var($_POST[$key], FILTER_VALIDATE_EMAIL) === false))) {
-						$this->errmsg = 'Item ' . $key . ' must be a valid E-Mail address';
+						$this->errmsg = sprintf(__('errors.item_email'), $key);
 						return false;
 					}
 				} else if (strpos($token, 'min:') === 0) { //Check for minimum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) < strval(substr($token, 4)))) {
-						$this->errmsg = 'Item length of ' . $key . ' must be greater than ' . substr($token, 4);
+						$this->errmsg = sprintf(__('errors.item_too_short'), $key, substr($token, 4));
 						return false;
 					}
 				} else if (strpos($token, 'max:') === 0) { //Check for maximum string length
 					if ((!isset($_POST[$key])) || (strlen($_POST[$key]) > strval(substr($token, 4)))) {
-						$this->errmsg = 'Item length of ' . $key . ' must be less than ' . substr($token, 4);
+						$this->errmsg = sprintf(__('errors.item_too_large'), $key, substr($token, 4));
 						return false;
 					}
 				} else if (strpos($token, 'datetime:') === 0) { //Check for valid date/time
@@ -212,13 +212,13 @@ class PostValidator {
 						$format = substr($token, 5);
 						$dt = \DateTime::createFromFormat($format, $_POST[$key]);
 						if ((!$dt) || ($dt->format($format) !== $_POST[$key])) {
-							$this->errmsg = 'Item ' . $key . ' is not a valid datetime object';
+							$this->errmsg = sprintf(__('errors.item_datetime'), $key);
 							return false;
 						}
 					}
 				} else if ($token == 'number') { //Check for valid number
 					if ((!isset($_POST[$key])) || (!is_numeric($_POST[$key]))) {
-						$this->errmsg = 'Item ' . $key . ' is not a valid number';
+						$this->errmsg = sprintf(__('errors.item_number'), $key);
 						return false;
 					}
 				} else { //Handle custom validation if found
