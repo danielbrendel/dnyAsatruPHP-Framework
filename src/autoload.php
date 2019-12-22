@@ -1,5 +1,5 @@
 <?php
-
+ 
 /*
     Asatru PHP (dnyAsatruPHP) developed by Daniel Brendel
     
