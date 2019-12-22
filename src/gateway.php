@@ -38,6 +38,13 @@ if (file_exists(__DIR__ . '/../../../../.env')) {
     env_parse(__DIR__ . '/../../../../.env');
 }
 
+//Set error reporting according to debug flag value
+if ($_ENV['APP_DEBUG'] === false) {
+    error_reporting(0);
+} else {
+    error_reporting(E_ALL);
+}
+
 //Check if we shall create/continue a session
 if ((isset($_ENV['APP_SESSION'])) && ($_ENV['APP_SESSION'])) {
     if (!session_start()) {
