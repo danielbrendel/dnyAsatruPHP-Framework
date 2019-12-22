@@ -13,10 +13,10 @@
 */
 
 //Framework
-define('FW_NAME', 'Asatru PHP');
-define('FW_VERSION', '0.1');
-define('FW_AUTHOR', 'Daniel Brendel');
-define('FW_CONTACT', 'dbrendel1988@yahoo.com');
+define('ASATRU_FW_NAME', 'Asatru PHP');
+define('ASATRU_FW_VERSION', '0.1');
+define('ASATRU_FW_AUTHOR', 'Daniel Brendel');
+define('ASATRU_FW_CONTACT', 'dbrendel1988@yahoo.com');
 
 //Cookie
 define('COOKIE_LOCALE', 'locale');
