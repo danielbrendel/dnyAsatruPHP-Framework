@@ -24,7 +24,7 @@ function createModel($name, $table)
         Asatru PHP - Migration for " . $table . "
     */
 
-    class ". $name ."_Migration {
+    class " . $name . "_Migration {
         private \$database = null;
         private \$connection = null;
 
@@ -90,7 +90,7 @@ function createController($name)
     use Asatru\View;
     use Asatru\Helper;
 
-    class " . $name . "Controller {
+    class " . ucfirst($name) . "Controller {
         //
     }
 ";
