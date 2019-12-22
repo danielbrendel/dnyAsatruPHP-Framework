@@ -24,7 +24,7 @@ function createModel($name, $table)
         Asatru PHP - Migration for " . $table . "
     */
 
-    class " . $name . "_Migration {
+    class " . ucfirst($name) . "_Migration {
         private \$database = null;
         private \$connection = null;
 
