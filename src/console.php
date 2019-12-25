@@ -333,6 +333,122 @@ function createAuth()
     return true;
 }
 
+function createTest($name)
+{
+    if (!is_dir(__DIR__ . '/../../../../app/tests')) {
+        mkdir(__DIR__ . '/../../../../app/tests');
+
+        $bootstrap = "
+        <?php
+
+        /*
+            Asatru PHP (dnyAsatruPHP) developed by Daniel Brendel
+            
+            (C) 2019 by Daniel Brendel
+            
+            Version: 0.1
+            Contact: dbrendel1988<at>yahoo<dot>com
+            GitHub: https://github.com/danielbrendel
+            
+            License: see LICENSE.txt
+        */
+        
+        //If composer is installed we utilize its autoloader
+        if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
+            require_once __DIR__ . '/../../vendor/autoload.php';
+        }
+        
+        //Fetch constants
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/constants.php';
+        
+        //Require the controller component
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/controller.php';
+        
+        //Require logging
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/logger.php';
+        
+        //Require .env config management
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/dotenv.php';
+        
+        //Require autoload component
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/autoload.php';
+        
+        //Require helpers
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/helper.php';
+        
+        //Require testing component
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/testing.php';
+        
+        //Parse .env file if it exists
+        if (file_exists(__DIR__ . '/../../.env.testing')) {
+            env_parse(__DIR__ . '/../../.env.testing');
+        }
+        
+        //Enable debug mode error handling
+        \$_ENV['APP_DEBUG'] = true;
+        error_reporting(E_ALL);
+        
+        
+        //Check if we shall create/continue a session
+        if ((isset(\$_ENV['APP_SESSION'])) && (\$_ENV['APP_SESSION'])) {
+            if (!session_start()) {
+                throw new Exception('Failed to create/continue the session');
+            }
+        
+            if (!isset(\$_SESSION['continued'])) { //Check if a new session
+                //Create CSRF-token
+                \$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        
+                //Mark session
+                \$_SESSION['continued'] = true;
+            }
+        }
+        
+        //Require localization
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/locale.php';
+        
+        
+        //Require database management
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/database.php';
+        
+        //Require event manager
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/events.php';
+        
+        //Perform autoloading
+        \$auto = new Asatru\Autoload\Autoloader(__DIR__ . '/../config/autoload.php');
+        \$auto->load();
+        
+        //Load validators if any
+        Asatru\Controller\CustomPostValidators::load(__DIR__ . '/../validators');
+        ";
+
+        if (!file_put_contents(__DIR__ . '/../../../../app/tests/bootstrap.php', $bootstrap)) {
+            return false;
+        }
+    }
+
+    $content = "<?php
+
+    /*
+        Testcase for Test " . ucfirst($name) .
+    "*/
+
+    use PHPUnit\Framework\TestCase;
+    use Asatru\Testing;
+    
+    class " . ucfirst($name) . "Test extends Asatru\Testing\Test
+    {
+        //
+    }
+    ";
+
+    if (!file_put_contents(__DIR__ . '/../../../../app/tests/' . ucfirst($name) . 'Test.php', $content)) {
+        return false;
+    }
+
+    return true;
+}
+
 function handleInput($argv)
 {
     //Handle console input
@@ -346,6 +462,7 @@ function handleInput($argv)
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
         echo "+ make:validator <name> <ident>: Creates a new validator\n";
         echo "+ make:auth: Creates new authentication model and migration\n";
+        echo "+ make:test <name>: Creates a new test case\n";
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
         echo "+ migrate:list: Creates only all new created migrations\n";
         echo "+ migrate:drop: Drops all migrations\n";
@@ -399,6 +516,12 @@ function handleInput($argv)
             echo "\033[31mFailed to create auth objects\033[39m\n";
         } else {
             echo "\033[32mThe auth objects have been created!\033[39m\n";
+        }
+    } else if ($argv[1] === 'make:test') {
+        if (!createTest($argv[2])) {
+            echo "\033[31mFailed to create test case\033[39m\n";
+        } else {
+            echo "\033[32mThe test case has been created!\033[39m\n";
         }
     } else if ($argv[1] === 'migrate:fresh') {
         migrate_fresh();
