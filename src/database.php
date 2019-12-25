@@ -148,7 +148,6 @@ namespace Asatru\Database {
         private static $instance = null;
         private static $handle = null;
         private static $where = '';
-        private static $whereBetween = '';
         private static $limit = '';
         private static $orderBy = '';
         private static $groupBy = '';
@@ -300,10 +299,10 @@ namespace Asatru\Database {
         {
             //Create a and-where between clause
 
-            if (self::$whereBetween === '') {
-                self::$whereBetween = 'WHERE ' . $name . ' BETWEEN ? AND ?';
+            if (self::$where === '') {
+                self::$where = 'WHERE ' . $name . ' BETWEEN ? AND ?';
             } else {
-                self::$whereBetween .= ' AND ' . $name . ' BETWEEN ? and ?';
+                self::$where .= ' AND ' . $name . ' BETWEEN ? and ?';
             }
 
             array_push(self::$params, $value1);
@@ -316,10 +315,10 @@ namespace Asatru\Database {
         {
             //Create a or-where between clause
 
-            if (self::$whereBetween === '') {
-                self::$whereBetween = 'WHERE ' . $name . ' BETWEEN ? AND ?';
+            if (self::$where === '') {
+                self::$where = 'WHERE ' . $name . ' BETWEEN ? AND ?';
             } else {
-                self::$whereBetween .= ' OR ' . $name . ' BETWEEN ? and ?';
+                self::$where .= ' OR ' . $name . ' BETWEEN ? and ?';
             }
 
             array_push(self::$params, $value1);
@@ -386,12 +385,11 @@ namespace Asatru\Database {
         {
             //Perform database query and get first entry
 
-            $query = 'SELECT * FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$whereBetween . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
+            $query = 'SELECT * FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
 
             $result = self::raw($query, self::$params);
 
             self::$where = '';
-            self::$whereBetween = '';
             self::$groupBy = '';
             self::$orderBy = '';
             self::$aggregate = '';
@@ -413,12 +411,11 @@ namespace Asatru\Database {
                 $select = '*';
             }
 
-            $query = 'SELECT ' . $select . ' FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$whereBetween . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
+            $query = 'SELECT ' . $select . ' FROM ' . static::tableName() . ' ' . self::$where . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
 
             $result = self::raw($query, self::$params);
 
             self::$where = '';
-            self::$whereBetween = '';
             self::$groupBy = '';
             self::$orderBy = '';
             self::$limit = '';
@@ -432,11 +429,11 @@ namespace Asatru\Database {
         public static function update($ident, $value)
         {
             //Create update set clause
-
+            
             if (self::$update === '') {
                 self::$update = 'SET ' . $ident . ' = ?';
             } else {
-                self::$update = ', ' . $ident . ' = ?';
+                self::$update .= ', ' . $ident . ' = ?';
             }
 
             array_push(self::$params, $value);
@@ -467,7 +464,7 @@ namespace Asatru\Database {
                 self::$params = array();
 
                 return $result;
-            } else if (self::$insert !== '') {
+            } else if (count(self::$insert) > 0) {
                 $idents = '(';
                 $values = 'VALUES(';
 

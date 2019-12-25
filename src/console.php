@@ -49,7 +49,7 @@ function createModel($name, $table)
         }
     }";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/' . $name . '_migration.php', $content1)) {
+    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/' . $name . '.php', $content1)) {
         return false;
     }
 
@@ -164,6 +164,175 @@ function createValidator($name, $ident)
     return true;
 }
 
+function createAuth()
+{
+    $content1 = "<?php
+    /*
+        Asatru PHP - Migration for Auth
+    */
+
+    class Auth_Migration {
+        private \$database = null;
+        private \$connection = null;
+
+        public function __construct(\$pdo)
+        {
+            \$this->connection = \$pdo;
+        }
+
+        public function up()
+        {
+            \$this->database = new Asatru\Database\Migration('Auth', \$this->connection);
+            \$this->database->drop();
+            \$this->database->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
+            \$this->database->add('email VARCHAR(255) NOT NULL');
+            \$this->database->add('username VARCHAR(255) NOT NULL');
+            \$this->database->add('password VARCHAR(255) NOT NULL');
+            \$this->database->add('session VARCHAR(255) NOT NULL');
+            \$this->database->add('status INT(1) NOT NULL DEFAULT 0');
+            \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+            \$this->database->create();
+        }
+
+        public function down()
+        {
+            if (\$this->database)
+                \$this->database->drop();
+        }
+    }
+    ";
+
+    $content2 = "<?php
+    /*
+        Asatru PHP - Model for Auth
+
+        Default authentication model
+    */
+
+    use Asatru\Database;
+
+    class Auth extends \Asatru\Database\Model {
+        public static function register(string \$username, string \$email, string \$password)
+        {
+            //Register a new user
+
+            if ((\$username === '') || (\$password === '') || (filter_var(\$email, FILTER_VALIDATE_EMAIL) === false))
+                return false;
+
+            \$byemail = Auth::getByEmail(\$email);
+            if (\$byemail->count() > 0)
+                return false;
+
+            try {
+                Auth::insert('username', \$username)->insert('email', \$email)->insert('password', password_hash(\$password, PASSWORD_DEFAULT))->go();
+            } catch (\Exception \$e) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static function login(string \$email, string \$password)
+        {
+            //Login user
+
+            \$byemail = Auth::getByEmail(\$email);
+            if (\$byemail->count() === 0)
+                return false;
+
+            if (!password_verify(\$password, \$byemail->get(0)->get('password')))
+                return false;
+            
+            try {
+                Auth::update('status', 1)->update('session', session_id())->where('email', '=', \$email)->go();
+            } catch (\Exception \$e) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static function logout(string \$email)
+        {
+            //Login user
+
+            \$byemail = Auth::getByEmail(\$email);
+            if (\$byemail->count() === 0)
+                return false;
+
+            try {
+                Auth::update('status', 0)->update('session', '')->where('email', '=', \$email)->go();
+            } catch (\Exception \$e) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static function isUserLoggedIn(\$email = null)
+        {
+            //Indicate whether a user is logged in
+
+            \$userdata = null;
+
+            if (\$email === null) {
+                \$userdata = Auth::getBySession();
+            } else {
+                \$userdata = Auth::getByEmail(\$email);
+            }
+
+            if (\$userdata->count() === 0)
+                return false;
+            
+            return \$userdata->get(0)->get('status') === '1';
+        }
+
+        public static function getByEmail(string \$email)
+        {
+            //Get user by email
+
+            try {
+                \$result = Auth::where('email', '=', \$email)->first();
+            } catch (\Exception \$e) {
+                return false;
+            }
+
+            return \$result;
+        }
+
+        public static function getBySession()
+        {
+            //Get user by email
+
+            try {
+                \$result = Auth::where('session', '=', session_id())->first();
+            } catch (\Exception \$e) {
+                return false;
+            }
+
+            return \$result;
+        }
+
+        public static function tableName()
+        {
+            //Return the associated table name of the migration
+
+            return 'Auth';
+        }
+    }
+    ";
+
+    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/Auth.php', $content1)) {
+        return false;
+    }
+
+    if (!file_put_contents(__DIR__ . '/../../../../app/models/Auth.php', $content2)) {
+        return false;
+    }
+
+    return true;
+}
+
 function handleInput($argv)
 {
     //Handle console input
@@ -176,6 +345,7 @@ function handleInput($argv)
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
         echo "+ make:validator <name> <ident>: Creates a new validator\n";
+        echo "+ make:auth: Creates new authentication model and migration\n";
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
         echo "+ migrate:list: Creates only all new created migrations\n";
         echo "+ migrate:drop: Drops all migrations\n";
@@ -223,6 +393,12 @@ function handleInput($argv)
             echo "\033[31mFailed to create the validator\033[39m\n";
         } else {
             echo "\033[32mThe validator has been created!\033[39m\n";
+        }
+    } else if ($argv[1] === 'make:auth') {
+        if (!createAuth()) {
+            echo "\033[31mFailed to create auth objects\033[39m\n";
+        } else {
+            echo "\033[32mThe auth objects have been created!\033[39m\n";
         }
     } else if ($argv[1] === 'migrate:fresh') {
         migrate_fresh();
