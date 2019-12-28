@@ -13,24 +13,33 @@
 */
 
 namespace Asatru\Lang {
-    //This component handles the locale
+    /**
+     * This component handles the locale
+     */
     class Language {
         private $lang = [];
 
+        /**
+         * Load language file if requested
+         * 
+         * @param string $lang The locale identifier
+         * @eturn void
+         */
         public function __construct($lang = null)
         {
-            //Instantiate object
-
-            //Load language file if requested
             if ($lang) {
                 $this->load($lang);
             }
         }
 
+        /**
+         * Load language files according to locale
+         * 
+         * @param string $locale The locale identifier
+         * @return void
+         */
         public function load($locale)
         {
-            //Load language files according to locale
-            
             $this->lang = [];
 
             $files = scandir(__DIR__ . '/../../../../app/lang/' . $locale); //Get all files of directory
@@ -44,10 +53,15 @@ namespace Asatru\Lang {
             }
         }
 
+        /**
+         * Query phrase from array
+         * 
+         * @param string $qry The query string containing the file and the phrase delimited by a dot
+         * @param array $params optional A key-value pair with variables for the phrase
+         * @return string The localization phrase or the qry if not found
+         */
         public function query($qry, $params = null)
         {
-            //Query phrase from array
-            
             if (strpos($qry, '.') !== false) {
                 $spl = explode('.', $qry); //First token is the language file and the second token the phrase
                 if (count($spl) == 2) {
@@ -78,35 +92,50 @@ namespace Asatru\Lang {
         }
     }
 
-    //This components handles the locale
+    /**
+     * This components handles the locale
+     */
     class Locale {
+        /**
+         * Instantiate object
+         * 
+         * @return void
+         */
         public function __construct()
         {
-            //Instantiate object
-
             $this->createCookieIfNotExists();
         }
 
+        /**
+         * Create the cookie for locale if not already exists
+         * 
+         * @return void
+         */
         public function createCookieIfNotExists()
         {
-            //Create the cookie for locale if not already exists
-
             if (!isset($_COOKIE[COOKIE_LOCALE])) {
                 $this->setLocale('en'); //Defaulted to english
             }
         }
 
+        /**
+         * Set new locale cookie value
+         * 
+         * @param string $lang The locale identifier
+         * @return void
+         */
         public function setLocale($lang)
         {
-            //Set new locale
-
             setcookie(COOKIE_LOCALE, $lang, time() + 60 * 60 * 24 * 365, '/');
         }
 
+        /**
+         * Get current locale
+         * 
+         * @return string The current locale identifier from the cookie
+         */
         public function getLocale()
         {
-            //Get current locale
-
             return isset($_COOKIE[COOKIE_LOCALE]) ? $_COOKIE[COOKIE_LOCALE] : 'en';
         }
     }
@@ -125,8 +154,14 @@ namespace {
         $objLanguage->load('en');
     }
 
-    //Create the shortcut language query function
     if (!function_exists('__')) {
+        /**
+         * Query phrase from array
+         * 
+         * @param string $qry The query string containing the file and the phrase delimited by a dot
+         * @param array $params optional A key-value pair with variables for the phrase
+         * @return string The localization phrase or the qry if not found
+         */
         function __($phrase, $params = null)
         {
             global $objLanguage;
@@ -134,8 +169,13 @@ namespace {
         }
     }
 
-    //Create the language chooser function
     if (!function_exists('setLanguage')) {
+        /**
+         * Set new locale and load language content
+         * 
+         * @param string $lang The locale identifier
+         * @return void
+         */
         function setLanguage($lang)
         {
             global $objLocale;
@@ -146,8 +186,12 @@ namespace {
         }
     }
 
-    //Create the locale getter function
     if (!function_exists('getLocale')) {
+        /**
+         * Get current locale
+         * 
+         * @return string The current locale identifier from the cookie
+         */
         function getLocale()
         {
             global $objLocale;

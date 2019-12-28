@@ -20,23 +20,31 @@ namespace Asatru\Logger {
     const LOG_WARNING = 3;
     const LOG_ERROR = 4;
 
-    //This components handles the logging
+    /**
+     * This components handles the logging
+     */
     class Logger {
         private $log = array();
 
+        /**
+         * Instantiate and add initial item
+         * 
+         * @return void
+         */
         public function __construct()
         {
-            //Instantiate object
-
-            //Add initial item
             $item = ['type' => LOG_HEADER, 'text' => 'Asatru PHP log on ' . date('o-m-j h:i:s a')];
             array_push($this->log, $item);
         }
 
+        /**
+         * Get log type string
+         * 
+         * @param int $logtype
+         * @return string
+         */
         private function getStrType($logtype)
         {
-            //Get log type
-
             switch ($logtype) {
                 case LOG_HEADER:
                     return 'Header';
@@ -53,28 +61,39 @@ namespace Asatru\Logger {
             }
         }
 
+        /**
+         * Add new log line
+         * 
+         * @param int $type The log event type
+         * @param string $line The event message
+         * @return void
+         */
         public function add($type, $line)
         {
-            //Add new log line
-
             $item = ['type' => $type, 'text' => $line];
             array_push($this->log, $item);
         }
 
+        /**
+         * Clear log content and add initial next item
+         * 
+         * @return void
+         */
         public function clear()
         {
-            //Clear log content and add initial next item
-
             $this->log = array();
 
             $item = ['type' => LOG_HEADER, 'text' => 'Asatru PHP log on ' . date('o-m-j h:i:s a')];
             array_push($this->log, $item);
         }
 
+        /**
+         * Store log content to file
+         * 
+         * @return void
+         */
         public function store()
         {
-            //Store log content to file
-
             $entireStr = '';
 
             foreach ($this->log as $item) {
@@ -100,6 +119,13 @@ namespace {
     $objLogger = new Asatru\Logger\Logger();
 
     if (!function_exists('addLog')) {
+        /**
+         * Add new log line
+         * 
+         * @param int $type The log event type
+         * @param string $line The event message
+         * @return void
+         */
         function addLog($type, $line)
         {
             global $objLogger;
@@ -108,6 +134,11 @@ namespace {
     }
 
     if (!function_exists('clearLog')) {
+        /**
+         * Clear log content and add initial next item
+         * 
+         * @return void
+         */
         function clearLog($type, $line)
         {
             global $objLogger;
@@ -116,6 +147,11 @@ namespace {
     }
 
     if (!function_exists('storeLog')) {
+        /**
+         * Store log content to file
+         * 
+         * @return void
+         */
         function storeLog()
         {
             global $objLogger;

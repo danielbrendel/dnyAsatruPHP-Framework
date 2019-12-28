@@ -13,15 +13,20 @@
 */
 
 namespace Asatru\Dotenv {
-    //This components handles the .env management
+    /**
+     * This components handles the .env management
+     */
     class DotEnvParser {
         private $vars = [];
         private $error = '';
 
+        /**
+         * Handle as singleton class
+         * 
+         * @return Asatru\Dotenv\DotEnvParser
+         */
         public static function instance()
         {
-            //Handle as singleton class
-
             static $inst = null;
             if ($inst == null) {
                 $inst = new DotEnvParser();
@@ -30,10 +35,14 @@ namespace Asatru\Dotenv {
             return $inst;
         }
 
+        /**
+         * Split items of line
+         * 
+         * @param string $line The current line
+         * @return array A key-value pair of the current variable
+         */
         private function splitItems($line)
         {
-            //Split items of line
-
             $varname = '';
             $varvalue = '';
             $err = true;
@@ -57,10 +66,14 @@ namespace Asatru\Dotenv {
             return ['varname' => $varname, 'varvalue' => $varvalue];
         }
 
+        /**
+         * Filter variable
+         * 
+         * @param string The value of a variable
+         * @return string The new value of the variable with the replaced variable value
+         */
         private function filterVar($value)
         {
-            //Filter variable
-
             $result = $value;
 
             foreach ($this->vars as $var) {
@@ -72,10 +85,14 @@ namespace Asatru\Dotenv {
             return $result;
         }
 
+        /**
+         * Filter string
+         * 
+         * @param string $input The input string to be filtered
+         * @return string
+         */
         private function filterString($input)
         {
-            //Filter string
-
             $result = '';
             $err = true;
 
@@ -96,10 +113,14 @@ namespace Asatru\Dotenv {
             return $result;
         }
 
+        /**
+         * Examine data type and store value accordingly
+         * 
+         * @param string $input The input string (variable value)
+         * @return mixed Depends on the data type of the input
+         */
         private function getAsDataType($input)
         {
-            //Examine data type and store value accordingly
-
             $input = trim($input);
 
             if (strpos($input, '"') !== false) {
@@ -115,10 +136,14 @@ namespace Asatru\Dotenv {
             }
         }
 
+        /**
+         * Parse .env file
+         * 
+         * @param string $input The absolute path to the .env file
+         * @return void
+         */
         public function parse($input)
         {
-            //Parse .env file
-
             $this->error = '';
 
             $content = file_get_contents($input);
@@ -152,17 +177,24 @@ namespace Asatru\Dotenv {
             }
         }
 
+        /**
+         * Clear vars
+         * 
+         * @return void
+         */
         public function clear()
         {
-            //Clear vars
-
             $this->vars = [];
         }
 
+        /**
+         * Query item
+         * 
+         * @param string $item The variable name to be queried
+         * @return mixed Depends of the data type of the variable
+         */
         public function query($item)
         {
-            //Query item
-
             foreach ($this->vars as $var) {
                 if ($var['varname'] == $item) {
                     return $var['varvalue'];
@@ -172,55 +204,78 @@ namespace Asatru\Dotenv {
             return '';
         }
 
+        /**
+         * Return whether there is an error
+         * 
+         * @return boolean
+         */
         public function has_error()
         {
-            //Return whether there is an error
-
             return strlen($this->error) > 0;
         }
 
+        /**
+         * Return error string
+         * 
+         * @return string A description of the last occured error
+         */
         public function errorStr()
         {
-            //Return error string
-
             return $this->error;
         }
     }
 }
 
 namespace {
+    /**
+     * Parse .env file
+     * 
+     * @param string $input The absolute path to the .env file
+     * @return void
+     */
     function env_parse($input = '.env')
     {
-        //env parser convenience function
-
         return Asatru\Dotenv\DotEnvParser::instance()->parse($input);
     }
 
+    /**
+     * Query item
+     * 
+     * @param string $item The variable name to be queried
+     * @return mixed Depends of the data type of the variable
+     */
     function env_get($item)
     {
-        //env acessor convenience function
-
         return Asatru\Dotenv\DotEnvParser::instance()->query($item);
     }
 
+    /**
+     * Clear vars
+     * 
+     * @return void
+     */
     function env_clear()
     {
-        //env clear convenience function
-
         return Asatru\Dotenv\DotEnvParser::instance()->clear();
     }
 
+    /**
+     * Return whether there is an error
+     * 
+     * @return boolean
+     */
     function env_has_error()
     {
-        //env has_error convenience function
-
         return Asatru\Dotenv\DotEnvParser::instance()->has_error();
     }
 
+    /**
+     * Return error string
+     * 
+     * @return string A description of the last occured error
+     */
     function env_errorStr()
     {
-        //env errorStr convenience function
-
         return Asatru\Dotenv\DotEnvParser::instance()->errorStr();
     }
 }

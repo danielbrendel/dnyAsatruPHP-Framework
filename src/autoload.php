@@ -14,22 +14,32 @@
 
 namespace Asatru\Autoload;
 
-//This components handles the autoloading
+/**
+ * This components handles the autoloading
+ */
 class Autoloader {
     private $data = [];
 
-    public function __construct($config)
+    /**
+     * Instantiate object
+     * 
+     * @param string $config optional The absolute path to the config file
+     */
+    public function __construct($config = null)
     {
-        //Instantiate object
-
         //Load config data
-        $this->data = require_once(__DIR__ . '/../../../../app/config/autoload.php');
+        if (!$config != null) {
+            $this->data = require_once(__DIR__ . '/../../../../app/config/autoload.php');
+        }
     }
 
+    /**
+     * Load all requested scripts
+     * 
+     * @return void
+     */
     public function load()
     {
-        //Load all requested scripts
-
         foreach ($this->data as $item) {
             if (file_exists(__DIR__ . '/../../app' . $item)) {
                 include_once __DIR__ . '/../../app' . $item;

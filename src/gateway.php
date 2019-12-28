@@ -77,6 +77,9 @@ $auto->load();
 //Load validators if any
 Asatru\Controller\CustomPostValidators::load(__DIR__ . '/../../../../app/validators');
 
+//Require mail wrapper
+require_once 'mailwrapper.php';
+
 //Create a new controller instance and handle the current URL
 $controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
 $viewComp = $controller->parse($_SERVER['REQUEST_URI']);

@@ -14,14 +14,17 @@
 
 namespace Asatru\Controller;
 
-//This component handles the internal PHP URL arguments
+/**
+ * This component handles the internal PHP URL arguments
+ */
 class PHPArgs {
 	private $args = [];
 	
+	/**
+	 * Fill the args array with POST and GET values
+	 */
 	public function __construct()
 	{
-		//Instantiate object
-
 		//Aquire POST variables
 		if (isset($_POST)) {
 			foreach ($_POST as $key => $value) {
@@ -37,90 +40,142 @@ class PHPArgs {
 		}
 	}
 	
+	/**
+	 * Query a variable
+	 * 
+	 * @param string $name The name of the variable
+	 * @return mixed The value of the variable
+	 */
 	public function query($name)
 	{
-		//Query a variable
-
 		return (isset($this->args[$name])) ? $this->args[$name]: '';
 	}
 	
+	/**
+	 * Query entire variable object
+	 * 
+	 * @return array The array containing the variables
+	 */
 	public function all()
 	{
-		//Query entire variable object
-
 		return $this->args;
 	}
 }
 
-//This component handles the URL included arguments
+/**
+ * This component handles the URL included arguments
+ */
 class ControllerArg {
 	private $args = [];
 	private $phpargs = null;
 	
+	/**
+	 * Store splitted URL arguments and save PHP arg variables
+	 */
 	public function __construct($url)
 	{
-		//Instantiate object
-
 		//Split URL into arguments and also aquire the internal arguments
 		$this->args = explode('/', $url);
 		$this->phpargs = new PHPArgs();
 	}
 	
+	/**
+	 * Return the object to the internal arg manager
+	 * 
+	 * @return Asatru\Controller\PHPArgs Instance of the PHP args manager 
+	 */
 	public function request()
 	{
-		//Return the object to the internal arg manager
-
 		return $this->phpargs;
 	}
 
+	/**
+	 * Add argument value
+	 * 
+	 * @param string $name The name of the variable
+	 * @param mixed $value The variable value
+	 * @return void
+	 */
 	public function addArg($name, $value)
 	{
-		//Add argument value
-
 		$this->args[$name] = $value;
 	}
 	
+	/**
+	 * Query URL specific argument
+	 * 
+	 * @param mixed $id The identifier of the argument
+	 * @return string The value of the argument variable
+	 */
 	public function arg($id)
 	{
-		//Query URL specific argument
-
 		return isset($this->args[$id]) ? $this->args[$id] : '';
 	}
 	
+	/**
+	 * Get amount of URL specific arguments
+	 * 
+	 * @return int
+	 */
 	public function count()
 	{
-		//Get amount of URL specific arguments
-
 		return count($this->args);
 	}
 }
 
-//This class defines the layout of a validator class
+/**
+ * This class defines the layout of a validator class
+ */
 abstract class BaseValidator {
-	//Shall return the name of this validator
+	/**
+	 * Shall return the name of this validator
+	 * 
+	 * @return string The identifier of the validator
+	 */
 	abstract public function getIdent();
 
-	//Shall validate a token
+	/**
+	 * Shall validate a token
+	 * 
+	 * @param mixed $value The value of the item to be verified
+	 * @param string $args optional The validator arguments if any
+	 * @return boolean True if the item is valid, otherwise false
+	 */
 	abstract public function verify($value, $args = null);
 
-	//Shall return an error description if any
+	/**
+	 * Shall return an error description if any
+	 * 
+	 * @return string A description of the error
+	 */
 	abstract public function getError();
 
-	//This is just a helper to split provided arguments
+	/**
+	 * This is just a helper to split provided arguments
+	 * 
+	 * @param string $args The arguments of the validator each separated by a comma
+	 * @return array An array containing each validator argument
+	 */
 	public function args($args)
 	{
 		return explode(',', $args);
 	}
 }
 
-//This component manages custom post validators
+/**
+ * This component manages custom post validators
+ */
 class CustomPostValidators {
 	static $validators;
 
+	/**
+	 * Load all validators
+	 * 
+	 * @param string $dir The target directory containing the validators
+	 * @return void
+	 */
 	public static function load($dir)
 	{
-		//Load all validators
-
 		static::$validators = array();
 
 		if (!is_dir($dir)) {
@@ -144,10 +199,14 @@ class CustomPostValidators {
 		}
 	}
 
+	/**
+	 * Find validator by its ident
+	 * 
+	 * @param string $ident The identifier of the validator
+	 * @return array An array containing the ident and an instance of the validator
+	 */
 	public static function findValidator($ident)
 	{
-		//Find validator by its ident
-
 		foreach (static::$validators as $validator) {
 			if ($validator['ident'] === $ident) {
 				return $validator;
@@ -158,24 +217,32 @@ class CustomPostValidators {
 	}
 }
 
-//This components handles POST data validation
+/**
+ * This components handles POST data validation
+ */
 class PostValidator {
 	private $attributes = [];
 	private $errmsgs = [];
 	private $isValid = false;
 
+	/**
+	 * Pass attribute array and validate the data
+	 * 
+	 * @param array $attribs The validation attributes
+	 */
 	public function __construct($attribs)
 	{
-		//Pass attribute array
-
 		$this->attributes = $attribs;
 		$this->validate();
 	}
 
+	/**
+	 * Validate whether the POST data is valid. Also check csrf token
+	 * 
+	 * @return void
+	 */
 	private function validate()
 	{
-		//Validate whether the POST data is valid. Also check csrf token
-
 		//Clear array
 		$this->errmsgs = [];
 
@@ -233,37 +300,56 @@ class PostValidator {
 		}
 	}
 
+	/**
+	 * Indicate validation result
+	 * 
+	 * @return boolean
+	 */
 	public function isValid()
 	{
-		//Indicate validation result
-
 		return count($this->errmsgs) === 0;
 	}
 
+	/**
+	 * Return the array of error messages
+	 * 
+	 * @return array An array containing error messages of all invalid items
+	 */
 	public function errorMsgs()
 	{
-		//Return the array of error messages
-
 		return $this->errmsgs;
 	}
 }
 
-//This component passes control to the given controller associated with the current URL
+/**
+ * This component passes control to the given controller associated with the current URL
+ */
 class ControllerHandler {
 	private $routes = [];
 	
+	/**
+	 * Acquire the routes configuration
+	 * 
+	 * @param string $routesFile The absolute path to the route configuration file
+	 * @return void
+	 */
 	public function __construct($routesFile)
 	{
-		//Instantiate object
-
-		//Acquire the routes configuration
 		$this->routes = require_once($routesFile);
 	}
 
+	/**
+	 * Determine whether this route matches the given URL for the given request method
+	 * 
+	 * @param string $url The current URL to be handled
+	 * @param string $method The request method
+	 * @param string $route The route to be checked against the URL
+	 * @param Asatru\Controller\ControllerArg Instance to add the arguments found in the URL according to definition in the route
+	 * @return boolean
+	 * @throws \Exception
+	 */
 	private function urlMatches($url, $method, $route, $ctrlArgs)
 	{
-		//Determine whether this route matches the given URL for the given request method
-		
 		if (strtolower($method) !== 'any') {
 			if (strtolower($method) !== strtolower($_SERVER['REQUEST_METHOD'])) {
 				return false;
@@ -298,10 +384,13 @@ class ControllerHandler {
 		return $route === $url;
 	}
 
+	/**
+	 * Get 404 handler if exists
+	 * 
+	 * @return array|null The 404 handler item of the routes configuration if found, otherwise null
+	 */
 	private function get404Handler()
 	{
-		//Get 404 handler if exists
-
 		for ($i = 0; $i < count($this->routes); $i++) {
 			if ($this->routes[$i][0] === '$404') {
 				return $this->routes[$i];
@@ -311,10 +400,15 @@ class ControllerHandler {
 		return null;
 	}
 	
+	/**
+	 * Parse the URL and call the associated controller
+	 * 
+	 * @param string $url The URL to be handled
+	 * @return mixed|string The result data of the called controller, the result of the 404 handler or a default string
+	 * @throws \Exception
+	 */
 	public function parse($url)
 	{
-		//Parse the URL and call the associated controller
-
 		//Remove unneccessary URL parts so we have the relative path of the current directory with URL
 		$url = str_replace(dirname(dirname(str_replace('\\', '/', substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']))))), '', $url);
 		if (strpos($url, '?') !== false) {

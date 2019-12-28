@@ -16,14 +16,22 @@ namespace Asatru\Testing;
 
 use PHPUnit\Framework\TestCase;
 
-//This components provides extended testing methods
+/**
+ * This components provides extended testing methods
+ */
 class Test extends TestCase {
     protected $ctrlresult = null;
 
+    /**
+     * Method to simulate a request on a route
+     * 
+     * @param string $method The request method
+     * @param string $route The route as it would be typed in the browser
+     * @param array $data An array containing key-value pair arrays for POST or GET data
+     * @return void
+     */
     public function route($method, $route, $data = array())
     {
-        //Method to simulate a request on a route
-
         //Set method
         $_SERVER['REQUEST_METHOD'] = $method;
 
@@ -44,10 +52,13 @@ class Test extends TestCase {
         $this->ctrlresult = $controller->parse($route);
     }
 
+    /**
+     * Get response of previous route call
+     * 
+     * @return mixed Depends on the result of the controller method
+     */
     public function getResponse()
     {
-        //Get response of previous route call
-
         return $this->ctrlresult;
     }
 }

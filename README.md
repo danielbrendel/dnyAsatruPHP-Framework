@@ -35,6 +35,7 @@ This product is a lightweight PHP framework which can be used to create your own
 + Authentication
 + Testing
 + CLI interface
++ mail() wrapper
 
 ## Installation
 The installation of this framework is just one composer command away:

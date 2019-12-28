@@ -13,16 +13,23 @@
 */
 
 namespace Asatru\Database {
-    //This component handles the table creation
+    /**
+     * This component handles the table creation
+     */
     class Migration {
         private $handle = null;
         private $command = null;
         private $name = null;
 
+        /**
+         * Initialize table creation
+         * 
+         * @param string $name The name of the migration
+         * @param \PDO $con PDO handler instance  
+         * @throws \Exception
+         */
         public function __construct($name, $con)
         {
-            //Initialize table creation
-
             if ((!$name) || (strlen($name) === 0)) {
                 throw new \Exception('Migration name must be provided');
             }
@@ -43,24 +50,36 @@ namespace Asatru\Database {
             $this->name = $name;
         }
 
+        /**
+         * Add new column
+         * 
+         * @param string $column The column definition
+         * @return void
+         */
         public function add($column)
         {
-            //Add new column
-
             $this->command .= (($this->command[strlen($this->command)-1] !== '(') ? ', ' : '') . $column;
         }
 
+        /**
+         * Append new column
+         * 
+         * @param string $column The column definition to be appended
+         * @return void
+         */
         public function append($column)
         {
-            //Append new column
-
             $this->handle->exec('ALTER TABLE ' . $this->name . ' ADD ' . $column . ';');
         }
 
+        /**
+         * Create table
+         * 
+         * @return void
+         * @throws \Exception
+         */
         public function create()
         {
-            //Create table
-
             $this->command .= ');';
 
             $this->handle->exec($this->command);
@@ -71,10 +90,14 @@ namespace Asatru\Database {
             }
         }
 
+        /**
+         * Drop the table
+         * 
+         * @return void
+         * @throws \Exception
+         */
         public function drop()
         {
-            //Drop the table
-            
             $this->handle->exec('DROP TABLE IF EXISTS ' . $this->name . ';');
 
             $error = $this->handle->errorInfo();
@@ -83,29 +106,42 @@ namespace Asatru\Database {
             }
         }
 
+        /**
+         * Get table name
+         * 
+         * @return string The name of the table
+         */
         public function getTableName()
         {
-            //Get table name
-
             return $this->name;
         }
     }
 
-    //This component represents a database query result collection
+    /**
+     * This component represents a database query result collection
+     */
     class Collection {
         private $items = array();
 
+        /**
+         * Create object from array
+         * 
+         * @param array $arr The target array
+         * @eturn void
+         */
         public function __construct($arr)
         {
-            //Construct object
-
             $this->createFromArray($arr);
         }
 
+        /**
+         * Create collection from array
+         * 
+         * @param array The array to be converted to \Collection
+         * @return void
+         */
         private function createFromArray($arr)
         {
-            //Create collection from array
-            
             foreach ($arr as $key => $value) {
                 if (is_array($value)) {
                     $this->items[$key] = new Collection($value);
@@ -115,17 +151,24 @@ namespace Asatru\Database {
             }
         }
 
+        /**
+         * Return amount of items
+         * 
+         * @return int
+         */
         public function count()
         {
-            //Return amount of items
-
             return count($this->items);
         }
 
+        /**
+         * Query item entry value
+         * 
+         * @param mixed $ident The ident of the object
+         * @return Asatru\Database\Collection|mixed The value of the item, can be a Collection, too
+         */
         public function get($ident)
         {
-            //Query item entry value
-
             if (isset($this->items[$ident])) {
                 return $this->items[$ident];
             }
@@ -133,17 +176,23 @@ namespace Asatru\Database {
             return null;
         }
 
+        /**
+         * Iterate through entries and inform a callback function
+         * 
+         * @param closure $callback The function to be called for each item
+         * @return void
+         */
         public function each($callback)
         {
-            //Iterate through entries and inform a callback function
-
             foreach ($this->items as $ident => $item) {
                 call_user_func_array($callback, array($ident, $item));
             }
         }
     }
 
-    //This component handles the models
+    /**
+     * This component handles the models
+     */
     abstract class Model {
         private static $instance = null;
         private static $handle = null;
@@ -157,10 +206,13 @@ namespace Asatru\Database {
         private static $getcount = false;
         private static $params = array();
 
+        /**
+         * Get singleton instance (create if not exists)
+         * 
+         * @return Asatru\Database\Model
+         */
         private static function getInstance()
         {
-            //Get singleton instance (create if not exists)
-
             if (self::$instance === null) {
                 self::$instance = new static;
             }
@@ -168,17 +220,25 @@ namespace Asatru\Database {
             return self::$instance;
         }
 
+        /**
+         * Set PDO handle
+         * 
+         * @param \PDO $pdo
+         * @return void
+         */
         public static function __setHandle($pdo)
         {
-            //Set PDO handle
-            
             self::$handle = $pdo;
         }
 
+        /**
+         * Determine the parameter type
+         * 
+         * @param string $param The object to be checked
+         * @return The constant specifying the data type
+         */
         public static function getParamType($param)
         {
-            //Determin the parameter type
-
             switch (gettype($param)) {
                 case 'boolean':
                     return \PDO::PARAM_BOOL;
@@ -200,10 +260,16 @@ namespace Asatru\Database {
             return \PDO::PARAM_STR;
         }
 
+        /**
+         * Perform database raw operation
+         * 
+         * @param string $qry The SQL query string
+         * @param array $opt optional A key-value paired array with the arguments of the SQL query string
+         * @return mixed|boolean The return type depends of the type of query, or false on failure
+         * @throws \Exception
+         */
         public static function raw($qry, $opt = null)
         {
-            //Perform database raw operation
-
             if (!self::$handle) {
                 throw new \Exception('PDO connection must be provided first');
             }
@@ -240,35 +306,52 @@ namespace Asatru\Database {
             return false;
         }
 
+        /**
+         * Query all entries
+         * 
+         * @return Asatru\Database\Collection|boolean
+         */
         public static function all()
         {
-            //Query all entries
-
             return self::raw('SELECT * FROM ' . static::tableName());
         }
 
+        /**
+         * Flag that we shall only get the count
+         * 
+         * @return Asatru\Database\Model
+         */
         public static function count()
         {
-            //Flag that we shall only get the count
-
             self::$getcount = true;
 
             return self::getInstance();
         }
 
+        /**
+         * Find entry by id
+         * 
+         * @param mixed The ID of the item
+         * @param string $key optional The name of the column to look for
+         * @return Asatru\Database\Collection|boolean
+         */
         public static function find($id, $key = 'id')
         {
-            //Find entry by id
-
             $query = 'SELECT * FROM ' . static::tableName() . ' WHERE ' . $key . ' = ?';
 
             return self::raw($query, array($id));
         }
 
+        /**
+         * Create a and-where clause
+         * 
+         * @param string $name The name of the column
+         * @param string $comparison The type of the comparision to be performed
+         * @param mixed $value The value to be checked
+         * @return Asatru\Database\Model
+         */
         public static function where($name, $comparison, $value)
         {
-            //Create a and-where clause
-
             if (self::$where === '') {
                 self::$where = 'WHERE ' . $name . ' ' . $comparison . ' ?';
             } else {
@@ -280,10 +363,16 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Create a or-where clause
+         * 
+         * @param string $name The name of the column
+         * @param string $comparison The type of the comparision to be performed
+         * @param mixed $value The value to be checked
+         * @return Asatru\Database\Model
+         */
         public static function whereOr($name, $comparison, $value)
         {
-            //Create a or-where clause
-
             if (self::$where === '') {
                 self::$where = 'WHERE ' . $name . ' ' . $comparison . ' ?';
             } else {
@@ -295,10 +384,16 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Create a and-where between clause
+         * 
+         * @param string $name The name of the column
+         * @param int $value1 The inclusive minimum value
+         * @param int $value2 The inclusive maximum value
+         * @return Asatru\Database\Model
+         */
         public static function whereBetween($name, $value1, $value2)
         {
-            //Create a and-where between clause
-
             if (self::$where === '') {
                 self::$where = 'WHERE ' . $name . ' BETWEEN ? AND ?';
             } else {
@@ -311,10 +406,16 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Create a or-where between clause
+         * 
+         * @param string $name The name of the column
+         * @param int $value1 The inclusive minimum value
+         * @param int $value2 The inclusive maximum value
+         * @return Asatru\Database\Model
+         */
         public static function whereBetweenOr($name, $value1, $value2)
         {
-            //Create a or-where between clause
-
             if (self::$where === '') {
                 self::$where = 'WHERE ' . $name . ' BETWEEN ? AND ?';
             } else {
@@ -327,10 +428,14 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Create a limit clause
+         * 
+         * @param int $value The value of the limit
+         * @return Asatru\Database\Model
+         */
         public static function limit($value)
         {
-            //Create a limit clause
-
             if (self::$limit === '') {
                 self::$limit = 'LIMIT ?';
                 array_push(self::$params, $value);
@@ -339,10 +444,15 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Create an ordering clause
+         * 
+         * @param string $ident The column name
+         * @param string $type The type of the ordering
+         * @return Asatru\Database\Model
+         */
         public static function orderBy($ident, $type)
         {
-            //Create an ordering clause
-
             if (self::$orderBy === '') {
                 self::$orderBy = 'ORDER BY ? ?';
                 array_push(self::$params, $ident);
@@ -352,10 +462,14 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Create a group-by clause
+         * 
+         * @param string $ident The column to be grouped by
+         * @return Asatru\Database\Model
+         */
         public static function groupBy($ident)
         {
-            //Create a group-by clause
-
             if (self::$groupBy === '') {
                 self::$groupBy = 'GROUP BY ?';
                 array_push(self::$params, $ident);
@@ -364,10 +478,16 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Add an aggregate query
+         * 
+         * @param string $type The aggregate identifier
+         * @param string $column The column to be passed as argument
+         * @param string|null $name optional A name to be used as the result variable or null
+         * @return Asatru\Database\Model
+         */
         public static function aggregate($type, $column, $name = null)
         {
-            //Add an aggregate query
-
             if ($name === null) {
                 $name = $column;
             }
@@ -381,10 +501,13 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Perform database query and get first entry
+         * 
+         * @return Asatru\Database\Collection|boolean
+         */
         public static function first()
         {
-            //Perform database query and get first entry
-
             $query = 'SELECT * FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
 
             $result = self::raw($query, self::$params);
@@ -398,10 +521,13 @@ namespace Asatru\Database {
             return $result;
         }
 
+        /**
+         * Perform database query
+         * 
+         * @return Asatru\Database\Collection|boolean
+         */
         public static function get()
         {
-            //Perform database query
-
             $select = '';
             if (self::$getcount !== false) {
                 $select = 'COUNT(*) as count';
@@ -426,10 +552,15 @@ namespace Asatru\Database {
             return $result;
         }
 
+        /**
+         * Create update set clause
+         * 
+         * @param string $ident The column name
+         * @param mixed $value The value
+         * @return Asatru\Database\Model
+         */
         public static function update($ident, $value)
         {
-            //Create update set clause
-            
             if (self::$update === '') {
                 self::$update = 'SET ' . $ident . ' = ?';
             } else {
@@ -441,20 +572,28 @@ namespace Asatru\Database {
             return self::getInstance();
         }
 
+        /**
+         * Add to insert array
+         * 
+         * @param string $ident The column name
+         * @param mixed $value The value
+         * @return Asatru\Database\Model
+         */
         public static function insert($ident, $value)
         {
-            //Add to insert array
-
             $item = array('ident' => $ident, 'value' => $value);
             array_push(self::$insert, $item);
 
             return self::getInstance();
         }
 
+        /**
+         * Perform database query. Either update or insert
+         * 
+         * @return mixed|boolean Result depends on the result of raw() or false on failure
+         */
         public static function go()
         {
-            //Perform database query. Either update or insert
-
             if (self::$update !== '') {
                 $query = 'UPDATE ' . static::tableName() . ' ' . self::$update . ' ' . self::$where;
                 $result = static::raw($query, self::$params);
@@ -490,10 +629,13 @@ namespace Asatru\Database {
             return false;
         }
 
+        /**
+         * Perform a deletion statement
+         * 
+         * @return mixed Depends on the result of raw()
+         */
         public static function delete()
         {
-            //Delete a row
-
             $query = 'DELETE FROM ' . static::tableName() . ' ' . self::$where;
 
             $result = self::raw($query, self::$params);
@@ -508,21 +650,30 @@ namespace Asatru\Database {
         abstract public static function tableName();
     }
 
-    //This component loads all migrations
+    /**
+     * This component loads all migrations
+     */
     class MigrationLoader {
         private $handle = null;
 
+        /**
+         * Set handle
+         * 
+         * @param \PDO $pdo The handle to the PDO instance
+         * @return void
+         */
         public function __construct($pdo)
         {
-            //Set handle
-
             $this->handle = $pdo;
         }
 
+        /**
+         * Load migration list
+         * 
+         * @return array An array containing each hashes
+         */
         private function loadMigrationList()
         {
-            //Load migration list
-
             if (!file_exists(__DIR__ . '/../../../../app/migrations/migrations.list')) {
                 return array();
             }
@@ -530,10 +681,14 @@ namespace Asatru\Database {
             return preg_split('/(\r\n|\n|\r)/', file_get_contents(__DIR__ . '/../../../../app/migrations/migrations.list'));
         }
 
+        /**
+         * Store migration list
+         * 
+         * @param array An array containing the hashes
+         * @return boolean
+         */
         private function storeMigrationList($migrations)
         {
-            //Store migration list
-
             $content = '';
 
             foreach ($migrations as $migration) {
@@ -543,10 +698,15 @@ namespace Asatru\Database {
             return file_put_contents(__DIR__ . '/../../../../app/migrations/migrations.list', $content) !== false;
         }
 
+        /**
+         * Check if in migration list
+         * 
+         * @param array $list The migration list
+         * @param string $file The hash of the file
+         * @return boolean
+         */
         private function isInMigrationList($list, $file)
         {
-            //Check if in migration list
-
             foreach ($list as $entry) {
                 if ($entry === $file) {
                     return true;
@@ -556,10 +716,14 @@ namespace Asatru\Database {
             return false;
         }
 
+        /**
+         * Load all migrations if not on the list and put a migrated entity to list
+         * 
+         * @return void
+         * @throws \Exception
+         */
         public function createAll()
         {
-            //Load all migrations if not on the list and put a migrated entity to list
-
             $files = scandir(__DIR__ . '/../../../../app/migrations');
             if ($files === false) {
                 throw new \Exception('Migration folder not found');
@@ -589,10 +753,14 @@ namespace Asatru\Database {
             $this->storeMigrationList($list);
         }
 
+        /**
+         * Drop all migrations
+         * 
+         * @return void
+         * @throws \Exception
+         */
         public function dropAll()
         {
-            //Drop all migrations
-
             $files = scandir(__DIR__ . '/../../../../app/migrations');
             if ($files === false) {
                 throw new \Exception('Migration folder not found');
@@ -653,7 +821,11 @@ namespace {
             }
         }
     
-        //Create function for fresh migration
+        /**
+         * Create function for fresh migration
+         * 
+         * @return void
+         */
         function migrate_fresh()
         {
             global $objPdo;
@@ -663,7 +835,11 @@ namespace {
             $objMigrationLoader->createAll();
         }
 
-        //Create function for listed migration
+        /**
+         * Create function for listed migration
+         * 
+         * @return void
+         */
         function migrate_list()
         {
             global $objPdo;
@@ -672,8 +848,11 @@ namespace {
             $objMigrationLoader->createAll();
         }
 
-        //Create function for dropping all migrations
-        //Create function for listed migration
+        /**
+         * Create function for dropping all migrations
+         * 
+         * @return void
+         */
         function migrate_drop()
         {
             global $objPdo;

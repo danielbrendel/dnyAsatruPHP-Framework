@@ -14,25 +14,44 @@
 
 namespace Asatru\Console;
 
+/**
+ * Create a model with the associated migration
+ * 
+ * @param string $name The name of the model and migration
+ * @param string $table The name of the database table
+ * @return boolean
+ */
 function createModel($name, $table)
 {
-    //Create a model with the associated migration
-
     $content1 = "<?php
 
     /*
         Asatru PHP - Migration for " . $table . "
     */
 
+    /**
+     * This class specifies a migration
+     */
     class " . ucfirst($name) . "_Migration {
         private \$database = null;
         private \$connection = null;
 
+        /**
+         * Store the PDO connection handle
+         * 
+         * @param \\PDO \$pdo The PDO connection handle
+         * @return void
+         */
         public function __construct(\$pdo)
         {
             \$this->connection = \$pdo;
         }
 
+        /**
+         * Called when the table shall be created or modified
+         * 
+         * @return void
+         */
         public function up()
         {
             \$this->database = new Asatru\Database\Migration('" . $table . "', \$this->connection);
@@ -42,6 +61,11 @@ function createModel($name, $table)
             \$this->database->create();
         }
 
+        /**
+         * Called when the table shall be dropped
+         * 
+         * @return void
+         */
         public function down()
         {
             if (\$this->database)
@@ -61,11 +85,17 @@ function createModel($name, $table)
 
     use Asatru\Database;
 
+    /**
+     * This class extends the base model class and represents your associated table
+     */ 
     class " . $name . " extends \Asatru\Database\Model {
+        /**
+         * Return the associated table name of the migration
+         * 
+         * @return string
+         */
         public static function tableName()
         {
-            //Return the associated table name of the migration
-
             return '" . $table . "';
         }
     }";
@@ -77,10 +107,14 @@ function createModel($name, $table)
     return true;
 }
 
+/**
+ * Create a controller
+ * 
+ * @param string $name The name of the controller
+ * @return boolean
+ */
 function createController($name)
 {
-    //Create a controller
-
     $content = "<?php
 
     /*
@@ -90,6 +124,9 @@ function createController($name)
     use Asatru\View;
     use Asatru\Helper;
 
+    /**
+     * This class represents your controller
+     */
     class " . ucfirst($name) . "Controller {
         //
     }
@@ -98,10 +135,13 @@ function createController($name)
     return file_put_contents(__DIR__ . '/../../../../app/controller/' . $name . '.php', $content) !== false;
 }
 
+/**
+ * Create language structure for ident
+ * 
+ * @param string $ident The identifier of the locale
+ */
 function createLang($ident)
 {
-    //Create language structure for ident
-
     if (is_dir(__DIR__ . '/../../../../app/lang/' . $ident)) {
         return false;
     }
@@ -125,6 +165,13 @@ function createLang($ident)
     return true;
 }
 
+/**
+ * Create a new custom validator
+ * 
+ * @param string $name The name of the validator
+ * @param string $ident The identifier to be used in the validation call
+ * @return boolean
+ */
 function createValidator($name, $ident)
 {
     if (!is_dir(__DIR__ . '/../../../../app/validators')) {
@@ -137,19 +184,39 @@ function createValidator($name, $ident)
             Asatru PHP - Validator for validation ident " . $ident . "
         */
 
+        /**
+         * This class implements your validator
+         */
         class " . ucfirst($name) . "Validator extends Asatru\Controller\BaseValidator {
             protected \$error;
 
+            /**
+             * Return the identifier of the validator
+             * 
+             * @return string
+             */
             public function getIdent()
             {
                 return '" . $ident . "';
             }
 
+            /**
+             * Validate the actual input data
+             * 
+             * @param mixed \$value The input value
+             * @param mixed \$args optional Arguments for the validator
+             * @return boolean True if valid, otherwise false
+             */
             public function verify(\$value, \$args = null)
             {
                 return true;
             }
 
+            /**
+             * Return error description of the validation process if the data is invalid
+             * 
+             * @return string
+             */
             public function getError()
             {
                 return \$this->error;
@@ -164,6 +231,11 @@ function createValidator($name, $ident)
     return true;
 }
 
+/**
+ * Create authentication model and migration
+ * 
+ * @return boolean
+ */
 function createAuth()
 {
     $content1 = "<?php
@@ -171,15 +243,29 @@ function createAuth()
         Asatru PHP - Migration for Auth
     */
 
+    /**
+     * Authentication migration
+     */
     class Auth_Migration {
         private \$database = null;
         private \$connection = null;
 
+        /**
+         * Set PDO connection handle
+         * 
+         * @param \\PDO \$pdo The PDO connection handle
+         * @return void
+         */
         public function __construct(\$pdo)
         {
             \$this->connection = \$pdo;
         }
 
+        /**
+         * Create the authentication database table
+         * 
+         * @return void
+         */
         public function up()
         {
             \$this->database = new Asatru\Database\Migration('Auth', \$this->connection);
@@ -194,6 +280,11 @@ function createAuth()
             \$this->database->create();
         }
 
+        /**
+         * Drop the authentication database table
+         * 
+         * @return void
+         */
         public function down()
         {
             if (\$this->database)
@@ -211,11 +302,20 @@ function createAuth()
 
     use Asatru\Database;
 
+    /**
+     * Model representing the authentication table
+     */
     class Auth extends \Asatru\Database\Model {
+        /**
+         * Add a new user registration
+         * 
+         * @param string \$username The name of the user
+         * @param string \$email The user E-Mail address
+         * @param string \$password The password given by the user
+         * @return boolean
+         */
         public static function register(string \$username, string \$email, string \$password)
         {
-            //Register a new user
-
             if ((\$username === '') || (\$password === '') || (filter_var(\$email, FILTER_VALIDATE_EMAIL) === false))
                 return false;
 
@@ -232,10 +332,15 @@ function createAuth()
             return true;
         }
 
+        /**
+         * Log the user in
+         * 
+         * @param string \$email The E-Mail address of the user
+         * @param string \$password The user password
+         * @return boolean
+         */
         public static function login(string \$email, string \$password)
         {
-            //Login user
-
             \$byemail = Auth::getByEmail(\$email);
             if (\$byemail->count() === 0)
                 return false;
@@ -252,10 +357,14 @@ function createAuth()
             return true;
         }
 
+        /**
+         * Log the user out
+         * 
+         * @param string \$email The user E-Mail address
+         * @return boolean
+         */
         public static function logout(string \$email)
         {
-            //Login user
-
             \$byemail = Auth::getByEmail(\$email);
             if (\$byemail->count() === 0)
                 return false;
@@ -269,10 +378,14 @@ function createAuth()
             return true;
         }
 
+        /**
+         * Check if a user is currently logged in (either by E-Mail address or by session)
+         * 
+         * @param string|null \$email The user E-Mail address
+         * @return boolean
+         */
         public static function isUserLoggedIn(\$email = null)
         {
-            //Indicate whether a user is logged in
-
             \$userdata = null;
 
             if (\$email === null) {
@@ -287,10 +400,14 @@ function createAuth()
             return \$userdata->get(0)->get('status') === '1';
         }
 
+        /**
+         * Get user by email
+         * 
+         * @param string \$email The users E-Mail address
+         * @return Asatru\Database\Collection|boolean User data collection on success, otherwise false
+         */
         public static function getByEmail(string \$email)
         {
-            //Get user by email
-
             try {
                 \$result = Auth::where('email', '=', \$email)->first();
             } catch (\Exception \$e) {
@@ -300,10 +417,13 @@ function createAuth()
             return \$result;
         }
 
+        /**
+         * Get user by session
+         * 
+         * @return Asatru\Database\Collection|boolean User data collection on success, otherwise false
+         */
         public static function getBySession()
         {
-            //Get user by email
-
             try {
                 \$result = Auth::where('session', '=', session_id())->first();
             } catch (\Exception \$e) {
@@ -313,10 +433,13 @@ function createAuth()
             return \$result;
         }
 
+        /**
+         * Return the associated table name of the migration
+         * 
+         * @return string
+         */
         public static function tableName()
         {
-            //Return the associated table name of the migration
-
             return 'Auth';
         }
     }
@@ -333,6 +456,12 @@ function createAuth()
     return true;
 }
 
+/**
+ * Create a new test
+ * 
+ * @param string $name The name of the test case
+ * @return boolean
+ */
 function createTest($name)
 {
     if (!is_dir(__DIR__ . '/../../../../app/tests')) {
@@ -375,6 +504,9 @@ function createTest($name)
         
         //Require helpers
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/helper.php';
+		
+		//Require mail wrapper
+		require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/mailwrapper.php';
         
         //Require testing component
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/testing.php';
@@ -436,6 +568,9 @@ function createTest($name)
     use PHPUnit\Framework\TestCase;
     use Asatru\Testing;
     
+    /**
+     * This class holds your test methods
+     */
     class " . ucfirst($name) . "Test extends Asatru\Testing\Test
     {
         //
@@ -449,6 +584,12 @@ function createTest($name)
     return true;
 }
 
+/**
+ * Process the input of the console
+ * 
+ * @param array $argv The arguments of the execution
+ * @return void
+ */
 function handleInput($argv)
 {
     //Handle console input

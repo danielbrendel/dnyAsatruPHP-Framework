@@ -13,63 +13,96 @@
 */
 
 namespace Asatru\View {
-	//Basic view interface
+	/**
+	 * Basic view interface
+	 */
 	interface ViewInterface {
+		/**
+		 * Output the actual content
+		 * 
+		 * @return void
+		 */
 		public function out();
 	}
 
-	//This component handles the view rendering
+	/**
+	 * This component handles the view rendering
+	 */
 	class ViewHandler implements ViewInterface {
 		private $yields = [];
 		private $layout = null;
 		private $vars = [];
 		
+		/**
+		 * Instantiate object
+		 * 
+		 * @param array $vars optional The key-value data
+		 */
 		public function __construct($vars = [])
 		{
-			//Instantiate object
-
-			//To ease usage we can pass the variable array if any
 			$this->vars = $vars;
 		}
 		
+		/**
+		 * Set the layout file
+		 * 
+		 * @param string $layout The name of the layout file
+		 * @return Asatru\View\ViewHandler
+		 */
 		public function setLayout($layout)
 		{
-			//Set the layout file
-
 			$this->layout = $layout;
 			
 			return $this;
 		}
 		
+		/**
+		 * Add a yield
+		 * 
+		 * @param string $name The yield identifier
+		 * @param string $file The yield file to be included
+		 * @return Asatru\View\ViewHandler
+		 */
 		public function setYield($name, $file)
 		{
-			//Add a yield
-
 			$this->yields[$name] = file_get_contents(__DIR__ . '/../../../../app/views/' . $file . '.php');;
 			
 			return $this;
 		}
 		
+		/**
+		 * Set view variables
+		 * 
+		 * @param array $vars An array containing the key-value pairs
+		 * @return Asatru\View\ViewHandler
+		 */
 		public function setVars($vars)
 		{
-			//Set view variables
-
 			$this->vars = $vars;
 			
 			return $this;
 		}
 
+		/**
+		 * Whether command is there
+		 * 
+		 * @param string $code The code line
+		 * @param string $cmd The command identifier
+		 * @return boolean
+		 */
 		private function hasCmd($code, $cmd)
 		{
-			//Whether command is there
-
 			return strpos($code, '@' . $cmd) === 0;
 		}
 
+		/**
+		 * Replace @<cmd> with code
+		 * 
+		 * @param string $code The current code line
+		 * @return string The new line with valid PHP code or the origin code if no command was found
+		 */
 		private function replaceCommand($code)
 		{
-			//Replace @<cmd> with code
-
 			if ($this->hasCmd($code, 'if')) {
 				return str_replace('@if', '<?php if', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'elseif')) {
@@ -123,10 +156,15 @@ namespace Asatru\View {
 			return $code;
 		}
 
+		/**
+		 * Indicate if mustache syntax shall be ignored
+		 * 
+		 * @param string $elem The current element
+		 * @param int $i The start index of element to be checked
+		 * @return boolean
+		 */
 		private function shallIgnoreMustache($elem, $i)
 		{
-			//Indicate if mustache syntax shall be ignored
-
 			if (($i > 0) && ($elem[$i - 1] === '@')) {
 				return true;
 			}
@@ -134,10 +172,14 @@ namespace Asatru\View {
 			return false;
 		}
 
+		/**
+		 * Return rendered code
+		 * 
+		 * @param string $code The actual view content
+		 * @return string The rendered view content
+		 */
 		private function renderCode($code)
 		{
-			//Return rendered code
-
 			//This array will contain all parsed lines
 			$resultCode = array();
 			
@@ -207,10 +249,14 @@ namespace Asatru\View {
 			return implode(PHP_EOL, $resultCode);
 		}
 		
-		public function out()
+		/**
+		 * Render the view with given information
+		 * 
+		 * @param boolean $return optional Wether the view shall be rendered or its content returned
+		 * @return mixed
+		 */
+		public function out($return = false)
 		{
-			//Render the view with given information
-
 			//Create all variables
 			foreach ($this->vars as $key => $value) {
 				$$key = $value;
@@ -224,62 +270,98 @@ namespace Asatru\View {
 				$layout = str_replace('{%' . $key . '%}', $value, $layout);
 			}
 			
-			//Render the code
-			eval('?>' . $this->renderCode($layout));
-			
+			//Render the code or return depending on flag
+			$result = true;
+			if (!$return) {
+				eval('?>' . $this->renderCode($layout));
+			} else {
+				ob_start();
+				eval('?>' . $this->renderCode($layout));
+				$result = ob_get_contents();
+				ob_end_clean();
+			}
+
 			//Remove all variables
 			foreach ($this->vars as $key => $value) {
 				unset($$key);
 			}
+
+			return $result;
 		}
 	}
 
-	//This component handles a json result
+	/**
+	 * This component handles a json result
+	 */
 	class JsonHandler implements ViewInterface {
 		private $content = null;
 
+		/**
+		 * Construct with content
+		 * 
+		 * @param string $content The content to be handled as json
+		 * @return void
+		 */
 		public function __construct($content = '')
 		{
-			//Construct with content
-
 			$this->content = $content;
 		}
 
+		/**
+		 * Render the content as json
+		 * 
+		 * @return void
+		 */
 		public function out()
 		{
-			//Render the content as json
-
 			header('Content-type: application/json');
 
 			echo json_encode($this->content);
 		}
 	}
 
-	//This component handles an xml result
+	/**
+	 * This component handles an xml result
+	 */
 	class XmlHandler implements ViewInterface {
 		private $content = null;
 
+		/**
+		 * Construct with content
+		 * 
+		 * @param string $content The content to be handled as XML
+		 * @return void
+		 */
 		public function __construct($content = '')
 		{
-			//Construct with content
-
 			$this->content = $content;
 		}
 
+		/**
+		 * Render the content as xml
+		 * 
+		 * @return void
+		 */
 		public function out()
 		{
-			//Render the content as json
-
 			header('Content-type: text/xml');
 
 			echo $this->content;
 		}
 	}
 
-	//This component handles a plain result
+	/**
+	 * This component handles a plain result
+	 */
 	class PlainHandler implements ViewInterface {
 		private $content = null;
 
+		/**
+		 * Construct with content
+		 * 
+		 * @param string $content The content to be handled as plain text
+		 * @return void
+		 */
 		public function __construct($content = '')
 		{
 			//Set content
@@ -287,73 +369,104 @@ namespace Asatru\View {
 			$this->content = $content;
 		}
 
+		/**
+		 * Render the content as plain text
+		 * 
+		 * @return void
+		 */
 		public function out()
 		{
-			//Render the content as plain text
-
 			header('Content-type: text/plain');
 
 			echo $this->content;
 		}
 	}
 
-	//This components handles a redirect
+	/**
+	 * This components handles a redirect
+	 */
 	class RedirectHandler implements ViewInterface {
 		private $dest = null;
 
+		/**
+		 * Set URL
+		 * 
+		 * @param string $url The URL, either internal or external
+		 * @return void
+		 */
 		public function __construct($url = '/')
 		{
-			//Set URL
-
 			$this->dest = $url;
 		}
 
+		/**
+		 * Redirect to url
+		 * 
+		 * @return void
+		 */
 		public function out()
 		{
-			//Redirect to url
-
 			header('Location: ' . $this->dest);
 			exit();
 		}
 	}
 
-	//This components handles a download
+	/**
+	 * This components handles a download
+	 */
 	class DownloadHandler implements ViewInterface {
 		private $resource = null;
 
+		/**
+		 * Set resource
+		 * 
+		 * @param string $res URL to the resource
+		 * @return void
+		 */
 		public function __construct($res)
 		{
-			//Set resource
-
 			$this->resource = $res;
 		}
 
+		/**
+		 * Redirect to resource
+		 * 
+		 * @return void
+		 */
 		public function out()
 		{
-			//Redirect to resource
-
 			header('Location: ' . (((isset($_ENV['APP_BASEDIR']) && strlen($_ENV['APP_BASEDIR']) > 0)) ? '/' . $_ENV['APP_BASEDIR']  : '') . $this->resource);
 			exit();
 		}
 	}
 
-	//This components handles a custom type
+	/**
+	 * This components handles a custom type
+	 */
 	class CustomHandler implements ViewInterface {
 		private $type = null;
 		private $content = null;
 
+		/**
+		 * Set data
+		 * 
+		 * @param string $type The content type
+		 * @param string $content The actual content
+		 * @return void
+		 */
 		public function __construct($type, $content)
 		{
-			//Set data
-
 			$this->type = $type;
 			$this->content = $content;
 		}
 
+		/**
+		 * Render data
+		 * 
+		 * @return void
+		 */
 		public function out()
 		{
-			//Render data
-
 			header('Content-type: ' . $this->type);
 			echo $this->content;
 		}
@@ -361,10 +474,15 @@ namespace Asatru\View {
 }
 
 namespace {
+	/**
+	 * Handle a result of a controller method
+	 * 
+	 * @param mixed $result The result from the controller method
+	 * @return void
+	 * @throws \Exception
+	 */
 	function HandleView($result)
 	{
-		//Handle a result of a controller method
-
 		if (gettype($result) == 'string') { //Default output is plain html
 			echo $result;
 		} else if (gettype($result) == 'object') { //Handle interface class
