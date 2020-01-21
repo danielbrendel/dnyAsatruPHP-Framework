@@ -3,7 +3,7 @@
 /*
     Asatru PHP (dnyAsatruPHP) developed by Daniel Brendel
     
-    (C) 2019 by Daniel Brendel
+    (C) 2019 - 2020 by Daniel Brendel
     
     Version: 0.1
     Contact: dbrendel1988<at>yahoo<dot>com
@@ -12,14 +12,16 @@
     License: see LICENSE.txt
 */
 
-namespace Asatru\Logger {
-    //Logging types
-    const LOG_HEADER = 0;
-    const LOG_INFO = 1;
-    const LOG_DEBUG = 2;
-    const LOG_WARNING = 3;
-    const LOG_ERROR = 4;
+//Logging types
+namespace {
+    defined('LOG_HEADER') || define('LOG_HEADER', 0);
+    defined('LOG_INFO') || define('LOG_HEADER', 1);
+    defined('LOG_DEBUG') || define('LOG_HEADER', 2);
+    defined('LOG_WARNING') || define('LOG_HEADER', 3);
+    defined('LOG_ERROR') || define('LOG_ERROR', 4);
+}
 
+namespace Asatru\Logger {
     /**
      * This components handles the logging
      */
@@ -50,12 +52,12 @@ namespace Asatru\Logger {
                     return 'Header';
                 case LOG_INFO:
                     return 'Info';
-                case LOG_INFO:
-                    return 'Info';
-                case LOG_INFO:
-                    return 'Info';
-                case LOG_INFO:
-                    return 'Info';
+                case LOG_DEBUG:
+                    return 'Debug';
+                case LOG_WARNING:
+                    return 'Warning';
+                case LOG_ERROR:
+                    return 'Error';
                 default:
                     return 'Unknown';
             }

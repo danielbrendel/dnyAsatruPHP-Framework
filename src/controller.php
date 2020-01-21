@@ -3,7 +3,7 @@
 /*
     Asatru PHP (dnyAsatruPHP) developed by Daniel Brendel
     
-    (C) 2019 by Daniel Brendel
+    (C) 2019 - 2020 by Daniel Brendel
     
     Version: 0.1
     Contact: dbrendel1988<at>yahoo<dot>com
@@ -84,7 +84,7 @@ class ControllerArg {
 	 * 
 	 * @return Asatru\Controller\PHPArgs Instance of the PHP args manager 
 	 */
-	public function request()
+	public function params()
 	{
 		return $this->phpargs;
 	}
@@ -322,6 +322,26 @@ class PostValidator {
 }
 
 /**
+ * This components represents a base controller
+ */
+abstract class Controller {
+	/**
+	 * Called before the actual route handler is being called
+	 * @throws \Exception For example throw an access denied action for a given user
+	 */
+	public function preDispatch()
+	{
+	}
+
+	/**
+	 * Called after the actual route handler is being called
+	 */
+	public function postDispatch()
+	{
+	}
+}
+
+/**
  * This component passes control to the given controller associated with the current URL
  */
 class ControllerHandler {
@@ -435,7 +455,15 @@ class ControllerHandler {
 				$obj = new $className();
 
 				if (method_exists($obj, $items[1])) {
+					if (method_exists($obj, 'preDispatch')) {
+						call_user_func(array($obj, 'preDispatch'));
+					}
+
 					$result = call_user_func(array($obj, $items[1]), $ctrl);
+
+					if (method_exists($obj, 'postDispatch')) {
+						call_user_func(array($obj, 'postDispatch'));
+					}
 				} else {
 					throw new \Exception('Controller handler ' . $items[1]. ' not found');
 				}

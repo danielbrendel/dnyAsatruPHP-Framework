@@ -3,7 +3,7 @@
 /*
     Asatru PHP (dnyAsatruPHP) developed by Daniel Brendel
     
-    (C) 2019 by Daniel Brendel
+    (C) 2019 - 2020 by Daniel Brendel
     
     Version: 0.1
     Contact: dbrendel1988<at>yahoo<dot>com
@@ -41,6 +41,26 @@ namespace Asatru\View {
 		public function __construct($vars = [])
 		{
 			$this->vars = $vars;
+		}
+
+		/**
+		 * Instantiate and setup view
+		 * 
+		 * @param string $layout The layout file
+		 * @param array $yields A key-value paired array containing the yields
+		 * @param array $vars optional The key-value data
+		 * @return Asatru\View\ViewHandler The view handler instance 
+		 */
+		public static function create($layout, array $yields, $vars = [])
+		{
+			$inst = new ViewHandler($vars);
+			$inst->setLayout($layout);
+			
+			foreach ($yields as $key => $value) {
+				$inst->setYield($key, $value);
+			}
+
+			return $inst;
 		}
 		
 		/**

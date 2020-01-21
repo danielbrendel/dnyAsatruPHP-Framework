@@ -5,7 +5,7 @@
 ![https://packagist.org/packages/danielbrendel/asatru-php-framework](https://img.shields.io/packagist/dm/danielbrendel/asatru-php-framework)
 ![](https://img.shields.io/github/last-commit/danielbrendel/dnyAsatruPHP-Framework)
 
-(C) 2019 by Daniel Brendel
+(C) 2019 - 2020 by Daniel Brendel
 
 **Version**: 0.1\
 **Codename**: dnyAsatruPHP\
