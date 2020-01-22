@@ -86,7 +86,7 @@ $viewComp = $controller->parse($_SERVER['REQUEST_URI']);
 HandleView($viewComp);
 
 //Clear flash messages
-Asatru\Helper\FlashMessage::clearAll();
+FlashMessage::clearAll();
 
 //If app is in debug mode then force storage of log
 if ($_ENV['APP_DEBUG']) {
