@@ -40,7 +40,7 @@ namespace Asatru\Events {
         private function loadEventConfig($config)
         {
             $arr = require_once($config);
-            if (!is_array($arr)) {
+            if (is_array($arr) === false) {
                 throw new \Exception('Invalid events configuration file');
             }
 

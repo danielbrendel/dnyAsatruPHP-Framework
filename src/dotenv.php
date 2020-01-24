@@ -235,7 +235,7 @@ namespace {
      */
     function env_parse($input = '.env')
     {
-        return Asatru\Dotenv\DotEnvParser::instance()->parse($input);
+        Asatru\Dotenv\DotEnvParser::instance()->parse($input);
     }
 
     /**

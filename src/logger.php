@@ -141,7 +141,7 @@ namespace {
          * 
          * @return void
          */
-        function clearLog($type, $line)
+        function clearLog()
         {
             global $objLogger;
             $objLogger->clear();

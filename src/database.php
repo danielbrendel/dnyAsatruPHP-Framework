@@ -211,7 +211,7 @@ namespace Asatru\Database {
          * 
          * @return Asatru\Database\Model
          */
-        private static function getInstance()
+        public static function getInstance()
         {
             if (self::$instance === null) {
                 self::$instance = new static;
@@ -292,7 +292,7 @@ namespace Asatru\Database {
             $opResult = $prp->fetchAll();
             
             if (self::$getcount === true) {
-                return $opResult[0]['count'];
+                return intval($opResult[0]['count']);
             } else if (self::$update !== '') {
                 return ($error[0] === '00000') ? true : false;
             } else if (count(self::$insert) > 0) {

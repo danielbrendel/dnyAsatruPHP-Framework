@@ -257,7 +257,11 @@ class PostValidator {
 			$tokens = explode('|', ((strlen($value) > 0) && (strpos($value, '|') === false)) ? $value : $value . '|');
 			
 			//Check each token
-			foreach ($tokens as $token) {
+			foreach ($tokens as $lal => $token) {
+				if (strlen($token) === 0) {
+					continue;
+				}
+
 				if ($token == 'required') { //Specify that this POST data object must be provided
 					if (!isset($_POST[$key])) {
 						$this->errmsgs[] = __('errors.item_required', ['key' => $key]);
@@ -276,7 +280,7 @@ class PostValidator {
 					}
 				} else if (strpos($token, 'datetime:') === 0) { //Check for valid date/time
 					if (isset($_POST[$key])) {
-						$format = substr($token, 5);
+						$format = substr($token, strlen('datetime:'));
 						$dt = \DateTime::createFromFormat($format, $_POST[$key]);
 						if ((!$dt) || ($dt->format($format) !== $_POST[$key])) {
 							$this->errmsgs[] = __('errors.item_datetime', ['key' => $key]);

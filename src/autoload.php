@@ -25,12 +25,10 @@ class Autoloader {
      * 
      * @param string $config optional The absolute path to the config file
      */
-    public function __construct($config = null)
+    public function __construct($config = __DIR__ . '/../../../../app/config/autoload.php')
     {
         //Load config data
-        if (!$config != null) {
-            $this->data = require_once(__DIR__ . '/../../../../app/config/autoload.php');
-        }
+        $this->data = require_once($config);
     }
 
     /**
