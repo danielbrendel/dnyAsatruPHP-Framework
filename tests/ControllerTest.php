@@ -19,13 +19,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class ControllerTest extends TestCase
 {
-    private $controller = null;
-
-    protected function setUp(): void
-    {
-        $this->controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
-    }
-
     protected static function getMethod($name)
     {
         $class = new ReflectionClass('Asatru\\Controller\\ControllerHandler');
@@ -37,7 +30,8 @@ final class ControllerTest extends TestCase
     public function testParseUrl()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
-        $result = $this->controller->parse('/test/test1/another/test2?hello=world');
+        $controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
+        $result = $controller->parse('/test/test1/another/test2?hello=world');
         $this->assertInstanceOf('Asatru\\View\\ViewHandler', $result);
     }
 

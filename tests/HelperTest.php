@@ -54,6 +54,18 @@ final class HelperTest extends TestCase
         $this->assertEquals('http://localhost/testdir', $result);
     }
 
+    public function testAppUrl()
+    {
+        $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_NAME'] = 'localhost';
+        $_SERVER['SERVER_PORT'] = 8000;
+        $_ENV['APP_BASEDIR'] = '/testdir';
+
+        $result = app_url();
+
+        $this->assertEquals('https://localhost:8000/testdir/app', $result);
+    }
+
     public function testResourceUrl()
     {
         $_SERVER['HTTPS'] = 'on';
@@ -64,5 +76,12 @@ final class HelperTest extends TestCase
         $result = resource_url();
 
         $this->assertEquals('https://localhost:8000/testdir/app/resources', $result);
+    }
+
+    public function testCsrfToken()
+    {
+        $_SESSION['csrf_token'] = 'Hello World';
+
+        $this->assertEquals($_SESSION['csrf_token'], csrf_token());
     }
 }

@@ -28,6 +28,8 @@ final class MailwrapperTest extends TestCase
         $mail->setRecipient('test@test.de');
         $mail->setSubject('TestCase');
         $mail->setView('layout', array('yield' => 'index'), array());
+        $mail->setAdditionalHeaders(array('X-Mailer' => 'PHP/' . phpversion()));
+        $mail->setAdditionalParameters('-ftest@test.de');
         //$mail->send();
         $this->addToAssertionCount(1);
     }

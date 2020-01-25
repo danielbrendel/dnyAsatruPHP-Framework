@@ -19,6 +19,23 @@ use PHPUnit\Framework\TestCase;
  */
 final class EventsTest extends TestCase
 {
+    protected static function getMethod($name)
+    {
+        $class = new ReflectionClass('Asatru\\Events\\EventManager');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
+    }
+
+    public function testLoadAndRaiseEvent()
+    {
+        $evtmgr = new Asatru\Events\EventManager(__DIR__ . '/../../../../app/config/events.php');
+        $method = self::getMethod('loadEventConfig');
+        $result = $method->invokeArgs($evtmgr, array(__DIR__ . '/../../../../app/config/events.php'));
+        $this->addToAssertionCount(1);
+        $evtmgr->raiseEvent('my_event');
+    }
+
     public function testRaiseEvent()
     {
         event('my_event');

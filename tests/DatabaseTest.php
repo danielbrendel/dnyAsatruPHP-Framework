@@ -23,16 +23,42 @@ class TestModel extends Asatru\Database\Model {
  */
 final class DatabaseTest extends TestCase
 {
+    private $pdo = null;
     private $mdl = null;
 
     protected function setUp(): void
     {
-        $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+        $this->pdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
 
         $this->mdl = TestModel::getInstance();
-        $this->mdl->__setHandle($objPdo);
+        $this->mdl->__setHandle($this->pdo);
     }
 
+    public function testMigration()
+    {
+        $mig = new Asatru\Database\Migration('example_migration', $this->pdo);
+        $this->addToAssertionCount(1);
+
+        $mig->drop();
+        $this->addToAssertionCount(1);
+
+        $mig->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
+        $mig->add('text VARCHAR(260) NULL DEFAULT \'Test\'');
+        $mig->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+        $mig->create();
+        $this->addToAssertionCount(4);
+
+        $mig->append('test VARCHAR(255) NULL');
+        $result = $this->mdl->raw('INSERT INTO ' . TestModel::tableName() . ' (text, test) VALUES(\'foo\', \'bar\')');
+        $this->assertTrue($result !== false);
+
+        $result = TestModel::where('text', '=', 'foo')->where('test', '=', 'bar')->first();
+        $this->assertEquals(1, $result->get(0)->get('id'));
+    }
+
+    /**
+     * @depends testMigration
+     */
     public function testMigrateFresh()
     {
         migrate_fresh();

@@ -39,10 +39,12 @@ namespace Asatru\Events {
          */
         private function loadEventConfig($config)
         {
-            $arr = require_once($config);
+            $arr = require($config);
             if (is_array($arr) === false) {
                 throw new \Exception('Invalid events configuration file');
             }
+
+            $this->eventlist = [];
 
             foreach ($arr as $key => $value) {
                 if (strpos($value, '@') === false) {
