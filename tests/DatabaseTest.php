@@ -96,4 +96,13 @@ final class DatabaseTest extends TestCase
         $result = TestModel::find(1);
         $this->assertEquals(1, $result->get(0)->get('id'));
     }
+
+    /**
+     * @depends testQueryEntries
+     */
+    public function testDeleteEntry()
+    {
+        $result = TestModel::where('id', '=', 1)->delete();
+        $this->assertTrue($result);
+    }
 }

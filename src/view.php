@@ -332,11 +332,14 @@ namespace Asatru\View {
 		 * 
 		 * @return void
 		 */
-		public function out()
+		public function out($return = false)
 		{
-			header('Content-type: application/json');
-
-			echo json_encode($this->content);
+			if ($return === false) {
+				header('Content-type: application/json');
+				echo json_encode($this->content);
+			} else {
+				return json_encode($this->content);
+			}
 		}
 	}
 
@@ -362,11 +365,14 @@ namespace Asatru\View {
 		 * 
 		 * @return void
 		 */
-		public function out()
+		public function out($return = false)
 		{
-			header('Content-type: text/xml');
-
-			echo $this->content;
+			if ($return === false) {
+				header('Content-type: text/xml');
+				echo $this->content;
+			} else {
+				return $this->content;
+			}
 		}
 	}
 
@@ -394,11 +400,14 @@ namespace Asatru\View {
 		 * 
 		 * @return void
 		 */
-		public function out()
+		public function out($return = false)
 		{
-			header('Content-type: text/plain');
-
-			echo $this->content;
+			if ($return === false) {
+				header('Content-type: text/plain');
+				echo $this->content;
+			} else {
+				return $this->content;
+			}
 		}
 	}
 
@@ -485,10 +494,14 @@ namespace Asatru\View {
 		 * 
 		 * @return void
 		 */
-		public function out()
+		public function out($return = false)
 		{
-			header('Content-type: ' . $this->type);
-			echo $this->content;
+			if ($return === false) {
+				header('Content-type: ' . $this->type);
+				echo $this->content;
+			} else {
+				return $this->content;
+			}
 		}
 	}
 }

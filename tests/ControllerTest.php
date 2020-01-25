@@ -26,10 +26,18 @@ final class ControllerTest extends TestCase
         $this->controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
     }
 
+    protected static function getMethod($name)
+    {
+        $class = new ReflectionClass('Asatru\\Controller\\ControllerHandler');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
+    }
+
     public function testParseUrl()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
-        $result = $this->controller->parse('/index');
+        $result = $this->controller->parse('/test/test1/another/test2?hello=world');
         $this->assertInstanceOf('Asatru\\View\\ViewHandler', $result);
     }
 
@@ -83,5 +91,21 @@ final class ControllerTest extends TestCase
         
         $pv = new Asatru\Controller\PostValidator($attribs);
         $this->assertTrue($pv->isValid());
+    }
+
+    public function testUrlMatches()
+    {
+        $url = '/test/var1/another/var2';
+        $_GET['test1'] = 'hello';
+        $_GET['test2'] = 'world';
+        $method = self::getMethod('urlMatches');
+        $obj = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
+        $ctrl = new Asatru\Controller\ControllerArg($url);
+        $result = $method->invokeArgs($obj, array($url, 'GET', '/test/{foo}/another/{bar}', $ctrl));
+        $this->assertTrue($result);
+        $this->assertEquals('var1', $ctrl->arg('foo'));
+        $this->assertEquals('var2', $ctrl->arg('bar'));
+        $this->assertEquals($_GET['test1'], $ctrl->params()->query('test1'));
+        $this->assertEquals($_GET['test2'], $ctrl->params()->query('test2'));
     }
 }

@@ -35,4 +35,32 @@ final class ViewTest extends TestCase
         $this->assertTrue(strpos($result, '<meta name="viewport" content="width=device-with, initial-scale=1.0">') !== false);
         $this->assertTrue(strpos($result, 'Example yield file') !== false);
     }
+
+    public function testJsonHandler()
+    {
+        $jh = new Asatru\View\JsonHandler(array('foo' => 'bar'));
+    
+        $result = $jh->out(true);
+        $this->assertEquals('{"foo":"bar"}', $result);
+    }
+
+    public function testXmlHandler()
+    {
+        $code = '<test><foo>Hallo</foo></test>';
+
+        $xmlh = new Asatru\View\XmlHandler($code);
+    
+        $result = $xmlh->out(true);
+        $this->assertEquals($code, $result);
+    }
+
+    public function testPlainHandler()
+    {
+        $code = 'Test from TestCase';
+
+        $plh = new Asatru\View\PlainHandler($code);
+    
+        $result = $plh->out(true);
+        $this->assertEquals($code, $result);
+    }
 }

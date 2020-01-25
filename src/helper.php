@@ -168,7 +168,7 @@ namespace {
      */
     function resource_url()
     {
-        return base_url() . '/app/resources';
+        return app_url() . '/resources';
     }
 
     /**
