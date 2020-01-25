@@ -129,8 +129,10 @@ namespace Asatru\Dotenv {
                 return null;
             } else if (is_numeric($input)) {
                 return strpos($input, '.') ? floatval($input) : intval($input);
-            } else if ((strtolower($input) == 'false') or (strtolower($input) == 'true')) {
-                return (strtolower($input) == 'false') ? false : true;
+            } else if ((strtolower($input) == 'false') || (strtolower($input) == 'off') || (strtolower($input) == 'no')) {
+                return false;
+            } else if ((strtolower($input) == 'true') || (strtolower($input) == 'on') || (strtolower($input) == 'yes')) {
+                return true;
             } else {
                 return $input;
             }

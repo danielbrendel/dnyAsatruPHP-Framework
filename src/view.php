@@ -20,7 +20,7 @@ namespace Asatru\View {
 		/**
 		 * Output the actual content
 		 * 
-		 * @return void
+		 * @return mixed
 		 */
 		public function out();
 	}
@@ -330,13 +330,14 @@ namespace Asatru\View {
 		/**
 		 * Render the content as json
 		 * 
-		 * @return void
+		 * @return mixed
 		 */
 		public function out($return = false)
 		{
 			if ($return === false) {
 				header('Content-type: application/json');
 				echo json_encode($this->content);
+				return true;
 			} else {
 				return json_encode($this->content);
 			}
@@ -363,13 +364,14 @@ namespace Asatru\View {
 		/**
 		 * Render the content as xml
 		 * 
-		 * @return void
+		 * @return mixed
 		 */
 		public function out($return = false)
 		{
 			if ($return === false) {
 				header('Content-type: text/xml');
 				echo $this->content;
+				return true;
 			} else {
 				return $this->content;
 			}
@@ -398,13 +400,14 @@ namespace Asatru\View {
 		/**
 		 * Render the content as plain text
 		 * 
-		 * @return void
+		 * @return mixed
 		 */
 		public function out($return = false)
 		{
 			if ($return === false) {
 				header('Content-type: text/plain');
 				echo $this->content;
+				return true;
 			} else {
 				return $this->content;
 			}
@@ -492,13 +495,14 @@ namespace Asatru\View {
 		/**
 		 * Render data
 		 * 
-		 * @return void
+		 * @return mixed
 		 */
 		public function out($return = false)
 		{
 			if ($return === false) {
 				header('Content-type: ' . $this->type);
 				echo $this->content;
+				return true;
 			} else {
 				return $this->content;
 			}

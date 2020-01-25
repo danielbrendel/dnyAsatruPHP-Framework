@@ -27,7 +27,7 @@ final class DatabaseTest extends TestCase
 
     protected function setUp(): void
     {
-        $objPdo = new \PDO('mysql:host=localhost;port=3306;dbname=asatru', 'root', '');
+        $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
 
         $this->mdl = TestModel::getInstance();
         $this->mdl->__setHandle($objPdo);
@@ -61,6 +61,18 @@ final class DatabaseTest extends TestCase
 
         $result = TestModel::count()->get();
         $this->assertTrue($result === 3);
+
+        $result = TestModel::insert('text', 'text #4')->go();
+        $this->assertTrue($result !== false);
+
+        $result = TestModel::count()->get();
+        $this->assertTrue($result === 4);
+
+        $result = TestModel::insert('text', 'text #4')->go();
+        $this->assertTrue($result !== false);
+
+        $result = TestModel::count()->get();
+        $this->assertTrue($result === 5);
     }
 
     /**
@@ -91,10 +103,25 @@ final class DatabaseTest extends TestCase
         });
 
         $result = TestModel::all();
-        $this->assertTrue($result->count() === 3);
+        $this->assertTrue($result->count() === 5);
 
         $result = TestModel::find(1);
         $this->assertEquals(1, $result->get(0)->get('id'));
+
+        $result = TestModel::aggregate('max', 'id')->get();
+        $this->assertEquals(5, $result->get(0)->get('id'));
+
+        $result = TestModel::whereBetween('id', 1, 3)->orderBy('id', 'desc')->get();
+        $this->assertEquals(3, $result->get(2)->get('id'));
+        $this->assertEquals(2, $result->get(1)->get('id'));
+        $this->assertEquals(1, $result->get(0)->get('id'));
+
+        $result = TestModel::where('id', '<>', 4)->whereOr('id', '<>', 5)->limit(2)->get();
+        $this->assertEquals(2, $result->count());
+        $result->each(function($ident, $item) {
+            $this->assertNotEquals(4, $item->get('id'));
+            $this->assertNotEquals(5, $item->get('id'));
+        });
     }
 
     /**
@@ -103,6 +130,9 @@ final class DatabaseTest extends TestCase
     public function testDeleteEntry()
     {
         $result = TestModel::where('id', '=', 1)->delete();
+        $this->assertTrue($result);
+
+        $result = TestModel::whereBetween('id', 2, 3)->whereBetweenOr('id', 3, 4)->delete();
         $this->assertTrue($result);
     }
 }
