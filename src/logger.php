@@ -14,11 +14,11 @@
 
 //Logging types
 namespace {
-    defined('LOG_HEADER') || define('LOG_HEADER', 0);
-    defined('LOG_INFO') || define('LOG_HEADER', 1);
-    defined('LOG_DEBUG') || define('LOG_HEADER', 2);
-    defined('LOG_WARNING') || define('LOG_HEADER', 3);
-    defined('LOG_ERROR') || define('LOG_ERROR', 4);
+    defined('LASATRU_LOG_HEADER') || define('ASATRU_LOG_HEADER', 0);
+    defined('ASATRU_LOG_INFO') || define('ASATRU_LOG_INFO', 1);
+    defined('ASATRU_LOG_DEBUG') || define('ASATRU_LOG_DEBUG', 2);
+    defined('ASATRU_LOG_WARNING') || define('ASATRU_LOG_WARNING', 3);
+    defined('ASATRU_LOG_ERROR') || define('ASATRU_LOG_ERROR', 4);
 }
 
 namespace Asatru\Logger {
@@ -35,7 +35,7 @@ namespace Asatru\Logger {
          */
         public function __construct()
         {
-            $item = ['type' => LOG_HEADER, 'text' => 'Asatru PHP log on ' . date('o-m-j h:i:s a')];
+            $item = ['type' => ASATRU_LOG_HEADER, 'text' => 'Asatru PHP log on ' . date('o-m-j h:i:s a')];
             array_push($this->log, $item);
         }
 
@@ -48,15 +48,15 @@ namespace Asatru\Logger {
         private function getStrType($logtype)
         {
             switch ($logtype) {
-                case LOG_HEADER:
+                case ASATRU_LOG_HEADER:
                     return 'Header';
-                case LOG_INFO:
+                case ASATRU_LOG_INFO:
                     return 'Info';
-                case LOG_DEBUG:
+                case ASATRU_LOG_DEBUG:
                     return 'Debug';
-                case LOG_WARNING:
+                case ASATRU_LOG_WARNING:
                     return 'Warning';
-                case LOG_ERROR:
+                case ASATRU_LOG_ERROR:
                     return 'Error';
                 default:
                     return 'Unknown';
@@ -85,7 +85,7 @@ namespace Asatru\Logger {
         {
             $this->log = array();
 
-            $item = ['type' => LOG_HEADER, 'text' => 'Asatru PHP log on ' . date('o-m-j h:i:s a')];
+            $item = ['type' => ASATRU_LOG_HEADER, 'text' => 'Asatru PHP log on ' . date('o-m-j h:i:s a')];
             array_push($this->log, $item);
         }
 

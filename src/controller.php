@@ -364,7 +364,7 @@ class ControllerHandler {
 	 */
 	public function __construct($routesFile)
 	{
-		$this->routes = require_once($routesFile);
+		$this->routes = require($routesFile);
 	}
 
 	/**

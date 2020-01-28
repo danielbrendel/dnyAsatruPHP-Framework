@@ -42,6 +42,24 @@ final class HelperTest extends TestCase
         $this->assertFalse(isset($_SESSION[$key]));
     }
 
+    public function testBasePath()
+    {
+        $result = base_path();
+        $this->assertTrue(is_dir($result));
+    }
+
+    public function testAppPath()
+    {
+        $result = app_path();
+        $this->assertTrue(is_dir($result));
+    }
+
+    public function testResourcePath()
+    {
+        $result = resource_path();
+        $this->assertTrue(is_dir($result));
+    }
+
     public function testBaseUrl()
     {
         $_SERVER['HTTPS'] = 'off';

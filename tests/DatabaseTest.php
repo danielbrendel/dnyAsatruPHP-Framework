@@ -88,13 +88,13 @@ final class DatabaseTest extends TestCase
         $result = TestModel::count()->get();
         $this->assertTrue($result === 3);
 
-        $result = TestModel::insert('text', 'text #4')->go();
+        $result = TestModel::insert('text', 'text same')->go();
         $this->assertTrue($result !== false);
 
         $result = TestModel::count()->get();
         $this->assertTrue($result === 4);
 
-        $result = TestModel::insert('text', 'text #4')->go();
+        $result = TestModel::insert('text', 'text same')->go();
         $this->assertTrue($result !== false);
 
         $result = TestModel::count()->get();
@@ -147,6 +147,12 @@ final class DatabaseTest extends TestCase
         $result->each(function($ident, $item) {
             $this->assertNotEquals(4, $item->get('id'));
             $this->assertNotEquals(5, $item->get('id'));
+        });
+
+        $result = TestModel::whereBetween('id', 1, 2)->whereBetweenOr('id', 4, 5)->get();
+        $this->assertEquals(4, $result->count());
+        $result->each(function($ident, $item) {
+            $this->assertNotEquals(3, $item->get('id'));
         });
     }
 

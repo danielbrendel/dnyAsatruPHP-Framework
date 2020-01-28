@@ -15,7 +15,7 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * TestCase for Asatru\Locale
+ * TestCase for Asatru\Lang
  */
 final class LocaleTest extends TestCase
 {
@@ -25,6 +25,16 @@ final class LocaleTest extends TestCase
         $this->assertEquals('en', $result);
 
         $result = __('app.welcome');
+        $this->assertTrue($result !== 'app.welcome');
+    }
+
+    public function testLanguage()
+    {
+        $lang = new Asatru\Lang\Language();
+        $lang->load('en');
+        $this->addToAssertionCount(2);
+
+        $result = $lang->query('app.welcome');
         $this->assertTrue($result !== 'app.welcome');
     }
 }

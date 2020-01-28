@@ -67,7 +67,7 @@ namespace Asatru\Lang {
                 if (count($spl) == 2) {
                     foreach ($this->lang as $item) { //Loop through language files
                         if ($item['file'] == $spl[0]) { //Check for the name
-                            foreach ($item['phrases'] as $ident => $phrase) { //If matched then loop through the phrases
+                            foreach ((array)$item['phrases'] as $ident => $phrase) { //If matched then loop through the phrases
                                 if ($ident == $spl[1]) { //Check for the requested phrase
                                     $result = $phrase;
 
