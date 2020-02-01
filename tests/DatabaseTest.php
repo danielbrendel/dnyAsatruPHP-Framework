@@ -34,6 +34,14 @@ final class DatabaseTest extends TestCase
         $this->mdl->__setHandle($this->pdo);
     }
 
+    protected static function getMethod($name)
+    {
+        $class = new ReflectionClass('Asatru\\Database\\Collection');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
+    }
+
     public function testMigration()
     {
         $mig = new Asatru\Database\Migration('example_migration', $this->pdo);
@@ -166,5 +174,28 @@ final class DatabaseTest extends TestCase
 
         $result = TestModel::whereBetween('id', 2, 3)->whereBetweenOr('id', 3, 4)->delete();
         $this->assertTrue($result);
+    }
+
+    public function testCollection()
+    {
+        $arrCollectionData = array('test1' => 'first test', 'test2' => 'second test', 'test3' => array('foo' => 'bar', 'foo2' => 'bar2'));
+
+        $coll = new Asatru\Database\Collection(array());
+        $this->addToAssertionCount(1);
+        
+        $method = self::getMethod('createFromArray');
+        $method->invokeArgs($coll, array($arrCollectionData));
+        $this->addToAssertionCount(1);
+
+        $this->assertEquals(3, $coll->count());
+        
+        $entry = $coll->get('test2');
+        $this->assertEquals('second test', $entry);
+
+        $coll->each(function($ident, $item, $data) {
+            $this->assertTrue(array_key_exists($ident, $data['collection_data']));
+        }, array('collection_data' => $arrCollectionData));
+
+        $this->assertEquals('bar', $coll->get('test3')->get('foo'));
     }
 }

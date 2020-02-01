@@ -76,3 +76,5 @@ require_once __DIR__ . '/../src/database.php';
 //Require event manager
 require_once __DIR__ . '/../src/events.php';
 
+//Require console
+require_once __DIR__ . '/../src/console.php';

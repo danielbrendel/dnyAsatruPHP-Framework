@@ -19,7 +19,6 @@
 			<exclude>
 				<file>src/bootstrap.php</file>
 				<file>src/constants.php</file>
-				<file>src/console.php</file>
 				<file>src/exception.php</file>
 			</exclude>
 		</whitelist>

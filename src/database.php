@@ -180,12 +180,17 @@ namespace Asatru\Database {
          * Iterate through entries and inform a callback function
          * 
          * @param closure $callback The function to be called for each item
+         * @param array $data optional A key-value paired array containing data to pass to the callback function
          * @return void
          */
-        public function each($callback)
+        public function each($callback, array $data = null)
         {
             foreach ($this->items as $ident => $item) {
-                call_user_func_array($callback, array($ident, $item));
+                if ($data !== null) {
+                    call_user_func_array($callback, array($ident, $item, $data));
+                } else {
+                    call_user_func_array($callback, array($ident, $item));
+                }
             }
         }
     }
