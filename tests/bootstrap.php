@@ -30,8 +30,8 @@ require_once __DIR__ . '/../src/logger.php';
 require_once __DIR__ . '/../src/dotenv.php';
 
 //Parse .env file if it exists
-if (file_exists(__DIR__ . '/../../../../.env')) {
-    env_parse(__DIR__ . '/../../../../.env');
+if (file_exists(__DIR__ . '/../../../../.env.testing')) {
+    env_parse(__DIR__ . '/../../../../.env.testing');
 }
 
 //Require autoload component
