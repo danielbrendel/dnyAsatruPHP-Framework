@@ -5,6 +5,7 @@
 		stopOnSkipped="false"
 		stopOnRisky="false"
 		bootstrap="tests/bootstrap.php"
+		processIsolation="false"
 	>
 	
 	<testsuites>
