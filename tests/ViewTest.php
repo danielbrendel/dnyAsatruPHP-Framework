@@ -25,6 +25,14 @@ final class ViewTest extends TestCase
         $_SERVER['SERVER_PORT'] = 80;
     }
 
+    protected static function getMethod($name)
+    {
+        $class = new ReflectionClass('Asatru\\View\\ViewHandler');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
+    }
+
     public function testViewHandler()
     {
         $vh = new Asatru\View\ViewHandler();
@@ -34,6 +42,14 @@ final class ViewTest extends TestCase
         $result = $vh->out(true);
         $this->assertTrue(strpos($result, '<meta name="viewport" content="width=device-with, initial-scale=1.0">') !== false);
         $this->assertTrue(strpos($result, 'Example yield file') !== false);
+    }
+
+    public function testViewHandlerReplace()
+    {
+        $method = self::getMethod('replaceCommand');
+        $vh = new Asatru\View\ViewHandler();
+        $result = $method->invokeArgs($vh, array('@dwhile ($a < 10)'));
+        $this->assertEquals('<?php while ($a < 10); ?>', $result);
     }
 
     public function testJsonHandler()
