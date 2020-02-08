@@ -137,6 +137,10 @@ namespace Asatru\View {
 				return str_replace('@while', '<?php while', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'continue')) {
 				return str_replace('@continue', '<?php continue; ?>', $code); 
+			} else if ($this->hasCmd($code, 'do')) {
+				return str_replace('@do', '<?php do', $code) . ' { ?>';
+			} else if ($this->hasCmd($code, 'dwhile')) {
+				return str_replace('@dwhile', '<?php while', $code) . '; ?>';
 			} else if ($this->hasCmd($code, 'switch')) {
 				return str_replace('@switch', '<?php switch', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'case')) {
@@ -163,7 +167,7 @@ namespace Asatru\View {
 				$fileToInclude = substr($code, strpos($code, ' ') + 1);
 				$fileToInclude = str_replace('"', '', $fileToInclude);
 				$fileToInclude = str_replace('\'', '', $fileToInclude);
-				$cont = $this->renderCode(file_get_contents(\Asatru\Helper\app_path() . '/views/' . $fileToInclude));
+				$cont = $this->renderCode(file_get_contents(app_path() . '/views/' . $fileToInclude));
 				return str_replace($code, $cont, $code);
 			} else if ($this->hasCmd($code, 'isset')) {
 				return str_replace('@isset', '<?php if (isset(', $code) . ')) { ?>';
