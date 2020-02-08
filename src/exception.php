@@ -13,9 +13,6 @@
 */
 
 namespace {
-    use Asatru\Logger;
-    use Asatru\View;
-
     $CatchExceptions = function($e) {
         //Handle all exceptions here
 
