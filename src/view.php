@@ -126,7 +126,7 @@ namespace Asatru\View {
 			if ($this->hasCmd($code, 'if')) {
 				return str_replace('@if', '<?php if', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'elseif')) {
-				return str_replace('@elseif', '<?php } elseif', $code) . ' { ?>';
+				return str_replace('@elseif', '<?php } else if', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'else')) {
 				return str_replace('@else', '<?php } else', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'foreach')) {
@@ -140,11 +140,11 @@ namespace Asatru\View {
 			} else if ($this->hasCmd($code, 'do')) {
 				return str_replace('@do', '<?php do', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'dwhile')) {
-				return str_replace('@dwhile', '<?php while', $code) . '; ?>';
+				return str_replace('@dwhile', '<?php } while', $code) . '; ?>';
 			} else if ($this->hasCmd($code, 'switch')) {
 				return str_replace('@switch', '<?php switch', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'case')) {
-				return str_replace('@case', '<?php case', $code) . ' : ?>';
+				return str_replace('@case', '<?php case', $code) . ': ?>';
 			} else if ($this->hasCmd($code, 'break')) {
 				return str_replace('@break', '<?php break; ?>', $code); 
 			} else if ($this->hasCmd($code, 'default')) {
@@ -162,7 +162,7 @@ namespace Asatru\View {
 			} else if ($this->hasCmd($code, 'csrf')) {
 				return str_replace('@csrf', '<input type="hidden" name="csrf_token" value="' . $_SESSION['csrf_token'] . '"/>', $code);
 			} else if ($this->hasCmd($code, 'comment')) {
-				return str_replace('@comment', '<?php /* ', $code) . ' */ ?>';
+				return str_replace('@comment', '<?php /*', $code) . ' */ ?>';
 			} else if ($this->hasCmd($code, 'include')) {
 				$fileToInclude = substr($code, strpos($code, ' ') + 1);
 				$fileToInclude = str_replace('"', '', $fileToInclude);
