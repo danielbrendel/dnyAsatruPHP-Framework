@@ -10,8 +10,9 @@
 **Version**: 0.1\
 **Codename**: dnyAsatruPHP\
 **Contact**: dbrendel1988 at gmail com\
-**GitHub**: [GitHub](https://github.com/danielbrendel)\
-**License**: see LICENSE.txt
+**GitHub**: https://github.com/danielbrendel\
+
+Released under the MIT license
 
 ## Description:
 This product is a lightweight PHP framework which can be used to create your own PHP apps using MVC design pattern.

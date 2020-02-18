@@ -9,7 +9,7 @@
     Contact: dbrendel1988<at>gmail<dot>com
     GitHub: https://github.com/danielbrendel/
     
-    License: see LICENSE.txt
+    Released under the MIT license
 */
 
 namespace Asatru\Console;
@@ -479,7 +479,7 @@ function createTest($name)
             Contact: dbrendel1988<at>gmail<dot>com
             GitHub: https://github.com/danielbrendel/
             
-            License: see LICENSE.txt
+            Released under the MIT license
         */
         
         //If composer is installed we utilize its autoloader
