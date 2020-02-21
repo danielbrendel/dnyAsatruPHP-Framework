@@ -10,7 +10,7 @@
 **Version**: 0.1\
 **Codename**: dnyAsatruPHP\
 **Contact**: dbrendel1988 at gmail com\
-**GitHub**: https://github.com/danielbrendel\
+**GitHub**: https://github.com/danielbrendel
 
 Released under the MIT license
 
