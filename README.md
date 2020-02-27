@@ -21,6 +21,7 @@ This product is a lightweight PHP framework which can be used to create your own
 + Controllers
 + Views
 + Models
++ Modules
 + Migrations
 + Templating
 + Logging
