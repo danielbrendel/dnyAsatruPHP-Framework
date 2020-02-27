@@ -73,6 +73,9 @@ require_once __DIR__ . '/../src/locale.php';
 //Require database management
 require_once __DIR__ . '/../src/database.php';
 
+//Require modules
+require_once __DIR__ . '/../src/modules.php';
+
 //Require event manager
 require_once __DIR__ . '/../src/events.php';
 

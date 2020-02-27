@@ -46,6 +46,23 @@ final class ConsoleTest extends TestCase
         unlink(__DIR__ . '/../../../../app/models/' . $name . '.php');
     }
 
+    public function testCreateModule()
+    {
+        $name = 'TestModule';
+
+        $result = Asatru\Console\createModule($name);
+        $this->assertTrue($result);
+
+        $scriptFile = require(__DIR__ . '/../../../../app/modules/' . $name . '.php');
+        $this->assertEquals(1, $scriptFile);
+
+        $className = $name;
+        $newClass = new $className();
+        $this->addToAssertionCount(1);
+
+        unlink(__DIR__ . '/../../../../app/modules/' . $name . '.php');
+    }
+
     public function testCreateController()
     {
         $name = 'Testcontrollercreation';

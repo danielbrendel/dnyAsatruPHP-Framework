@@ -180,4 +180,16 @@ namespace {
     {
         return $_SESSION['csrf_token'];
     }
+
+    /**
+     * Add template command
+     * 
+     * @param string $ident The command identifier
+     * @param callback $callback The callback function
+     * @return bool
+     */
+    function template_command($ident, $callback)
+    {
+        return Asatru\View\ViewHandler::addReplacerCommand($ident, $callback);
+    }
 }

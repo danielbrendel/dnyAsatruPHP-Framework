@@ -108,6 +108,39 @@ function createModel($name, $table)
 }
 
 /**
+ * Create a module
+ * 
+ * @param string $name The name of the module
+ * @return boolean
+ */
+function createModule($name)
+{
+    $content = "<?php
+
+    /*
+        Asatru PHP - Module
+    */
+
+    /**
+     * This class represents your module
+     */
+    class " . ucfirst($name) . " {
+        public function __construct()
+        {
+            //
+        }
+
+        public function __destruct()
+        {
+            //
+        }
+    }
+";
+
+    return file_put_contents(__DIR__ . '/../../../../app/modules/' . $name . '.php', $content) !== false;
+}
+
+/**
  * Create a controller
  * 
  * @param string $name The name of the controller
@@ -599,6 +632,7 @@ function handleInput($argv)
         echo "The following commands are available:\n";
         echo "+ help: Displays this help text\n";
         echo "+ make:model <name> <table>: Creates a new model with migration\n";
+        echo "+ make:module <name>: Creates a new module for business logics\n";
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
         echo "+ make:validator <name> <ident>: Creates a new validator\n";
@@ -618,6 +652,17 @@ function handleInput($argv)
             echo "\033[31mFailed to create model and migration\033[39m\n";
         } else {
             echo "\033[32mModel and migration files have been created!\033[39m\n";
+        }
+    } else if ($argv[1] === 'make:module') {
+        if (!isset($argv[2])) {
+            echo "\033[31mYou must specify the module name\033[39m\n";
+            exit(0);
+        }
+
+        if (!createModule($argv[2])) {
+            echo "\033[31mFailed to create module\033[39m\n";
+        } else {
+            echo "\033[32mModule has been created!\033[39m\n";
         }
     } else if ($argv[1] === 'make:controller') {
         if (!isset($argv[2])) {

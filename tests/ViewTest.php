@@ -102,6 +102,16 @@ final class ViewTest extends TestCase
         $this->assertEquals('<?php } ?>', $result);
         $result = $method->invokeArgs($vh, array('@unknowncommand'));
         $this->assertEquals('@unknowncommand', $result);
+
+        template_command('test1', function(string $code, array $args){ return '<?php echo "Just a test"; ?>';});
+        template_command('test2', function(string $code, array $args){ return str_replace('@test2', '<?php if (gettype', $code) . '==="string") { ?>';});
+        $this->addToAssertionCount(2);
+
+        $result = $method->invokeArgs($vh, array('@test1'));
+        $this->assertEquals('<?php echo "Just a test"; ?>', $result);
+
+        $result = $method->invokeArgs($vh, array('@test2("Hello World!")'));
+        $this->assertEquals('<?php if (gettype("Hello World!")==="string") { ?>', $result);
     }
 
     public function testJsonHandler()

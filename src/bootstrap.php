@@ -67,6 +67,9 @@ require_once 'locale.php';
 //Require database management
 require_once 'database.php';
 
+//Require modules
+require_once 'modules.php';
+
 //Require event manager
 require_once 'events.php';
 

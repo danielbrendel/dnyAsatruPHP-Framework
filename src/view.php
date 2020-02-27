@@ -32,6 +32,8 @@ namespace Asatru\View {
 		private $yields = [];
 		private $layout = null;
 		private $vars = [];
+
+		private static $customCommands = array();
 		
 		/**
 		 * Instantiate object
@@ -116,6 +118,74 @@ namespace Asatru\View {
 		}
 
 		/**
+		 * Get replacer command callback by ident
+		 * 
+		 * @param string $ident The identifier of the command
+		 * @return mixed Either callback or null if not found
+		 */
+		private static function getReplacerCommand($ident)
+		{
+			foreach (static::$customCommands as $key => $value) {
+				if ($key === $ident) {
+					return $value;
+				}
+			}
+
+			return null;
+		}
+
+		/**
+		 * Add a replacer command to the list
+		 * 
+		 * @param string $ident The identifier of the callback
+		 * @param callback $callback The function to call when the command is triggered
+		 * @return bool
+		 * @throws Exception Only when a command with the given name already exists
+		 */
+		public static function addReplacerCommand($ident, $callback)
+		{
+			if ((gettype($ident) === 'string') && (gettype($callback) === 'object')) {
+				if (static::getReplacerCommand($ident) === null) {
+					static::$customCommands[$ident] = $callback; 
+					return true;
+				} else {
+					throw new Exception("Command with name {$ident} does already exist");
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Parse replacer command arguments
+		 * 
+		 * @param string $str The input string to parse
+		 * @return array An array with the arguments
+		 * @throws Exception Thrown if encountered syntax errors
+		 */
+		private static function parseReplacerCommandParams($str)
+		{
+			$result = array();
+			
+			if (strlen($str) === 0) {
+				return $result;
+			}
+
+			if ((strlen($str) > 1) && ((strpos($str, '(') === false) || (strpos($str, ')') === false))) {
+				throw new \Exception("String {$str} contains arguments, but syntax error found");
+			}
+
+			try {
+				$code = '$result = array' . $str . ';';
+				eval($code);
+			} catch (\Exception $e) {
+				throw new \Exception("Failed to parse {$str}");
+			}
+
+			return $result;
+		}
+
+		/**
 		 * Replace @<cmd> with code
 		 * 
 		 * @param string $code The current code line
@@ -123,6 +193,14 @@ namespace Asatru\View {
 		 */
 		private function replaceCommand($code)
 		{
+			foreach (static::$customCommands as $key => $callback) {
+				if ($this->hasCmd($code, $key)) {
+					$parsedArgs = static::parseReplacerCommandParams(substr($code, strlen($key) + 1));
+					$replacerCode = $callback($code, $parsedArgs);
+					return $replacerCode;
+				}
+			}
+
 			if ($this->hasCmd($code, 'if')) {
 				return str_replace('@if', '<?php if', $code) . ' { ?>';
 			} else if ($this->hasCmd($code, 'elseif')) {
@@ -175,6 +253,8 @@ namespace Asatru\View {
 				return str_replace('@isnotset', '<?php if (!isset(', $code) . ')) { ?>';
 			} else if ($this->hasCmd($code, 'endset')) {
 				return str_replace('@endset', '<?php } ?>', $code);
+			} else if ($this->hasCmd($code, 'end')) {
+				return str_replace('@end', '<?php } ?>', $code);
 			}
 
 			return $code;

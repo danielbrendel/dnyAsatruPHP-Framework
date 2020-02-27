@@ -102,4 +102,10 @@ final class HelperTest extends TestCase
 
         $this->assertEquals($_SESSION['csrf_token'], csrf_token());
     }
+
+    public function testTemplateCommand()
+    {
+        template_command('sometest', function(string $code, array $args){ return '<?php echo "Just a test"; ?>';});
+        $this->addToAssertionCount(1);
+    }
 }
