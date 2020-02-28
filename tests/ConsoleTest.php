@@ -58,7 +58,8 @@ final class ConsoleTest extends TestCase
 
         $className = $name;
         $newClass = new $className();
-        $this->addToAssertionCount(1);
+        $this->assertIsObject($newClass);
+        $this->assertInstanceOf($className, $newClass);
 
         unlink(__DIR__ . '/../../../../app/modules/' . $name . '.php');
     }

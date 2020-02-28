@@ -108,6 +108,18 @@ final class HelperTest extends TestCase
         $this->assertEquals('https://localhost:8000/testdir/app/resources', $result);
     }
 
+    public function testAsset()
+    {
+        $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_NAME'] = 'localhost';
+        $_SERVER['SERVER_PORT'] = 8000;
+        $_ENV['APP_BASEDIR'] = '/testdir';
+
+        $result = asset('/js/app.js');
+
+        $this->assertEquals('https://localhost:8000/testdir/app/resources/js/app.js', $result);
+    }
+
     public function testCsrfToken()
     {
         $_SESSION['csrf_token'] = 'Hello World';
