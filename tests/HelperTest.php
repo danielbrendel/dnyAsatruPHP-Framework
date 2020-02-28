@@ -72,6 +72,18 @@ final class HelperTest extends TestCase
         $this->assertEquals('http://localhost/testdir', $result);
     }
 
+    public function testUrl()
+    {
+        $_SERVER['HTTPS'] = 'off';
+        $_SERVER['SERVER_NAME'] = 'localhost';
+        $_SERVER['SERVER_PORT'] = 80;
+        $_ENV['APP_BASEDIR'] = '/testdir';
+
+        $result = url('/path/to/resource');
+
+        $this->assertEquals('http://localhost/testdir/path/to/resource', $result);
+    }
+
     public function testAppUrl()
     {
         $_SERVER['HTTPS'] = 'on';

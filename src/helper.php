@@ -152,6 +152,17 @@ namespace {
     }
 
     /**
+     * Make a full URL to the given path
+     * 
+     * @param string $path The destination path
+     * @return string The full URL
+     */
+    function url($path)
+    {
+        return base_url() . $path;
+    }
+
+    /**
      * Return URL to app directory
      * 
      * @return string

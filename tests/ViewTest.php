@@ -119,6 +119,19 @@ final class ViewTest extends TestCase
         $method = new ReflectionMethod('Asatru\\View\\ViewHandler', 'addReplacerCommand');
         $result = $method->invoke(null, 'testcase', function(string $code, array $args){return '<?php echo "TestCase"; ?>';});
         $this->assertTrue($result);
+        $method = self::getMethod('getReplacerCommand');
+        $result = $method->invoke(null, 'notfound');
+        $this->assertTrue($result === null);
+        $result = $method->invoke(null, 'testcase');
+        $this->assertTrue($result !== null);
+        $this->assertTrue(gettype($result) === 'object');
+        $method = self::getMethod('parseReplacerCommandParams');
+        $result = $method->invoke(null, '("Hello World!", 1020, true)');
+        $this->assertIsArray($result);
+        $this->assertEquals(3, count($result));
+        $this->assertEquals('Hello World!', $result[0]);
+        $this->assertEquals(1020, $result[1]);
+        $this->assertEquals(true, $result[2]);
     }
 
     public function testJsonHandler()
