@@ -183,6 +183,17 @@ namespace {
     }
 
     /**
+     * Return URL to asset
+     * 
+     * @param string $path The path to the asset
+     * @return string The full URL to the asset
+     */
+    function asset($path)
+    {
+        return resource_url() . $path;
+    }
+
+    /**
      * Return the CSRF token
      * 
      * @return string
