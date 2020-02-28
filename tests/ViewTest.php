@@ -114,6 +114,13 @@ final class ViewTest extends TestCase
         $this->assertEquals('<?php if (gettype("Hello World!")==="string") { ?>', $result);
     }
 
+    public function testViewHandlerStatic()
+    {
+        $method = new ReflectionMethod('Asatru\\View\\ViewHandler', 'addReplacerCommand');
+        $result = $method->invoke(null, 'testcase', function(string $code, array $args){return '<?php echo "TestCase"; ?>';});
+        $this->assertTrue($result);
+    }
+
     public function testJsonHandler()
     {
         $jh = new Asatru\View\JsonHandler(array('foo' => 'bar'));

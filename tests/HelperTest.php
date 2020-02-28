@@ -105,7 +105,7 @@ final class HelperTest extends TestCase
 
     public function testTemplateCommand()
     {
-        template_command('sometest', function(string $code, array $args){ return '<?php echo "Just a test"; ?>';});
-        $this->addToAssertionCount(1);
+        $result = template_command('sometest', function(string $code, array $args){ return '<?php echo "Just a test"; ?>';});
+        $this->assertTrue($result);
     }
 }
