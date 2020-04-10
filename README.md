@@ -1,10 +1,5 @@
 # Asatru PHP
 
-![https://github.com/danielbrendel/dnyAsatruPHP-Framework/blob/master/LICENSE.txt](https://img.shields.io/github/license/danielbrendel/dnyAsatruPHP-Framework)
-![](https://img.shields.io/github/repo-size/danielbrendel/dnyAsatruPHP-Framework)
-![https://packagist.org/packages/danielbrendel/asatru-php-framework](https://img.shields.io/packagist/dm/danielbrendel/asatru-php-framework)
-![](https://img.shields.io/github/last-commit/danielbrendel/dnyAsatruPHP-Framework)
-
 (C) 2019 - 2020 by Daniel Brendel
 
 **Version**: 0.1\

@@ -25,7 +25,7 @@ namespace {
         }
 
         if (function_exists('addLog')) {
-            addLog(LOG_ERROR, $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
+            addLog(ASATRU_LOG_ERROR, $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
         }
     };
 

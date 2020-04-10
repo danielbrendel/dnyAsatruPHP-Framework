@@ -337,6 +337,7 @@ abstract class Controller {
 	/**
 	 * Called before the actual route handler is being called
 	 * @throws \Exception For example throw an access denied action for a given user
+	 * @return void
 	 */
 	public function preDispatch()
 	{
@@ -344,6 +345,8 @@ abstract class Controller {
 
 	/**
 	 * Called after the actual route handler is being called
+	 * @throws \Exception For example throw an access denied action for a given user
+	 * @return void
 	 */
 	public function postDispatch()
 	{

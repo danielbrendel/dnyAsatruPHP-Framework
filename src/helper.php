@@ -214,4 +214,26 @@ namespace {
     {
         return Asatru\View\ViewHandler::addReplacerCommand($ident, $callback);
     }
+
+    /**
+     * View creation helper function
+     * 
+     * @param string $layout The layout file name
+     * @param array $yields An array containing yield name and replacer file for each entry
+     * @param array $vars optional Array containing variables passed to the view
+     * @return Asatru\View\ViewHandler
+     */
+    function view($layout, $yields, $vars = array())
+    {
+        $viewHandler = new Asatru\View\ViewHandler();
+
+        $viewHandler->setLayout($layout);
+        $viewHandler->setVars($vars);
+
+        foreach ($yields as $yield) {
+            $viewHandler->setYield($yield[0], $yield[1]);
+        }
+
+        return $viewHandler;
+    }
 }

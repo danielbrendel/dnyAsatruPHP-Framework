@@ -132,4 +132,10 @@ final class HelperTest extends TestCase
         $result = template_command('sometest', function(string $code, array $args){ return '<?php echo "Just a test"; ?>';});
         $this->assertTrue($result);
     }
+
+    public function testView()
+    {
+        $result = view('layout', array(array('yield', 'index')));
+        $this->assertInstanceOf('Asatru\View\ViewHandler', $result);
+    }
 }
