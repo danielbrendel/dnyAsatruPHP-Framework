@@ -83,8 +83,6 @@ function createModel($name, $table)
         Asatru PHP - Model for ". $table . "
     */
 
-    use Asatru\Database;
-
     /**
      * This class extends the base model class and represents your associated table
      */ 
@@ -153,9 +151,6 @@ function createController($name)
     /*
         Asatru PHP - Controller
     */
-
-    use Asatru\View;
-    use Asatru\Helper;
 
     /**
      * This class represents your controller
@@ -332,8 +327,6 @@ function createAuth()
 
         Default authentication model
     */
-
-    use Asatru\Database;
 
     /**
      * Model representing the authentication table
@@ -599,7 +592,6 @@ function createTest($name)
     "*/
 
     use PHPUnit\Framework\TestCase;
-    use Asatru\Testing;
     
     /**
      * This class holds your test methods

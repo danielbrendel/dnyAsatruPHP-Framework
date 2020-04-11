@@ -14,8 +14,6 @@
 
 namespace Asatru\Mailwrapper;
 
-use Asatru\View;
-
 /**
  * This components handles the mail() wrapping
  */
