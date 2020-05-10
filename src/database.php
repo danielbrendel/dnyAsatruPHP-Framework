@@ -800,12 +800,6 @@ namespace {
             throw new \Exception('No database PDO driver specified');
         } else if ($_ENV['DB_DRIVER'] === 'mysql') {
             $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-        } else if ($_ENV['DB_DRIVER'] === 'sqlite') {
-            $objPdo = new \PDO('sqlite:' . __DIR__ . '/../../../../app/db/' . $_ENV['DB_DATABASE']);
-        } else if ($_ENV['DB_DRIVER'] === 'oracle') {
-            $objPdo = new \PDO('oci:dbname=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-        } else if ($_ENV['DB_DRIVER'] === 'mssql') {
-            $objPdo = new \PDO('sqlsrv:Server=' . $_ENV['DB_HOST'] . ':'. $_ENV['DB_PORT'] . ';Database=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
         } else {
             throw new \Exception('Database driver ' . $_ENV['DB_DRIVER'] . ' is not supported');
         }
