@@ -53,7 +53,7 @@ sure that a database (for testing it is MySQL) is running and adjust the setting
 ## Requirements
 + PHP >= 7.3.8
 + PHP PDO extension
-+ For databases either MySQL, SQLite, MS SQL Server or Oracle
++ MySQL when database needed
 
 ## Changelog:
 + Version 0.1:
