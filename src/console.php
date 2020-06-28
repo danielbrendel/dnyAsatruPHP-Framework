@@ -483,6 +483,166 @@ function createAuth()
 }
 
 /**
+ * Create caching model and migration
+ * 
+ * @return boolean
+ */
+function createCache()
+{
+    $content1 = "<?php
+
+	/*
+		Asatru PHP - Migration vor Caching
+	*/
+
+	class Cache_Migration {
+		private \$database = null;
+		private \$connection = null;
+
+		/**
+		 * Construct class and store PDO connection handle
+		 * 
+		 * @param \PDO \$pdo
+		 * @return void
+		 */
+		public function __construct(\$pdo)
+		{
+			\$this->connection = \$pdo;
+		}
+
+		/**
+		 * Called when the table shall be created or modified
+		 * 
+		 * @return void
+		 */
+		public function up()
+		{
+			\$this->database = new Asatru\Database\Migration('Cache', \$this->connection);
+			\$this->database->drop();
+			\$this->database->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
+			\$this->database->add('ident VARCHAR(260) NOT NULL');
+			\$this->database->add('value BLOB NULL');
+			\$this->database->add('updated_at TIMESTAMP');
+			\$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+			\$this->database->create();
+		}
+
+		/**
+		 * Called when the table shall be dropped
+		 * 
+		 * @return void
+		 */
+		public function down()
+		{
+			\$this->database = new Asatru\Database\Migration('Cache', \$this->connection);
+			\$this->database->drop();
+		}
+	}";
+
+    $content2 = "<?php
+	/*
+		Asatru PHP - Model for Caching
+	*/
+
+	class Cache extends \Asatru\Database\Model {
+		/**
+		 * Obtain value either from cache or from closure
+		 *	
+		 *	@param string \$ident The cache item identifier
+		 *	@param int \$timeInSeconds Amount of seconds the item shall be cached
+		 *	@param \$closure Function to be called for the actual value
+		 *	@return mixed
+		 */
+		public static function remember(\$ident, \$timeInSeconds, \$closure)
+		{
+			\$item = CacheModel::find(\$ident, 'ident');
+			if (\$item->count() == 0) {
+				\$value = \$closure();
+				
+				\$data = array(
+					'ident' => \$ident,
+					'value' => \$value,
+					'updated_at' => date('Y-m-d H:i:s')
+				);
+				
+				foreach (\$data as \$key => \$val) {
+					CacheModel::insert(\$key, \$val);
+				}
+				
+				CacheModel::go();
+				
+				return \$value;
+			} else {
+				\$data = $item->get(0);
+				\$dtLast = new DateTime(date('Y-m-d H:i:s', strtotime(\$data->get('updated_at'))));
+				\$dtLast->add(new DateInterval('PT' . \$timeInSeconds . 'S'));
+				\$dtNow = new DateTime('now');
+
+				if (\$dtNow < \$dtLast) {
+					return \$data->get('value');
+				} else {
+					\$value = $closure();
+					
+					\$updData = array(
+						'value' => \$value,
+						'updated_at' => date('Y-m-d H:i:s')
+					);
+					
+					foreach (\$updData as \$key => \$val) {
+						CacheModel::update(\$key, \$val);
+					}
+					
+					CacheModel::go();
+					
+					return \$value;
+				}
+			}
+			
+			return null;
+		}
+		
+		/**
+		 * Forget cache item
+		 * 
+		 * @param string \$ident The item identifier
+		 * @return bool
+		 */
+		public static function forget(\$ident)
+		{
+			\$item = CacheModel::find(\$ident, 'ident');
+			if (\$item->count() > 0) {
+				CacheModel::where('id', '=', \$item->get(0)->get('id'))->delete();
+				
+				return true;
+			}
+			
+			return false;
+		}
+		
+		/**
+		 * Return the associated table name of the migration
+		 * 
+		 * @return string
+		 */
+		public static function tableName()
+		{
+			return 'Cache';
+		}
+	}
+    ";
+
+    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/Cache.php', $content1)) {
+        return false;
+    }
+
+    if (!file_put_contents(__DIR__ . '/../../../../app/models/Cache.php', $content2)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Create a new test
  * 
  * @param string $name The name of the test case
@@ -694,6 +854,12 @@ function handleInput($argv)
             echo "\033[31mFailed to create auth objects\033[39m\n";
         } else {
             echo "\033[32mThe auth objects have been created!\033[39m\n";
+        }
+	} else if ($argv[1] === 'make:cache') {
+        if (!createCache()) {
+            echo "\033[31mFailed to create cache objects\033[39m\n";
+        } else {
+            echo "\033[32mThe cache objects have been created!\033[39m\n";
         }
     } else if ($argv[1] === 'make:test') {
         if (!createTest($argv[2])) {

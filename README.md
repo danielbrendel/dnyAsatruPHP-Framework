@@ -30,6 +30,7 @@ This product is a lightweight PHP framework which can be used to create your own
 + Security
 + Flash messages
 + Authentication
++ Caching
 + Testing
 + CLI interface
 + mail() wrapper
