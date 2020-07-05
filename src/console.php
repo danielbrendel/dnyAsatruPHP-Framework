@@ -602,6 +602,22 @@ function createCache()
 		}
 		
 		/**
+		 * Check for item existence
+		 *
+		 *	@param \$ident
+		 *  @return bool
+		 */
+		public static function has(\$ident)
+		{
+			\$item = Cache::find(\$ident, 'ident');
+			if (\$item->count() > 0) {
+				return true;
+			}
+			
+			return false;
+		}
+		
+		/**
 		 * Get item and then delete it
 		 *
 		 *	@param \$ident
