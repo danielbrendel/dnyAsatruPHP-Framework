@@ -573,7 +573,7 @@ function createCache()
 				
 				return \$value;
 			} else {
-				\$data = $item->get(0);
+				\$data = \$item->get(0);
 				\$dtLast = new DateTime(date('Y-m-d H:i:s', strtotime(\$data->get('updated_at'))));
 				\$dtLast->add(new DateInterval('PT' . \$timeInSeconds . 'S'));
 				\$dtNow = new DateTime('now');
@@ -581,7 +581,7 @@ function createCache()
 				if (\$dtNow < \$dtLast) {
 					return \$data->get('value');
 				} else {
-					\$value = $closure();
+					\$value = \$closure();
 					
 					\$updData = array(
 						'value' => \$value,
