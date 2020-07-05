@@ -602,6 +602,26 @@ function createCache()
 		}
 		
 		/**
+		 * Get item and then delete it
+		 *
+		 *	@param \$ident
+		 *  @return mixed
+		 */
+		public static function pull(\$ident)
+		{
+			\$item = Cache::find(\$ident, 'ident');
+			if (\$item->count() > 0) {
+				\$data = \$item->get(0);
+				
+				Cache::where('id', '=', \$item->get(0)->get('id'))->delete();
+				
+				return \$data->get('value');
+			}
+			
+			return null;
+		}
+		
+		/**
 		 * Forget cache item
 		 * 
 		 * @param string \$ident The item identifier
