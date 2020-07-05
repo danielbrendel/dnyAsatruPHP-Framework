@@ -555,7 +555,7 @@ function createCache()
 		 */
 		public static function remember(\$ident, \$timeInSeconds, \$closure)
 		{
-			\$item = CacheModel::find(\$ident, 'ident');
+			\$item = Cache::find(\$ident, 'ident');
 			if (\$item->count() == 0) {
 				\$value = \$closure();
 				
@@ -566,10 +566,10 @@ function createCache()
 				);
 				
 				foreach (\$data as \$key => \$val) {
-					CacheModel::insert(\$key, \$val);
+					Cache::insert(\$key, \$val);
 				}
 				
-				CacheModel::go();
+				Cache::go();
 				
 				return \$value;
 			} else {
@@ -589,10 +589,10 @@ function createCache()
 					);
 					
 					foreach (\$updData as \$key => \$val) {
-						CacheModel::update(\$key, \$val);
+						Cache::update(\$key, \$val);
 					}
 					
-					CacheModel::go();
+					Cache::go();
 					
 					return \$value;
 				}
@@ -629,9 +629,9 @@ function createCache()
 		 */
 		public static function forget(\$ident)
 		{
-			\$item = CacheModel::find(\$ident, 'ident');
+			\$item = Cache::find(\$ident, 'ident');
 			if (\$item->count() > 0) {
-				CacheModel::where('id', '=', \$item->get(0)->get('id'))->delete();
+				Cache::where('id', '=', \$item->get(0)->get('id'))->delete();
 				
 				return true;
 			}
