@@ -14,11 +14,11 @@
 
 namespace {
     //Include all modules
-    $modules = scandir(__DIR__ . '/../../../../app/modules');
+    $modules = scandir(ASATRU_APP_ROOT . '/app/modules');
     if ($modules !== false) {
         foreach ($modules as $file) {
-            if (pathinfo(__DIR__ . '/../../../../app/modules/' . $file, PATHINFO_EXTENSION) == 'php') {
-                require_once __DIR__ . '/../../../../app/modules/' . $file;
+            if (pathinfo(ASATRU_APP_ROOT . '/app/modules/' . $file, PATHINFO_EXTENSION) == 'php') {
+                require_once ASATRU_APP_ROOT . '/app/modules/' . $file;
                 //Check if class name equals the file name
                 $className = pathinfo($file, PATHINFO_FILENAME);
                 try {

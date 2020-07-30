@@ -42,11 +42,11 @@ namespace Asatru\Lang {
         {
             $this->lang = [];
 
-            $files = scandir(__DIR__ . '/../../../../app/lang/' . $locale); //Get all files of directory
+            $files = scandir(ASATRU_APP_ROOT . '/app/lang/' . $locale); //Get all files of directory
             foreach($files as $file) {
-                if (!is_dir(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file)) { //If it's not a directory
-                    if (pathinfo(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file, PATHINFO_EXTENSION) === 'php') { //If it's a PHP script
-                        $item = array('file' => pathinfo($file, PATHINFO_FILENAME), 'phrases' => require_once(__DIR__ . '/../../../../app/lang/' . $locale . '/' . $file)); //Create item with the phrases
+                if (!is_dir(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file)) { //If it's not a directory
+                    if (pathinfo(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file, PATHINFO_EXTENSION) === 'php') { //If it's a PHP script
+                        $item = array('file' => pathinfo($file, PATHINFO_FILENAME), 'phrases' => require_once(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file)); //Create item with the phrases
                         array_push($this->lang, $item); //Add to array
                     }
                 }

@@ -64,8 +64,8 @@ class Mail {
         $view->setVars($data);
         $view->setLayout($layout);
         
-        foreach ($yields as $key => $value) {
-            $view->setYield($key, $value);
+        foreach ($yields as $yield) {
+            $view->setYield($yield[0], $yield[1]);
         }
 
         $this->message = $view->out(true);

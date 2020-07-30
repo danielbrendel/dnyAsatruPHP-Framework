@@ -104,11 +104,11 @@ namespace Asatru\Logger {
 
             $entireStr .= PHP_EOL . PHP_EOL;
 
-            if (!is_dir(__DIR__ . '/../../../../app/logs')) {
-                mkdir(__DIR__ . '/../../../../app/logs');
+            if (!is_dir(ASATRU_APP_ROOT . '/app/logs')) {
+                mkdir(ASATRU_APP_ROOT . '/app/logs');
             }
 
-            file_put_contents(__DIR__ . '/../../../../app/logs/logfile_' . date('o-m-j') . '.txt', $entireStr, FILE_APPEND);
+            file_put_contents(ASATRU_APP_ROOT . '/app/logs/logfile_' . date('o-m-j') . '.txt', $entireStr, FILE_APPEND);
 
             $this->clear();
         }

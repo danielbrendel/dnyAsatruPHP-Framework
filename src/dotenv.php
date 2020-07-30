@@ -193,9 +193,10 @@ namespace Asatru\Dotenv {
          * Query item
          * 
          * @param string $item The variable name to be queried
+		 * @param mixed $fallback optional A default value to be returned
          * @return mixed Depends of the data type of the variable
          */
-        public function query($item)
+        public function query($item, $fallback = null)
         {
             foreach ($this->vars as $var) {
                 if ($var['varname'] == $item) {
@@ -203,7 +204,7 @@ namespace Asatru\Dotenv {
                 }
             }
             
-            return '';
+            return $fallback;
         }
 
         /**
@@ -244,11 +245,12 @@ namespace {
      * Query item
      * 
      * @param string $item The variable name to be queried
+	 * @param mixed $fallback optional A default value to be returned
      * @return mixed Depends of the data type of the variable
      */
-    function env_get($item)
+    function env_get($item, $fallback = null)
     {
-        return Asatru\Dotenv\DotEnvParser::instance()->query($item);
+        return Asatru\Dotenv\DotEnvParser::instance()->query($item, $fallback);
     }
 
     /**

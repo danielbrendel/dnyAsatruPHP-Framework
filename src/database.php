@@ -679,11 +679,11 @@ namespace Asatru\Database {
          */
         private function loadMigrationList()
         {
-            if (!file_exists(__DIR__ . '/../../../../app/migrations/migrations.list')) {
+            if (!file_exists(ASATRU_APP_ROOT . '/app/migrations/migrations.list')) {
                 return array();
             }
 
-            return preg_split('/(\r\n|\n|\r)/', file_get_contents(__DIR__ . '/../../../../app/migrations/migrations.list'));
+            return preg_split('/(\r\n|\n|\r)/', file_get_contents(ASATRU_APP_ROOT . '/app/migrations/migrations.list'));
         }
 
         /**
@@ -700,7 +700,7 @@ namespace Asatru\Database {
                 $content .= $migration . PHP_EOL;
             }
 
-            return file_put_contents(__DIR__ . '/../../../../app/migrations/migrations.list', $content) !== false;
+            return file_put_contents(ASATRU_APP_ROOT . '/app/migrations/migrations.list', $content) !== false;
         }
 
         /**
@@ -729,7 +729,7 @@ namespace Asatru\Database {
          */
         public function createAll()
         {
-            $files = scandir(__DIR__ . '/../../../../app/migrations');
+            $files = scandir(ASATRU_APP_ROOT . '/app/migrations');
             if ($files === false) {
                 throw new \Exception('Migration folder not found');
             }
@@ -737,11 +737,11 @@ namespace Asatru\Database {
             $list = $this->loadMigrationList();
 
             foreach ($files as $file) {
-                if (pathinfo(__DIR__ . '/../../../../app/migrations/' . $file, PATHINFO_EXTENSION) === 'php') {
+                if (pathinfo(ASATRU_APP_ROOT . '/app/migrations/' . $file, PATHINFO_EXTENSION) === 'php') {
                     if (!$this->isInMigrationList($list, hash('sha512', $file))) {
-                        require_once __DIR__ . '/../../../../app/migrations/' . $file;
+                        require_once ASATRU_APP_ROOT . '/app/migrations/' . $file;
 
-                        $className = ucfirst(pathinfo(__DIR__ . '/../../../../app/migrations/' . $file, PATHINFO_FILENAME)) . '_Migration';
+                        $className = ucfirst(pathinfo(ASATRU_APP_ROOT . '/app/migrations/' . $file, PATHINFO_FILENAME)) . '_Migration';
                         $obj = new $className($this->handle);
 
                         if (method_exists($obj, 'up')) {
@@ -766,16 +766,16 @@ namespace Asatru\Database {
          */
         public function dropAll()
         {
-            $files = scandir(__DIR__ . '/../../../../app/migrations');
+            $files = scandir(ASATRU_APP_ROOT . '/app/migrations');
             if ($files === false) {
                 throw new \Exception('Migration folder not found');
             }
 
             foreach ($files as $file) {
-                if (pathinfo(__DIR__ . '/../../../../app/migrations/' . $file, PATHINFO_EXTENSION) === 'php') {
-                    require_once __DIR__ . '/../../../../app/migrations/' . $file;
+                if (pathinfo(ASATRU_APP_ROOT . '/app/migrations/' . $file, PATHINFO_EXTENSION) === 'php') {
+                    require_once ASATRU_APP_ROOT . '/app/migrations/' . $file;
                     
-                    $className = ucfirst(pathinfo(__DIR__ . '/../../../../app/migrations/' . $file, PATHINFO_FILENAME)) . '_Migration';
+                    $className = ucfirst(pathinfo(ASATRU_APP_ROOT . '/app/migrations/' . $file, PATHINFO_FILENAME)) . '_Migration';
                     $obj = new $className($this->handle);
                     
                     if (method_exists($obj, 'down')) {
@@ -786,8 +786,8 @@ namespace Asatru\Database {
                 }
             }
 
-            if (file_exists(__DIR__ . '/../../../../app/migrations/migrations.list')) {
-                unlink(__DIR__ . '/../../../../app/migrations/migrations.list');
+            if (file_exists(ASATRU_APP_ROOT . '/app/migrations/migrations.list')) {
+                unlink(ASATRU_APP_ROOT . '/app/migrations/migrations.list');
             }
         }
     }
@@ -808,11 +808,11 @@ namespace {
         $objMigrationLoader = new Asatru\Database\MigrationLoader($objPdo);
 
         //Include all models
-        $models = scandir(__DIR__ . '/../../../../app/models');
+        $models = scandir(ASATRU_APP_ROOT . '/app/models');
         if ($models !== false) {
             foreach ($models as $file) {
-                if (pathinfo(__DIR__ . '/../../../../app/models/' . $file, PATHINFO_EXTENSION) == 'php') {
-                    require_once __DIR__ . '/../../../../app/models/' . $file;
+                if (pathinfo(ASATRU_APP_ROOT . '/app/models/' . $file, PATHINFO_EXTENSION) == 'php') {
+                    require_once ASATRU_APP_ROOT . '/app/models/' . $file;
 
                     $className = pathinfo($file, PATHINFO_FILENAME);
                     $className::__setHandle($objPdo);

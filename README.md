@@ -34,6 +34,7 @@ This product is a lightweight PHP framework which can be used to create your own
 + Testing
 + CLI interface
 + mail() wrapper
++ SMTP mailing
 
 ## Installation
 The installation of this framework is just one composer command away:

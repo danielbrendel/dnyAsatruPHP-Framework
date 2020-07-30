@@ -87,7 +87,7 @@ namespace Asatru\View {
 		 */
 		public function setYield($name, $file)
 		{
-			$this->yields[$name] = file_get_contents(__DIR__ . '/../../../../app/views/' . $file . '.php');;
+			$this->yields[$name] = file_get_contents(ASATRU_APP_ROOT . '/app/views/' . $file . '.php');;
 			
 			return $this;
 		}
@@ -367,7 +367,7 @@ namespace Asatru\View {
 			}
 			
 			//Acquire content of the layout file
-			$layout = file_get_contents(__DIR__ . '/../../../../app/views/' . $this->layout . '.php');
+			$layout = file_get_contents(ASATRU_APP_ROOT . '/app/views/' . $this->layout . '.php');
 			
 			//Replace all yields
 			foreach ($this->yields as $key => $value) {

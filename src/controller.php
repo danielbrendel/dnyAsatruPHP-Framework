@@ -460,7 +460,7 @@ class ControllerHandler {
 					throw new \Exception('Erroneous handler specified: ' . $this->routes[$i][2]);
 				}
 				
-				require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
+				require_once ASATRU_APP_ROOT . '/app/controller/' . $items[0] . '.php';
 				require_once "view.php";
 				
 				$className = ucfirst($items[0]) . 'Controller';
@@ -493,7 +493,7 @@ class ControllerHandler {
 			if (count($items) != 2) {
 				throw new \Exception('Erroneous handler specified: ' . $err404Handler[2]);
 			}
-			require_once __DIR__ . '/../../../../app/controller/' . $items[0] . '.php';
+			require_once ASATRU_APP_ROOT . '/app/controller/' . $items[0] . '.php';
 			require_once "view.php";
 			$className = ucfirst($items[0]) . 'Controller';
 			$obj = new $className();

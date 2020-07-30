@@ -25,7 +25,7 @@ class Autoloader {
      * 
      * @param string $config optional The absolute path to the config file
      */
-    public function __construct($config = __DIR__ . '/../../../../app/config/autoload.php')
+    public function __construct($config = ASATRU_APP_ROOT . '/app/config/autoload.php')
     {
         //Load config data
         $this->data = require_once($config);

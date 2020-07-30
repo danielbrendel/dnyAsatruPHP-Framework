@@ -48,7 +48,7 @@ class Test extends TestCase {
         }
 
         //Dispatch to controller
-        $controller = new \Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
+        $controller = new \Asatru\Controller\ControllerHandler(ASATRU_APP_ROOT . '/app/config/routes.php');
         $this->ctrlresult = $controller->parse($route);
     }
 

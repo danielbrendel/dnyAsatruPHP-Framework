@@ -18,10 +18,10 @@ namespace {
 
         if ((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG'] === true)) {
             $exception = $e;
-            require_once __DIR__ . '/../../../../app/views/error/exception_debug.php';
+            require_once ASATRU_APP_ROOT . '/app/views/error/exception_debug.php';
             unset($exception);
         } else {
-            require_once __DIR__ . '/../../../../app/views/error/exception_prod.php';
+            require_once ASATRU_APP_ROOT . '/app/views/error/exception_prod.php';
         }
 
         if (function_exists('addLog')) {

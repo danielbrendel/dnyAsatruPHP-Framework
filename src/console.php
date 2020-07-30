@@ -73,7 +73,7 @@ function createModel($name, $table)
         }
     }";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/' . $name . '.php', $content1)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/migrations/' . $name . '.php', $content1)) {
         return false;
     }
 
@@ -98,7 +98,7 @@ function createModel($name, $table)
         }
     }";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/models/' . $name . '.php', $content2)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/' . $name . '.php', $content2)) {
         return false;
     }
 
@@ -135,7 +135,7 @@ function createModule($name)
     }
 ";
 
-    return file_put_contents(__DIR__ . '/../../../../app/modules/' . $name . '.php', $content) !== false;
+    return file_put_contents(ASATRU_APP_ROOT . '/app/modules/' . $name . '.php', $content) !== false;
 }
 
 /**
@@ -160,7 +160,7 @@ function createController($name)
     }
 ";
 
-    return file_put_contents(__DIR__ . '/../../../../app/controller/' . $name . '.php', $content) !== false;
+    return file_put_contents(ASATRU_APP_ROOT . '/app/controller/' . $name . '.php', $content) !== false;
 }
 
 /**
@@ -170,11 +170,11 @@ function createController($name)
  */
 function createLang($ident)
 {
-    if (is_dir(__DIR__ . '/../../../../app/lang/' . $ident)) {
+    if (is_dir(ASATRU_APP_ROOT . '/app/lang/' . $ident)) {
         return false;
     }
 
-    mkdir(__DIR__ . '/../../../../app/lang/' . $ident);
+    mkdir(ASATRU_APP_ROOT . '/app/lang/' . $ident);
 
     $content = "<?php
 
@@ -186,7 +186,7 @@ function createLang($ident)
         //
     ];";
     
-    if (!file_put_contents(__DIR__ . '/../../../../app/lang/' . $ident . '/app.php', $content)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/lang/' . $ident . '/app.php', $content)) {
         return false;
     }
 
@@ -202,8 +202,8 @@ function createLang($ident)
  */
 function createValidator($name, $ident)
 {
-    if (!is_dir(__DIR__ . '/../../../../app/validators')) {
-        mkdir(__DIR__ . '/../../../../app/validators');
+    if (!is_dir(ASATRU_APP_ROOT . '/app/validators')) {
+        mkdir(ASATRU_APP_ROOT . '/app/validators');
     }
 
     $content = "<?php
@@ -252,7 +252,7 @@ function createValidator($name, $ident)
         }
     ";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/validators/' . strtolower($name) . '.php', $content)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/validators/' . strtolower($name) . '.php', $content)) {
         return false;
     }
 
@@ -471,11 +471,11 @@ function createAuth()
     }
     ";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/Auth.php', $content1)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/migrations/Auth.php', $content1)) {
         return false;
     }
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/models/Auth.php', $content2)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/Auth.php', $content2)) {
         return false;
     }
 
@@ -667,11 +667,11 @@ function createCache()
 	}
     ";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/migrations/Cache.php', $content1)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/migrations/Cache.php', $content1)) {
         return false;
     }
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/models/Cache.php', $content2)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/Cache.php', $content2)) {
         return false;
     }
 
@@ -686,8 +686,8 @@ function createCache()
  */
 function createTest($name)
 {
-    if (!is_dir(__DIR__ . '/../../../../app/tests')) {
-        mkdir(__DIR__ . '/../../../../app/tests');
+    if (!is_dir(ASATRU_APP_ROOT . '/app/tests')) {
+        mkdir(ASATRU_APP_ROOT . '/app/tests');
 
         $bootstrap = "
         <?php
@@ -776,7 +776,7 @@ function createTest($name)
         Asatru\Controller\CustomPostValidators::load(__DIR__ . '/../validators');
         ";
 
-        if (!file_put_contents(__DIR__ . '/../../../../app/tests/bootstrap.php', $bootstrap)) {
+        if (!file_put_contents(ASATRU_APP_ROOT . '/app/tests/bootstrap.php', $bootstrap)) {
             return false;
         }
     }
@@ -798,7 +798,7 @@ function createTest($name)
     }
     ";
 
-    if (!file_put_contents(__DIR__ . '/../../../../app/tests/' . ucfirst($name) . 'Test.php', $content)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/tests/' . ucfirst($name) . 'Test.php', $content)) {
         return false;
     }
 

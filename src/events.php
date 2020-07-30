@@ -67,7 +67,7 @@ namespace Asatru\Events {
         public function raiseEvent($name, $params = null)
         {
             if (isset($this->eventlist[$name])) {
-                require_once __DIR__ . '/../../../../app/events/' . strtolower($this->eventlist[$name]['class']) . '.php';
+                require_once ASATRU_APP_ROOT . '/app/events/' . strtolower($this->eventlist[$name]['class']) . '.php';
 
                 $cls = new $this->eventlist[$name]['class'];
                 call_user_func_array(array($cls, $this->eventlist[$name]['method']), array($params));
@@ -77,7 +77,7 @@ namespace Asatru\Events {
 }
 
 namespace {
-    $objEventManager = new \Asatru\Events\EventManager(__DIR__ . '/../../../../app/config/events.php');
+    $objEventManager = new \Asatru\Events\EventManager(ASATRU_APP_ROOT . '/app/config/events.php');
 
     /**
      * Raise an event and call the associated handler

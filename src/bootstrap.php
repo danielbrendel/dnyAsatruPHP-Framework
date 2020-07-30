@@ -12,6 +12,9 @@
     Released under the MIT license
 */
 
+//Set application root directory path
+define('ASATRU_APP_ROOT', __DIR__ . '/../../../..');
+
 //Require exception handler
 require_once 'exception.php';
 
@@ -34,8 +37,8 @@ require_once 'autoload.php';
 require_once 'helper.php';
 
 //Parse .env file if it exists
-if (file_exists(__DIR__ . '/../../../../.env')) {
-    env_parse(__DIR__ . '/../../../../.env');
+if (file_exists(ASATRU_APP_ROOT . '/.env')) {
+    env_parse(ASATRU_APP_ROOT . '/.env');
 }
 
 //Set error reporting according to debug flag value
@@ -63,7 +66,6 @@ if ((isset($_ENV['APP_SESSION'])) && ($_ENV['APP_SESSION'])) {
 //Require localization
 require_once 'locale.php';
 
-
 //Require database management
 require_once 'database.php';
 
@@ -74,17 +76,20 @@ require_once 'modules.php';
 require_once 'events.php';
 
 //Perform autoloading
-$auto = new Asatru\Autoload\Autoloader(__DIR__ . '/../../../../app/config/autoload.php');
+$auto = new Asatru\Autoload\Autoloader(ASATRU_APP_ROOT . '/app/config/autoload.php');
 $auto->load();
 
 //Load validators if any
-Asatru\Controller\CustomPostValidators::load(__DIR__ . '/../../../../app/validators');
+Asatru\Controller\CustomPostValidators::load(ASATRU_APP_ROOT . '/app/validators');
 
 //Require mail wrapper
 require_once 'mailwrapper.php';
 
+//Require SMTP mail handler
+require_once 'smtpmailer.php';
+
 //Create a new controller instance and handle the current URL
-$controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
+$controller = new Asatru\Controller\ControllerHandler(ASATRU_APP_ROOT . '/app/config/routes.php');
 $viewComp = $controller->parse($_SERVER['REQUEST_URI']);
 HandleView($viewComp);
 
