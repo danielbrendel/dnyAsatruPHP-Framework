@@ -12,6 +12,8 @@
     Released under the MIT license
 */
 
+use Carbon\Carbon;
+
 namespace {
     /**
      * Actual flash message item
@@ -114,22 +116,20 @@ namespace {
     /**
      * Carbon helper component
      */
-    class Carbon {
+    class Carbon extends Carbon\Carbon {
         /**
-         * Create a Carbon instance with appropriate locale
+         * Construct object and set locale
          * 
-         * @param mixed
-         * @return Carbon\Carbon
+         * @param $time
+		 * @param $tz
+         * @return void
          */
-        public static function create()
-        {
-            $params = func_get_args();
-
-            $obj = forward_static_call_array(array('Carbon\Carbon', 'create'), $params);
-            $obj->locale(getLocale());
-
-            return $obj;
-        }
+        public function __construct($time = null, $tz = null)
+		{
+			parent::__construct($time, $tz);
+			
+			$this->locale(getLocale());
+		}
     }
 
     /**
