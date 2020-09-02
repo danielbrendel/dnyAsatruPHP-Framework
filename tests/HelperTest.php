@@ -138,4 +138,11 @@ final class HelperTest extends TestCase
         $result = view('layout', array(array('yield', 'index')));
         $this->assertInstanceOf('Asatru\View\ViewHandler', $result);
     }
+	
+	public function testEnv()
+	{
+		env_parse(__DIR__ . '/../../../../.env');
+		$this->assertTrue(env_has_error() === false);
+		$this->assertTrue(env('APP_NAME') === 'Asatru PHP');
+	}
 }
