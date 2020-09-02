@@ -112,6 +112,27 @@ namespace {
     }
 
     /**
+     * Carbon helper component
+     */
+    class Carbon {
+        /**
+         * Create a Carbon instance with appropriate locale
+         * 
+         * @param mixed
+         * @return Carbon\Carbon
+         */
+        public static function create()
+        {
+            $params = func_get_args();
+
+            $obj = forward_static_call_array(array('Carbon\Carbon', 'create'), $params);
+            $obj->locale(getLocale());
+
+            return $obj;
+        }
+    }
+
+    /**
      * Return root path of project
      * 
      * @return string
@@ -235,5 +256,17 @@ namespace {
         }
 
         return $viewHandler;
+    }
+
+    /**
+     * Helper shortname function for env_get
+     * 
+     * @param string $item 
+     * @param mixed $fallback 
+     * @return mixed
+     */
+    function env($item, $fallback = null)
+    {
+        return env_get($item, $fallback);
     }
 }
