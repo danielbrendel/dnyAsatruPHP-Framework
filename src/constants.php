@@ -5,7 +5,7 @@
     
     (C) 2019 - 2020 by Daniel Brendel
     
-    Version: 0.1
+    Version: 1.0
     Contact: dbrendel1988<at>gmail<dot>com
     GitHub: https://github.com/danielbrendel/
     
@@ -14,7 +14,7 @@
 
 //Framework
 define('ASATRU_FW_NAME', 'Asatru PHP');
-define('ASATRU_FW_VERSION', '0.1');
+define('ASATRU_FW_VERSION', '1.0');
 define('ASATRU_FW_AUTHOR', 'Daniel Brendel');
 define('ASATRU_FW_CONTACT', 'dbrendel1988@gmail.com');
 

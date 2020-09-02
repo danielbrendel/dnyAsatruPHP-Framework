@@ -2,7 +2,7 @@
 
 (C) 2019 - 2020 by Daniel Brendel
 
-**Version**: 0.1\
+**Version**: 1.0\
 **Codename**: dnyAsatruPHP\
 **Contact**: dbrendel1988(at)gmail(dot)com\
 **GitHub**: https://github.com/danielbrendel
@@ -60,5 +60,5 @@ sure that a database (for testing it is MySQL) is running and adjust the setting
 + MySQL when database needed
 
 ## Changelog:
-+ Version 0.1:
++ Version 1.0:
 	- (Initial release)
