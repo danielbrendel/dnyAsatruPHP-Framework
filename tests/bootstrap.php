@@ -12,6 +12,9 @@
     Released under the MIT license
 */
 
+//Set application root directory path
+define('ASATRU_APP_ROOT', __DIR__ . '/../../../..');
+
 //If composer is installed we utilize its autoloader
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
