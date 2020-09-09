@@ -257,7 +257,7 @@ class PostValidator {
 			$tokens = explode('|', ((strlen($value) > 0) && (strpos($value, '|') === false)) ? $value : $value . '|');
 			
 			//Check each token
-			foreach ($tokens as $lal => $token) {
+			foreach ($tokens as $token) {
 				if (strlen($token) === 0) {
 					continue;
 				}
