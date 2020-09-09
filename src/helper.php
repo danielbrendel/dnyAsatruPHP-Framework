@@ -259,6 +259,41 @@ namespace {
     }
 
     /**
+     * Helper for JsonHandler
+     * 
+     * @param array $content
+     * @return mixed
+     */
+    function json(array $content)
+    {
+        return new Asatru\View\JsonHandler($content);
+    }
+
+    /**
+     * Helper for XmlHandler
+     * 
+     * @param array $content 
+     * @param string $root
+     * @return mixed
+     */
+    function xml(array $content, $root = 'data')
+    {
+        return new Asatru\View\XmlHandler($content, $root);
+    }
+
+    /**
+     * Helper for CsvHandler
+     * 
+     * @param array $content
+     * @param array $header
+     * @return mixed
+     */
+    function csv(array $content, array $header = null)
+    {
+        return new Asatru\View\CsvHandler($content, $header);
+    }
+
+    /**
      * Helper shortname function for env_get
      * 
      * @param string $item 

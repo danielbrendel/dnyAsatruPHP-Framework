@@ -398,15 +398,15 @@ namespace Asatru\View {
 	 * This component handles a json result
 	 */
 	class JsonHandler implements ViewInterface {
-		private $content = null;
+		private $content = array();
 
 		/**
 		 * Construct with content
 		 * 
-		 * @param string $content The content to be handled as json
+		 * @param array $content The content to be handled as json
 		 * @return void
 		 */
-		public function __construct($content = '')
+		public function __construct($content = array())
 		{
 			$this->content = $content;
 		}
@@ -414,16 +414,19 @@ namespace Asatru\View {
 		/**
 		 * Render the content as json
 		 * 
+		 * @param boolean $return optional Wether the view shall be rendered or its content returned
 		 * @return mixed
 		 */
 		public function out($return = false)
 		{
+			$output = json_encode($this->content);
+
 			if ($return === false) {
 				header('Content-type: application/json');
-				echo json_encode($this->content);
+				echo $output;
 				return true;
 			} else {
-				return json_encode($this->content);
+				return $output;
 			}
 		}
 	}
@@ -432,33 +435,145 @@ namespace Asatru\View {
 	 * This component handles an xml result
 	 */
 	class XmlHandler implements ViewInterface {
-		private $content = null;
+		private $content = array();
+		private $root = '';
 
 		/**
 		 * Construct with content
 		 * 
-		 * @param string $content The content to be handled as XML
+		 * @param array $content The content to be handled as XML
+		 * @param string $root The root element name
 		 * @return void
 		 */
-		public function __construct($content = '')
+		public function __construct($content = array(), $root = 'data')
 		{
 			$this->content = $content;
+			$this->root = $root;
 		}
 
 		/**
 		 * Render the content as xml
 		 * 
+		 * @param boolean $return optional Wether the view shall be rendered or its content returned
 		 * @return mixed
 		 */
 		public function out($return = false)
 		{
+			
+			$xml_base = '<?xml version="1.0" encoding="utf-8"?>';
+			if ((is_string($this->root)) && (strlen($this->root) > 0)) {
+				$xml_base .= '<' . $this->root . '></' . $this->root . '>';
+			}
+
+			$xml_data = new \SimpleXMLElement($xml_base);
+			$output = $this->xml_encode($this->content, $xml_data);
+
 			if ($return === false) {
 				header('Content-type: text/xml');
-				echo $this->content;
+				echo $output;
 				return true;
 			} else {
-				return $this->content;
+				return $output;
 			}
+		}
+
+		/**
+		 * Encode array to xml
+		 * 
+		 * @param array $content The array of data
+		 * @param \SimpleXMLElement &$rootElem Reference to object to be used for encoding
+		 * @return string The xml code
+		 */
+		protected function xml_encode($content = array(), &$rootElem = null)
+		{
+			if ($rootElem === null) {
+				return null;
+			}
+
+			foreach ($content as $key => $value) {
+				if (is_array($value)) {
+					if (is_numeric($key)) {
+						$key = array_key_first($value);
+						$this->xml_encode($value, $rootElem);
+					} else {
+						$childElem = $rootElem->addChild($key);
+						$this->xml_encode($value, $childElem);
+					}
+				} else {
+					$rootElem->addChild($key, strval($value));
+				}
+			}
+
+			return $rootElem->asXML();
+		}
+	}
+
+	/**
+	 * This component handles CSV content
+	 */
+	class CsvHandler implements ViewInterface {
+		private $content = array();
+		private $header = null;
+
+		/**
+		 * Construct with content
+		 * 
+		 * @param array $content The content to be handled as XML
+		 * @param array $header The header if required
+		 * @return void
+		 */
+		public function __construct($content = array(), array $header = null)
+		{
+			$this->content = $content;
+			$this->header = $header;
+		}
+
+		/**
+		 * Render the content as CSV
+		 * 
+		 * @param boolean $return optional Wether the view shall be rendered or its content returned
+		 * @return mixed
+		 */
+		public function out($return = false)
+		{
+			$output = $this->csv_encode($this->content, $this->header);
+
+			if ($return === false) {
+				header('Content-type: text/csv');
+				echo $output;
+				return true;
+			} else {
+				return $output;
+			}
+		}
+
+		/**
+		 * Encode array to CSV
+		 * 
+		 * @param array $content The content to be encoded
+		 * @param array $header If header shall be included
+		 * @return mixed
+		 */
+		protected function csv_encode(array $content = array(), array $header = null)
+		{
+			$handle = fopen('php://memory', 'w+');
+			if ($handle === false) {
+				return null;
+			}
+
+			if ($header != null) {
+				fputcsv($handle, $header);
+			}
+
+			foreach ($content as $item) {
+				fputcsv($handle, $item);
+			}
+
+			rewind($handle);
+			$content = stream_get_contents($handle);
+			fclose($handle);
+
+			return $content;
 		}
 	}
 
@@ -484,6 +599,7 @@ namespace Asatru\View {
 		/**
 		 * Render the content as plain text
 		 * 
+		 * @param boolean $return optional Wether the view shall be rendered or its content returned
 		 * @return mixed
 		 */
 		public function out($return = false)
