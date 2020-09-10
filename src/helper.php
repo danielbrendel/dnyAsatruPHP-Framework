@@ -262,7 +262,7 @@ namespace {
      * Helper for JsonHandler
      * 
      * @param array $content
-     * @return mixed
+     * @return Asatru\View\JsonHandler
      */
     function json(array $content)
     {
@@ -274,7 +274,7 @@ namespace {
      * 
      * @param array $content 
      * @param string $root
-     * @return mixed
+     * @return Asatru\View\XmlHandler
      */
     function xml(array $content, $root = 'data')
     {
@@ -286,12 +286,45 @@ namespace {
      * 
      * @param array $content
      * @param array $header
-     * @return mixed
+     * @return Asatru\View\CsvHandler
      */
     function csv(array $content, array $header = null)
     {
         return new Asatru\View\CsvHandler($content, $header);
     }
+	
+	/**
+     * Helper for PlainHandler
+     * 
+     * @param string $content
+     * @return Asatru\View\PlainHandler
+     */
+	function text($content)
+	{
+		return new Asatru\View\PlainHandler($content);
+	}
+	
+	/**
+     * Helper for RedirectHandler
+     * 
+     * @param string $to
+     * @return Asatru\View\RedirectHandler
+     */
+	function redirect($to)
+	{
+		return new Asatru\View\RedirectHandler($to);
+	}
+	
+	/**
+     * Helper for DownloadHandler
+     * 
+     * @param string $resource
+     * @return Asatru\View\DownloadHandler
+     */
+	function download($resource)
+	{
+		return new Asatru\View\DownloadHandler($resource);
+	}
 
     /**
      * Helper shortname function for env_get
