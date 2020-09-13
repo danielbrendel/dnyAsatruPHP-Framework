@@ -305,6 +305,18 @@ namespace {
 	}
 	
 	/**
+     * Helper for CustomHandler
+     * 
+	 * @param string $type
+     * @param mixed $content
+     * @return Asatru\View\CustomHandler
+     */
+	function custom($type, $content)
+	{
+		return new Asatru\View\CustomHandler($type, $content);
+	}
+	
+	/**
      * Helper for RedirectHandler
      * 
      * @param string $to
