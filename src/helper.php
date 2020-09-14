@@ -329,7 +329,7 @@ namespace {
 	
 	/**
      * Helper to go back to last URL.
-	 * Should be used from POST route request to get back to the related GET request route
+	 * Should be used from POST request route to get back to the related GET request route
      * 
      * @return Asatru\View\RedirectHandler
      */
