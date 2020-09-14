@@ -505,6 +505,17 @@ class ControllerHandler {
 			if (count($items) != 2) {
 				throw new \Exception('Erroneous handler specified: ' . $err404Handler[2]);
 			}
+			if (file_exists(ASATRU_APP_ROOT . '/app/controller/_base.php')) {
+				require_once ASATRU_APP_ROOT . '/app/controller/_base.php';
+				
+				if ($_ENV['APP_DEBUG']) {
+					try {
+						$checkBaseClass = new \BaseController();
+					} catch (\Exception $e) {
+						throw $e;
+					}
+				}
+			}
 			require_once ASATRU_APP_ROOT . '/app/controller/' . $items[0] . '.php';
 			require_once "view.php";
 			$className = ucfirst($items[0]) . 'Controller';
