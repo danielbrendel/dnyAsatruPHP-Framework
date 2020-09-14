@@ -328,6 +328,17 @@ namespace {
 	}
 	
 	/**
+     * Helper to go back to last URL.
+	 * Should be used from POST route request to get back to the related GET request route
+     * 
+     * @return Asatru\View\RedirectHandler
+     */
+	function back()
+	{
+		return redirect($_SERVER['REQUEST_URI']);
+	}
+	
+	/**
      * Helper for DownloadHandler
      * 
      * @param string $resource
