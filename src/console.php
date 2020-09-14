@@ -260,6 +260,48 @@ function createValidator($name, $ident)
 }
 
 /**
+ * Create a new event handler
+ * 
+ * @param string $name The name of the event handler
+ * @param string $initial_handler An initial handler to be provided
+ * @return boolean
+ */
+function createEvent($name, $initial_handler)
+{
+    if (!is_dir(ASATRU_APP_ROOT . '/app/events')) {
+        mkdir(ASATRU_APP_ROOT . '/app/events');
+    }
+
+    $content = "<?php
+
+		/*
+			Asatru PHP - Event handler
+		*/
+
+		/**
+		 * Event handler class
+		 */
+		class $name {
+			/**
+			 * An initial event handler method
+			 * 
+			 * @param \$data optional
+			 * @return void
+			 */
+			public function $initial_handler(\$data = null)
+			{
+			}
+		}
+    ";
+
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/events/' . strtolower($name) . '.php', $content)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Create authentication model and migration
  * 
  * @return boolean
@@ -879,7 +921,7 @@ function handleInput($argv)
         }
     } else if ($argv[1] === 'make:validator') {
         if ((!isset($argv[2])) || (!isset($argv[3]))) {
-            echo "\033[31mYou must the name of the validator and also its identifier\033[39m\n";
+            echo "\033[31mYou must specify the name of the validator and also its identifier\033[39m\n";
             exit(0);
         }
 
@@ -888,6 +930,17 @@ function handleInput($argv)
         } else {
             echo "\033[32mThe validator has been created!\033[39m\n";
         }
+	} else if ($argv[1] === 'make:event') {
+        if ((!isset($argv[2])) || (!isset($argv[3]))) {
+            echo "\033[31mYou must specify the name of the event handler and also its initial handler method\033[39m\n";
+            exit(0);
+        }
+
+        if (!createEvent($argv[2], $argv[3])) {
+            echo "\033[31mFailed to create the event handler\033[39m\n";
+        } else {
+            echo "\033[32mThe event handler has been created!\033[39m\n";
+		}
     } else if ($argv[1] === 'make:auth') {
         if (!createAuth()) {
             echo "\033[31mFailed to create auth objects\033[39m\n";
