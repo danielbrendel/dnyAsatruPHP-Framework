@@ -136,19 +136,20 @@ final class ViewTest extends TestCase
 
     public function testJsonHandler()
     {
-        $jh = new Asatru\View\JsonHandler(array('foo' => 'bar'));
+        $jh = new Asatru\View\JsonHandler(array('key' => 'value'));
     
         $result = $jh->out(true);
-        $this->assertEquals('{"foo":"bar"}', $result);
+        $this->assertEquals('{"key":"value"}', $result);
     }
 
     public function testXmlHandler()
     {
-        $code = '<test><foo>Hallo</foo></test>';
+        $code = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . '<data><key>value</key></data>' . "\n";
 
-        $xmlh = new Asatru\View\XmlHandler($code);
+        $xmlh = new Asatru\View\XmlHandler(array('key' => 'value'));
     
         $result = $xmlh->out(true);
+		
         $this->assertEquals($code, $result);
     }
 

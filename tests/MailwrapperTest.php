@@ -27,7 +27,7 @@ final class MailwrapperTest extends TestCase
         $mail = new Asatru\Mailwrapper\Mail();
         $mail->setRecipient('test@test.de');
         $mail->setSubject('TestCase');
-        $mail->setView('layout', array('yield' => 'index'), array());
+        $mail->setView('layout', array(array('yield', 'index')), array());
         $mail->setAdditionalHeaders(array('X-Mailer' => 'PHP/' . phpversion()));
         $mail->setAdditionalParameters('-ftest@test.de');
         //$mail->send();

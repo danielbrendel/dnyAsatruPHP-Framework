@@ -57,10 +57,10 @@ final class DatabaseTest extends TestCase
         $this->addToAssertionCount(4);
 
         $mig->append('test VARCHAR(255) NULL');
-        $result = $this->mdl->raw('INSERT INTO ' . TestModel::tableName() . ' (text, test) VALUES(\'foo\', \'bar\')');
+        $result = $this->mdl->raw('INSERT INTO ' . TestModel::tableName() . ' (text, test) VALUES(\'text\', \'test\')');
         $this->assertTrue($result !== false);
 
-        $result = TestModel::where('text', '=', 'foo')->where('test', '=', 'bar')->first();
+        $result = TestModel::where('text', '=', 'text')->where('test', '=', 'test')->first();
         $this->assertEquals(1, $result->get(0)->get('id'));
     }
 
@@ -178,7 +178,7 @@ final class DatabaseTest extends TestCase
 
     public function testCollection()
     {
-        $arrCollectionData = array('test1' => 'first test', 'test2' => 'second test', 'test3' => array('foo' => 'bar', 'foo2' => 'bar2'));
+        $arrCollectionData = array('test1' => 'first test', 'test2' => 'second test', 'test3' => array('one' => 'two', 'three' => 'four'));
 
         $coll = new Asatru\Database\Collection(array());
         $this->addToAssertionCount(1);
@@ -196,6 +196,6 @@ final class DatabaseTest extends TestCase
             $this->assertTrue(array_key_exists($ident, $data['collection_data']));
         }, array('collection_data' => $arrCollectionData));
 
-        $this->assertEquals('bar', $coll->get('test3')->get('foo'));
+        $this->assertEquals('two', $coll->get('test3')->get('one'));
     }
 }

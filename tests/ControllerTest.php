@@ -105,10 +105,10 @@ final class ControllerTest extends TestCase
         $method = self::getMethod('urlMatches');
         $obj = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
         $ctrl = new Asatru\Controller\ControllerArg($url);
-        $result = $method->invokeArgs($obj, array($url, 'GET', '/test/{foo}/another/{bar}', $ctrl));
+        $result = $method->invokeArgs($obj, array($url, 'GET', '/test/{first}/another/{second}', $ctrl));
         $this->assertTrue($result);
-        $this->assertEquals('var1', $ctrl->arg('foo'));
-        $this->assertEquals('var2', $ctrl->arg('bar'));
+        $this->assertEquals('var1', $ctrl->arg('first'));
+        $this->assertEquals('var2', $ctrl->arg('second'));
         $this->assertEquals($_GET['test1'], $ctrl->params()->query('test1'));
         $this->assertEquals($_GET['test2'], $ctrl->params()->query('test2'));
     }
