@@ -708,6 +708,9 @@ function createTest($name)
         if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
             require_once __DIR__ . '/../../vendor/autoload.php';
         }
+		
+		//Set application root directory path
+		define('ASATRU_APP_ROOT', __DIR__ . '/../..');
         
         //Fetch constants
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/constants.php';
