@@ -14,7 +14,7 @@
 
 //Logging types
 namespace {
-    defined('LASATRU_LOG_HEADER') || define('ASATRU_LOG_HEADER', 0);
+    defined('ASATRU_LOG_HEADER') || define('ASATRU_LOG_HEADER', 0);
     defined('ASATRU_LOG_INFO') || define('ASATRU_LOG_INFO', 1);
     defined('ASATRU_LOG_DEBUG') || define('ASATRU_LOG_DEBUG', 2);
     defined('ASATRU_LOG_WARNING') || define('ASATRU_LOG_WARNING', 3);

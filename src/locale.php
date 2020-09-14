@@ -46,7 +46,7 @@ namespace Asatru\Lang {
             foreach($files as $file) {
                 if (!is_dir(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file)) { //If it's not a directory
                     if (pathinfo(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file, PATHINFO_EXTENSION) === 'php') { //If it's a PHP script
-                        $item = array('file' => pathinfo($file, PATHINFO_FILENAME), 'phrases' => require_once(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file)); //Create item with the phrases
+                        $item = array('file' => pathinfo($file, PATHINFO_FILENAME), 'phrases' => require(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file)); //Create item with the phrases
                         array_push($this->lang, $item); //Add to array
                     }
                 }
@@ -113,7 +113,7 @@ namespace Asatru\Lang {
          */
         public function createCookieIfNotExists()
         {
-            if (!isset($_COOKIE[COOKIE_LOCALE])) {
+            if (!isset($_COOKIE['COOKIE_LOCALE'])) {
                 $this->setLocale('en'); //Defaulted to english
             }
         }
@@ -126,7 +126,7 @@ namespace Asatru\Lang {
          */
         public function setLocale($lang)
         {
-            setcookie(COOKIE_LOCALE, $lang, time() + 60 * 60 * 24 * 365, '/');
+            setcookie('COOKIE_LOCALE', $lang, time() + 60 * 60 * 24 * 365, '/');
         }
 
         /**
@@ -136,7 +136,7 @@ namespace Asatru\Lang {
          */
         public function getLocale()
         {
-            return isset($_COOKIE[COOKIE_LOCALE]) ? $_COOKIE[COOKIE_LOCALE] : 'en';
+            return isset($_COOKIE['COOKIE_LOCALE']) ? $_COOKIE['COOKIE_LOCALE'] : 'en';
         }
     }
 }
@@ -148,8 +148,8 @@ namespace {
 
     //Instantiate language handler and load language
     $objLanguage = new Asatru\Lang\Language();
-    if (isset($_COOKIE[COOKIE_LOCALE])) {
-        $objLanguage->load($_COOKIE[COOKIE_LOCALE]);
+    if (isset($_COOKIE['COOKIE_LOCALE'])) {
+        $objLanguage->load($_COOKIE['COOKIE_LOCALE']);
     } else {
         $objLanguage->load('en');
     }
