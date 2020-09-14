@@ -290,7 +290,7 @@ class PostValidator {
 					if ((!isset($_POST[$key])) || (!is_numeric($_POST[$key]))) {
 						$this->errmsgs[] = __('errors.item_number', ['key' => $key]);
 					}
-				} else if (strpos($token, 'regex:') === 0) {
+				} else if (strpos($token, 'regex:') === 0) { //Check against regex pattern
 					$pattern = substr($token, strlen('regex:'));
 					if ((!isset($_POST[$key])) || (preg_match($pattern, $_POST[$key]) !== 1)) {
 						$this->errmsgs[] = __('errors.item_regex', ['key' => $key, 'pattern' => $pattern]);
