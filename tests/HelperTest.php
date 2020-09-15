@@ -139,6 +139,51 @@ final class HelperTest extends TestCase
         $this->assertInstanceOf('Asatru\View\ViewHandler', $result);
     }
 	
+	public function testJson()
+    {
+        $result = json(array('name' => 'value'));
+        $this->assertInstanceOf('Asatru\View\JsonHandler', $result);
+    }
+	
+	public function testXml()
+    {
+        $result = xml(array('name' => 'value'));
+        $this->assertInstanceOf('Asatru\View\XmlHandler', $result);
+    }
+	
+	public function testCsv()
+	{
+		$result = csv(array(
+			array('one', 'two', 'three', 'four', 'five')
+		));
+		$this->assertInstanceOf('Asatru\View\CsvHandler', $result);
+	}
+	
+	public function testText()
+	{
+		$result = text('Hello World');
+        $this->assertInstanceOf('Asatru\View\PlainHandler', $result);
+	}
+	
+	public function testCustom()
+    {
+        $result = custom('text/plain', 'Hello World');
+        $this->assertInstanceOf('Asatru\View\CustomHandler', $result);
+    }
+	
+	public function testRedirect()
+    {
+        $result = redirect('/');
+        $this->assertInstanceOf('Asatru\View\RedirectHandler', $result);
+    }
+	
+	public function testBack()
+    {
+		$_SERVER['REQUEST_URI'] = '/';
+        $result = back();
+        $this->assertInstanceOf('Asatru\View\RedirectHandler', $result);
+    }
+	
 	public function testEnv()
 	{
 		env_parse(__DIR__ . '/../../../../.env');

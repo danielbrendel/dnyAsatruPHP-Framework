@@ -518,7 +518,7 @@ namespace Asatru\View {
 		/**
 		 * Construct with content
 		 * 
-		 * @param array $content The content to be handled as XML
+		 * @param array $content The content to be handled as CSV
 		 * @param array $header The header if required
 		 * @return void
 		 */

@@ -46,7 +46,7 @@ To create a new project run the command:
 + composer create-project danielbrendel/asatru-php
 
 ## Documentation
-The source documentation file is located in the /doc directory. It is a LibreOffice Writer document.
+The source documentation file is located in the /doc directory.
 
 ## Testing
 In order to run the framework tests you have to place the project folder so as
