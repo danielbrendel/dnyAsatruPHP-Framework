@@ -12,8 +12,6 @@
     Released under the MIT license
 */
 
-use Carbon\Carbon;
-
 namespace {
     /**
      * Actual flash message item
