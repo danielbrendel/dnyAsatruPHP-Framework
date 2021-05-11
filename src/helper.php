@@ -133,31 +133,34 @@ namespace {
     /**
      * Return root path of project
      * 
+     * @param string $path Additional path
      * @return string
      */
-    function base_path()
+    function base_path($path = '')
     {
-        return str_replace('\\', '/', dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+        return str_replace('\\', '/', dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . $path;
     }
 
     /**
      * Return path to app directory
      * 
+     * @param string $path Additional path
      * @return string
      */
-    function app_path()
+    function app_path($path = '')
     {
-        return base_path() . '/app';
+        return base_path() . '/app' . $path;
     }
 
     /**
-     * Return path to resource directory
+     * Return path to public directory
      * 
+     * @param string $path Additional path
      * @return string
      */
-    function resource_path()
+    function public_path($path = '')
     {
-        return base_path() . '/app/resources';
+        return base_path() . '/public' . $path;
     }
 
     /**
@@ -173,43 +176,27 @@ namespace {
     /**
      * Make a full URL to the given path
      * 
-     * @param string $path The destination path
+     * @param string $to An additional destination
      * @return string The full URL
      */
-    function url($path)
+    function url($to = '')
     {
-        return base_url() . $path;
-    }
-
-    /**
-     * Return URL to app directory
-     * 
-     * @return string
-     */
-    function app_url()
-    {
-        return base_url() . '/app';
-    }
-
-    /**
-     * Return URL to resources directory
-     * 
-     * @return string
-     */
-    function resource_url()
-    {
-        return app_url() . '/resources';
+        return base_url() . $to;
     }
 
     /**
      * Return URL to asset
      * 
-     * @param string $path The path to the asset
+     * @param string $asset The path to the asset
      * @return string The full URL to the asset
      */
-    function asset($path)
+    function asset($asset = '')
     {
-        return resource_url() . $path;
+        if ((((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG']))) && (!file_exists(public_path('/' . $asset)))) {
+            throw new \Exception('Resource "' . $asset . '" not found on server.');
+        }
+
+        return url('/' . $asset);
     }
 
     /**
