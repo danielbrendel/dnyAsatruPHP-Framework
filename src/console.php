@@ -975,7 +975,7 @@ function handleInput($argv)
         $retval = 0;
         $port = isset($argv[2]) ? $argv[2] : 8000;
         echo "\033[32mLocal development server started at localhost:" . $port . "\033[39m\n";
-        system('php -S localhost:' . $port, $retval);
+        system('php -S localhost:' . $port . ' -t public/', $retval);
     } else {
         echo "\033[31mCommand " . $argv[1] . " is unknown\033[39m\n";
     }

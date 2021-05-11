@@ -239,13 +239,18 @@ namespace Asatru\View {
 				return str_replace('@endswitch', '<?php } ?>', $code);
 			} else if ($this->hasCmd($code, 'csrf')) {
 				return str_replace('@csrf', '<input type="hidden" name="csrf_token" value="' . $_SESSION['csrf_token'] . '"/>', $code);
+			} else if ($this->hasCmd($code, 'method')) {
+				$methodName = substr($code, strpos($code, '(') + 1, strpos($code, ')') - strpos($code, '(') - 1);
+				$methodName = str_replace('"', '', $methodName);
+				$methodName = str_replace('\'', '', $methodName);
+				return str_replace($code, '<input type="hidden" name="_method" value="' . trim($methodName) . '"/>', $code);
 			} else if ($this->hasCmd($code, 'comment')) {
 				return str_replace('@comment', '<?php /*', $code) . ' */ ?>';
 			} else if ($this->hasCmd($code, 'include')) {
-				$fileToInclude = substr($code, strpos($code, ' ') + 1);
+				$fileToInclude = substr($code, strpos($code, '(') + 1, strpos($code, ')') - strpos($code, '(') - 1);
 				$fileToInclude = str_replace('"', '', $fileToInclude);
 				$fileToInclude = str_replace('\'', '', $fileToInclude);
-				$cont = $this->renderCode(file_get_contents(app_path() . '/views/' . $fileToInclude));
+				$cont = $this->renderCode(file_get_contents(app_path() . '/views/' . trim($fileToInclude)));
 				return str_replace($code, $cont, $code);
 			} else if ($this->hasCmd($code, 'isset')) {
 				return str_replace('@isset', '<?php if (isset(', $code) . ')) { ?>';

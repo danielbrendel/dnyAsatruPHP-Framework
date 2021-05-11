@@ -38,6 +38,14 @@ class PHPArgs {
 				$this->args[$key] = $value;
 			}
 		}
+
+		//Acquire PHP input data
+		$inputdata = json_decode(file_get_contents('php://input'), true);
+		if ($inputdata !== null) {
+			foreach ($inputdata as $key => $value) {
+				$this->args[$key] = $value;
+			}
+		}
 	}
 	
 	/**
@@ -371,6 +379,20 @@ class ControllerHandler {
 	}
 
 	/**
+	 * Get current request method
+	 * 
+	 * @return string
+	 */
+	private function getRequestMethod()
+	{
+		if (isset($_POST['_method'])) {
+			return $_POST['_method'];
+		}
+
+		return $_SERVER['REQUEST_METHOD'];
+	}
+
+	/**
 	 * Determine whether this route matches the given URL for the given request method
 	 * 
 	 * @param string $url The current URL to be handled
@@ -383,7 +405,7 @@ class ControllerHandler {
 	private function urlMatches($url, $method, $route, $ctrlArgs)
 	{
 		if (strtolower($method) !== 'any') {
-			if (strtolower($method) !== strtolower($_SERVER['REQUEST_METHOD'])) {
+			if (strtolower($method) !== strtolower($this->getRequestMethod())) {
 				return false;
 			}
 		}

@@ -65,7 +65,8 @@ final class DotenvTest extends TestCase
         $this->assertTrue($inst->errorStr() === '');
         $this->assertTrue($inst->query('APP_NAME') === 'Asatru PHP');
         $inst->clear();
-        $this->assertTrue($inst->query('APP_NAME') === '');
+        $this->assertTrue($inst->query('APP_NAME') === null);
+        $this->assertTrue($inst->query('APP_NAME', 'fallback') === 'fallback');
     }
 
     public function testEnv()

@@ -54,9 +54,9 @@ final class HelperTest extends TestCase
         $this->assertTrue(is_dir($result));
     }
 
-    public function testResourcePath()
+    public function testPublicPath()
     {
-        $result = resource_path();
+        $result = public_path();
         $this->assertTrue(is_dir($result));
     }
 
@@ -84,30 +84,6 @@ final class HelperTest extends TestCase
         $this->assertEquals('http://localhost/testdir/path/to/resource', $result);
     }
 
-    public function testAppUrl()
-    {
-        $_SERVER['HTTPS'] = 'on';
-        $_SERVER['SERVER_NAME'] = 'localhost';
-        $_SERVER['SERVER_PORT'] = 8000;
-        $_ENV['APP_BASEDIR'] = '/testdir';
-
-        $result = app_url();
-
-        $this->assertEquals('https://localhost:8000/testdir/app', $result);
-    }
-
-    public function testResourceUrl()
-    {
-        $_SERVER['HTTPS'] = 'on';
-        $_SERVER['SERVER_NAME'] = 'localhost';
-        $_SERVER['SERVER_PORT'] = 8000;
-        $_ENV['APP_BASEDIR'] = '/testdir';
-
-        $result = resource_url();
-
-        $this->assertEquals('https://localhost:8000/testdir/app/resources', $result);
-    }
-
     public function testAsset()
     {
         $_SERVER['HTTPS'] = 'on';
@@ -115,9 +91,9 @@ final class HelperTest extends TestCase
         $_SERVER['SERVER_PORT'] = 8000;
         $_ENV['APP_BASEDIR'] = '/testdir';
 
-        $result = asset('/js/app.js');
+        $result = asset('js/app.js');
 
-        $this->assertEquals('https://localhost:8000/testdir/app/resources/js/app.js', $result);
+        $this->assertEquals('https://localhost:8000/testdir/js/app.js', $result);
     }
 
     public function testCsrfToken()
