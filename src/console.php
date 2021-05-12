@@ -851,6 +851,19 @@ function createTest($name)
 }
 
 /**
+ * Validate if database feature is enabled
+ * 
+ * @return void
+ */
+function validate_database_enabled()
+{
+    if ((!isset($_ENV['DB_ENABLE'])) || (!$_ENV['DB_ENABLE'])) {
+        echo "\033[31mDatabase feature is disabled in environment config\033[39m\n";
+        exit(1);
+    }
+}
+
+/**
  * Process the input of the console
  * 
  * @param array $argv The arguments of the execution
@@ -960,14 +973,17 @@ function handleInput($argv)
             echo "\033[32mThe test case has been created!\033[39m\n";
         }
     } else if ($argv[1] === 'migrate:fresh') {
+        validate_database_enabled();
         migrate_fresh();
 
         echo "\033[32mThe database has been freshly migrated!\033[39m\n";
     } else if ($argv[1] === 'migrate:list') {
+        validate_database_enabled();
         migrate_list();
 
         echo "\033[32mThe database has been listly migrated!\033[39m\n";
     } else if ($argv[1] === 'migrate:drop') {
+        validate_database_enabled();
         migrate_drop();
 
         echo "\033[32mThe database has been cleared!\033[39m\n";
