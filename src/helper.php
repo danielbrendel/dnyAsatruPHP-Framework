@@ -225,16 +225,23 @@ namespace {
      * View creation helper function
      * 
      * @param string $layout The layout file name
-     * @param array $yields An array containing yield name and replacer file for each entry
+     * @param array $yields An array either containing items of yields or a single yield entry
      * @param array $vars optional Array containing variables passed to the view
      * @return Asatru\View\ViewHandler
      */
-    function view($layout, $yields, $vars = array())
+    function view($layout, array $yields, $vars = array())
     {
         $viewHandler = new Asatru\View\ViewHandler();
 
         $viewHandler->setLayout($layout);
         $viewHandler->setVars($vars);
+
+        if (count($yields) === 2) {
+            if ((is_string($yields[0])) && (is_string($yields[1]))) {
+                $viewHandler->setYield($yields[0], $yields[1]);
+                return $viewHandler;
+            }
+        }
 
         foreach ($yields as $yield) {
             $viewHandler->setYield($yield[0], $yield[1]);
