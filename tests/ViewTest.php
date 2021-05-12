@@ -89,9 +89,11 @@ final class ViewTest extends TestCase
         $_SESSION['csrf_token'] = 'TestCase';
         $result = $method->invokeArgs($vh, array('@csrf'));
         $this->assertEquals('<input type="hidden" name="csrf_token" value="' . $_SESSION['csrf_token'] . '"/>', $result);
+		$result = $method->invokeArgs($vh, array('@method("PATCH")'));
+		$this->assertEquals('<input type="hidden" name="_method" value="PATCH"/>', $result);
         $result = $method->invokeArgs($vh, array('@comment From a TestCase'));
         $this->assertEquals('<?php /* From a TestCase */ ?>', $result);
-        $result = $method->invokeArgs($vh, array('@include "index.php"'));
+        $result = $method->invokeArgs($vh, array('@include("index.php")'));
         $this->assertTrue(strpos($result, '<div class="outer">') !== false);
         $this->assertTrue(strpos($result, '<?= htmlspecialchars( __(\'app.welcome\') , ENT_QUOTES | ENT_HTML401); ?>') !== false);
         $result = $method->invokeArgs($vh, array('@isset $a'));

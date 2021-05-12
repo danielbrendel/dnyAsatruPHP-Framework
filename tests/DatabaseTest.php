@@ -61,7 +61,7 @@ final class DatabaseTest extends TestCase
         $this->assertTrue($result !== false);
 
         $result = TestModel::where('text', '=', 'text')->where('test', '=', 'test')->first();
-        $this->assertEquals(1, $result->get(0)->get('id'));
+        $this->assertEquals(1, $result->get('id'));
     }
 
     /**
@@ -118,7 +118,7 @@ final class DatabaseTest extends TestCase
         $this->assertTrue($result !== false);
 
         $result = TestModel::where('id', '=', 1)->first();
-        $this->assertTrue($result->get(0)->get('text') === 'New text');
+        $this->assertTrue($result->get('text') === 'New text');
     }
 
     /**

@@ -40,10 +40,14 @@ This product is a lightweight PHP framework which can be used to create your own
 
 ## Installation
 The installation of this framework is just one composer command away:
-+ composer require danielbrendel/asatru-php-framework
+```
+composer require danielbrendel/asatru-php-framework
+```
 
 To create a new project run the command:
-+ composer create-project danielbrendel/asatru-php
+```
+composer create-project danielbrendel/asatru-php
+```
 
 ## Documentation
 The source documentation file is located in the /doc directory.
