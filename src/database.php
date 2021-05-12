@@ -523,7 +523,7 @@ namespace Asatru\Database {
             self::$aggregate = '';
             self::$params = array();
 
-            return $result;
+            return $result->get(0);
         }
 
         /**
