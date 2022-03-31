@@ -35,6 +35,8 @@ This product is a lightweight PHP framework which can be used to create your own
 + CLI interface
 + mail() wrapper
 + SMTP mailing
++ Html helper
++ Form helper
 + Carbon support
 + npm/webpack support
 

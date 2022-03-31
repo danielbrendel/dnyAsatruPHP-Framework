@@ -12,6 +12,9 @@
     Released under the MIT license
 */
 
+//Set starting time
+define('ASATRU_START', microtime(true));
+
 //Set application root directory path
 define('ASATRU_APP_ROOT', __DIR__ . '/../../../..');
 
@@ -35,6 +38,12 @@ require_once 'autoload.php';
 
 //Require helpers
 require_once 'helper.php';
+
+//Require Html helper
+require_once 'html.php';
+
+//Require form helper
+require_once 'forms.php';
 
 //Parse .env file if it exists
 if (file_exists(ASATRU_APP_ROOT . '/.env')) {

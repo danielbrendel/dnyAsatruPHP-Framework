@@ -347,6 +347,18 @@ namespace Asatru\View {
 						} else { //The mustache syntax shall be ignored
 							$elem = substr($elem, 0, $i - 1) . substr($elem, $i);
 						}
+					} else if (($elem[$i] === '{') && (($i + 1 < strlen($elem)) && ($elem[$i + 1] === '!')) && (($i + 2 < strlen($elem)) && ($elem[$i + 2] === '!'))) { //Check for non converting indicator
+						$endOfSeq = strlen($elem);
+						
+						//Find end of sequence
+						for ($j = $i + 3; $j < strlen($elem); $j++) {
+							if (($elem[$j] === '!') && (($j + 1 < strlen($elem)) && ($elem[$j + 1] === '!')) && (($j + 2 < strlen($elem)) && ($elem[$j + 2] === '}'))) {
+								$endOfSeq = $j;
+								break;
+							}
+						}
+
+						$elem = substr($elem, 0, $i) . '<?= ' . substr($elem, $i + 3, $endOfSeq - $i - 3) . ' ?>' . substr($elem, $endOfSeq + 3);
 					}
 				}
 
