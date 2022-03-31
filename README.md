@@ -1,6 +1,6 @@
 # Asatru PHP
 
-(C) 2019 - 2021 by Daniel Brendel
+(C) 2019 - 2022 by Daniel Brendel
 
 **Version**: 1.0\
 **Codename**: dnyAsatruPHP\
