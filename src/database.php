@@ -37,7 +37,7 @@ namespace Asatru\Database {
             $this->handle = $con;
             
             if ($_ENV['DB_DRIVER'] === 'mysql') {
-                $this->handle->exec('USE ' . $_ENV['DB_DATABASE'] . ';');
+                $this->handle->exec('USE `' . $_ENV['DB_DATABASE'] . '`;');
             }
 
             $error = $this->handle->errorInfo();
