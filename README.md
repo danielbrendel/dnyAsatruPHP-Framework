@@ -27,6 +27,7 @@ This product is a lightweight PHP framework which can be used to create your own
 + Validators
 + Helpers
 + Autoloading
++ Config management
 + Security
 + Flash messages
 + Authentication

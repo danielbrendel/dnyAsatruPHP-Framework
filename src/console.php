@@ -768,6 +768,9 @@ function createTest($name)
         
         //Require autoload component
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/autoload.php';
+
+        //Require config component
+        require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/config.php';
         
         //Require helpers
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/helper.php';

@@ -36,6 +36,9 @@ require_once 'dotenv.php';
 //Require autoload component
 require_once 'autoload.php';
 
+//Require config component
+require_once 'config.php';
+
 //Require helpers
 require_once 'helper.php';
 
