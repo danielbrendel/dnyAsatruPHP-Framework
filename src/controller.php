@@ -52,11 +52,12 @@ class PHPArgs {
 	 * Query a variable
 	 * 
 	 * @param string $name The name of the variable
+	 * @param mixed $fallback The fallback value
 	 * @return mixed The value of the variable
 	 */
-	public function query($name)
+	public function query($name, $fallback = null)
 	{
-		return (isset($this->args[$name])) ? $this->args[$name]: '';
+		return (isset($this->args[$name])) ? $this->args[$name] : $fallback;
 	}
 	
 	/**
@@ -113,11 +114,12 @@ class ControllerArg {
 	 * Query URL specific argument
 	 * 
 	 * @param mixed $id The identifier of the argument
+	 * @param mixed $fallback The fallback data
 	 * @return string The value of the argument variable
 	 */
-	public function arg($id)
+	public function arg($id, $fallback = null)
 	{
-		return isset($this->args[$id]) ? $this->args[$id] : '';
+		return isset($this->args[$id]) ? $this->args[$id] : $fallback;
 	}
 	
 	/**
