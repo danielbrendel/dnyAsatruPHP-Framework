@@ -179,6 +179,26 @@ namespace Asatru\Database {
         }
 
         /**
+         * Get first element
+         * 
+         * @return mixed
+         */
+        public function first()
+        {
+            return (isset($this->items[0])) ? $this->items[0] : null;
+        }
+
+        /**
+         * Get last element
+         * 
+         * @return mixed
+         */
+        public function last()
+        {
+            return (isset($this->items[count($this->items)-1])) ? $this->items[count($this->items)-1] : null;
+        }
+
+        /**
          * Iterate through entries and inform a callback function
          * 
          * @param closure $callback The function to be called for each item

@@ -796,7 +796,6 @@ function createTest($name)
         \$_ENV['APP_DEBUG'] = true;
         error_reporting(E_ALL);
         
-        
         //Check if we shall create/continue a session
         if ((isset(\$_ENV['APP_SESSION'])) && (\$_ENV['APP_SESSION'])) {
             if (!session_start()) {
@@ -814,7 +813,6 @@ function createTest($name)
         
         //Require localization
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/locale.php';
-        
         
         //Require database management
         require_once __DIR__ . '/../../vendor/danielbrendel/asatru-php-framework/src/database.php';
