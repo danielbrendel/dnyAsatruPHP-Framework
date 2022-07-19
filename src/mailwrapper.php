@@ -51,6 +51,19 @@ class Mail {
     }
 
     /**
+     * Set message content
+     * 
+     * @param string $content The message content
+     * @return Asatru\Mailwrapper\Mail
+     */
+    public function setMessage($content)
+    {
+        $this->message = $content;
+
+        return $this;
+    }
+
+    /**
      * Render the view of the E-Mail
      * 
      * @param string $layout The layout file
@@ -60,15 +73,7 @@ class Mail {
      */
     public function setView($layout, array $yields, array $data = [])
     {
-        $view = new \Asatru\View\ViewHandler();
-        $view->setVars($data);
-        $view->setLayout($layout);
-        
-        foreach ($yields as $yield) {
-            $view->setYield($yield[0], $yield[1]);
-        }
-
-        $this->message = $view->out(true);
+        $this->message = view($layout, $yields, $data)->out(true);
 
         return $this;
     }

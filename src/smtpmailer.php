@@ -42,7 +42,7 @@ class SMTPMailer
      * Set recipient of the E-Mail
      * 
      * @param string $value The recipients E-Mail address
-     * @return Asatru\Mailwrapper\Mail
+     * @return Asatru\SMTPMailer\SMTPMailer
      */
     public function setRecipient($value)
     {
@@ -55,11 +55,24 @@ class SMTPMailer
      * Set subject of the E-Mail
      * 
      * @param string $value The subject
-     * @return Asatru\Mailwrapper\Mail
+     * @return Asatru\SMTPMailer\SMTPMailer
      */
     public function setSubject($value)
     {
         $this->subject = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set message content
+     * 
+     * @param string $content The message content
+     * @return Asatru\SMTPMailer\SMTPMailer
+     */
+    public function setMessage($content)
+    {
+        $this->message = $content;
 
         return $this;
     }
@@ -70,19 +83,11 @@ class SMTPMailer
      * @param string $layout The layout file
      * @param array $yields The used yields
      * @param array $data optional The variables if any
-     * @return Asatru\Mailwrapper\Mail
+     * @return Asatru\SMTPMailer\SMTPMailer
      */
     public function setView($layout, array $yields, array $data = [])
     {
-        $view = new \Asatru\View\ViewHandler();
-        $view->setVars($data);
-        $view->setLayout($layout);
-        
-        foreach ($yields as $yield) {
-            $view->setYield($yield[0], $yield[1]);
-        }
-
-        $this->message = $view->out(true);
+        $this->message = view($layout, $yields, $data)->out(true);
 
         return $this;
     }
