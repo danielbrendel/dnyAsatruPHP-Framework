@@ -120,8 +120,9 @@ namespace Asatru\Database {
     /**
      * This component represents a database query result collection
      */
-    class Collection {
+    class Collection implements \Iterator, \Countable {
         private $items = array();
+        private $position = 0;
 
         /**
          * Create object from array
@@ -131,6 +132,7 @@ namespace Asatru\Database {
          */
         public function __construct($arr)
         {
+            $this->position = 0;
             $this->createFromArray($arr);
         }
 
@@ -193,6 +195,56 @@ namespace Asatru\Database {
                 }
             }
         }
+
+        /**
+         * Indicate validity of item index
+         * 
+         * @return bool
+         */
+        public function valid()
+        {
+            return isset($this->items[$this->position]);
+        }
+
+        /**
+         * Get current iterated element
+         * 
+         * @return mixed
+         */
+        public function current()
+        {
+            return $this->items[$this->position];
+        }
+
+        /**
+         * Get key index value
+         * 
+         * @return int
+         */
+        public function key()
+        {
+            return $this->position;
+        }
+        
+        /**
+         * Go to next entry
+         * 
+         * @return void
+         */
+        public function next()
+        {
+            ++$this->position;
+        }
+        
+        /**
+         * Reset index pointer
+         * 
+         * @return void
+         */
+        public function rewind()
+        {
+            $this->position = 0;
+        } 
     }
 
     /**
