@@ -182,7 +182,9 @@ namespace {
      */
     function url($to = '')
     {
-        return base_url(false) . $to;
+        $port = ($_SERVER['SERVER_PORT'] == 8000) ? true : false;
+
+        return base_url($port) . $to;
     }
 
     /**

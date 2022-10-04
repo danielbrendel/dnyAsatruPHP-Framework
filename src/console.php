@@ -889,6 +889,7 @@ function handleInput($argv)
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
         echo "+ make:validator <name> <ident>: Creates a new validator\n";
+        echo "+ make:event <name> <handler> Creates a new event handler\n";
         echo "+ make:auth: Creates new authentication model and migration\n";
         echo "+ make:test <name>: Creates a new test case\n";
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
