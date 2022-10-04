@@ -166,11 +166,12 @@ namespace {
     /**
      * Return the base URL
      * 
+     * @param $port
      * @return string
      */
-    function base_url()
+    function base_url($port = false)
     {
-        return (((isset($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] != 'off')) ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . (($_SERVER['SERVER_PORT'] != 80) ? ':' . $_SERVER['SERVER_PORT'] : '') . $_ENV['APP_BASEDIR'];
+        return (((isset($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] != 'off')) ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . (($port !== false) ? ':' . $_SERVER['SERVER_PORT'] : '') . $_ENV['APP_BASEDIR'];
     }
 
     /**
@@ -181,7 +182,7 @@ namespace {
      */
     function url($to = '')
     {
-        return base_url() . $to;
+        return base_url(false) . $to;
     }
 
     /**
