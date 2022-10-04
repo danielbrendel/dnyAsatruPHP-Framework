@@ -352,4 +352,18 @@ namespace {
     {
         return env_get($item, $fallback);
     }
+
+    /**
+     * Helper for controllers abort method
+     * 
+     * @param $code
+     * @param $ctrl
+     * @return mixed
+     */
+    function abort($code, $ctrl = null)
+    {
+        global $controller;
+
+        return $controller->abort($code, $ctrl);
+    }
 }

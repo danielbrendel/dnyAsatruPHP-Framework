@@ -455,6 +455,22 @@ class ControllerHandler {
 
 		return null;
 	}
+
+	/**
+	 * Get server code handler if exists
+	 * 
+	 * @return array|null The server code handler item of the routes configuration if found, otherwise null
+	 */
+	private function getServerCodeHandler($code)
+	{
+		for ($i = 0; $i < count($this->routes); $i++) {
+			if ($this->routes[$i][0] === '$' . $code) {
+				return $this->routes[$i];
+			}
+		}
+
+		return null;
+	}
 	
 	/**
 	 * Parse the URL and call the associated controller
@@ -550,6 +566,49 @@ class ControllerHandler {
 				throw new \Exception('Controller handler ' . $items[1]. ' not found');
 			}
 		}
+		return $result;
+	}
+
+	/**
+	 * Abort with server response code
+	 * 
+	 * @param $code The response code to send
+	 * @param $ctrl An instance of ControllerArg
+	 * @return mixed|string The result of the controller handler or a default string
+	 * @throws \Exception
+	 */
+	public function abort($code, $ctrl = null)
+	{
+		header("HTTP/1.0 {$code}");
+		$codeHandler = $this->getServerCodeHandler($code);
+		$result = 'Server response code: ' . $code;
+		if ($codeHandler !== null) {
+			$items = explode('@', $codeHandler[2]);
+			if (count($items) != 2) {
+				throw new \Exception('Erroneous handler specified: ' . $codeHandler[2]);
+			}
+			if (file_exists(ASATRU_APP_ROOT . '/app/controller/_base.php')) {
+				require_once ASATRU_APP_ROOT . '/app/controller/_base.php';
+				
+				if ($_ENV['APP_DEBUG']) {
+					try {
+						$checkBaseClass = new \BaseController();
+					} catch (\Exception $e) {
+						throw $e;
+					}
+				}
+			}
+			require_once ASATRU_APP_ROOT . '/app/controller/' . $items[0] . '.php';
+			require_once "view.php";
+			$className = ucfirst($items[0]) . 'Controller';
+			$obj = new $className();
+			if (method_exists($obj, $items[1])) {
+				$result = call_user_func(array($obj, $items[1]), $ctrl);
+			} else {
+				throw new \Exception('Controller handler ' . $items[1]. ' not found');
+			}
+		}
+
 		return $result;
 	}
 }
