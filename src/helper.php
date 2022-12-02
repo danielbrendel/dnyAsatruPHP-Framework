@@ -191,15 +191,25 @@ namespace {
      * Return URL to asset
      * 
      * @param string $asset The path to the asset
+     * @param bool $mt If the file modification time shall be included
      * @return string The full URL to the asset
      */
-    function asset($asset = '')
+    function asset($asset = '', $mt = false)
     {
         if ((((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG']))) && (!file_exists(public_path('/' . $asset)))) {
             throw new \Exception('Resource "' . $asset . '" not found on server.');
         }
 
-        return url('/' . $asset);
+        $param = '';
+
+        if ($mt) {
+            $fmtime = filemtime(public_path('/' . $asset));
+            if ($fmtime !== false) {
+                $param = '?v=' . $fmtime;
+            }
+        }
+
+        return url('/' . $asset . $param);
     }
 
     /**
