@@ -895,7 +895,7 @@ function handleInput($argv)
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
         echo "+ migrate:list: Creates only all new created migrations\n";
         echo "+ migrate:drop: Drops all migrations\n";
-        echo "+ serve <port>: Spawns a development server. If port is not provided it uses port 8000\n";
+        echo "+ serve <port>: Spawns a development server. If port is not provided it uses port " . DEVSERV_DEFAULT_PORT . "\n";
     } else if ($argv[1] === 'make:model') {
         if (!isset($argv[2]) || (!isset($argv[3]))) {
             echo "\033[31mYou must specify the model name and the associated table name\033[39m\n";
@@ -997,7 +997,7 @@ function handleInput($argv)
         echo "\033[32mThe database has been cleared!\033[39m\n";
     } else if ($argv[1] === 'serve') {
         $retval = 0;
-        $port = isset($argv[2]) ? $argv[2] : 8000;
+        $port = isset($argv[2]) ? $argv[2] : DEVSERV_DEFAULT_PORT;
         echo "\033[32mLocal development server started at localhost:" . $port . "\033[39m\n";
         system('php -S localhost:' . $port . ' -t public/', $retval);
     } else {

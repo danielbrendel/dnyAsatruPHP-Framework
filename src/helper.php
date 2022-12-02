@@ -182,7 +182,7 @@ namespace {
      */
     function url($to = '')
     {
-        $port = ($_SERVER['SERVER_PORT'] == 8000) ? true : false;
+        $port = (($_SERVER['SERVER_PORT'] != HTTP_DEFAULT_PORT) && ($_SERVER['SERVER_PORT'] != HTTPS_DEFAULT_PORT)) ? true : false;
 
         return base_url($port) . $to;
     }
