@@ -158,7 +158,7 @@ namespace Asatru\Database {
          * 
          * @return int
          */
-        public function count()
+        public function count(): int
         {
             return count($this->items);
         }
@@ -221,7 +221,7 @@ namespace Asatru\Database {
          * 
          * @return bool
          */
-        public function valid()
+        public function valid(): bool
         {
             return isset($this->items[$this->position]);
         }
@@ -231,7 +231,7 @@ namespace Asatru\Database {
          * 
          * @return mixed
          */
-        public function current()
+        public function current(): mixed
         {
             return $this->items[$this->position];
         }
@@ -241,7 +241,7 @@ namespace Asatru\Database {
          * 
          * @return int
          */
-        public function key()
+        public function key(): mixed
         {
             return $this->position;
         }
@@ -251,7 +251,7 @@ namespace Asatru\Database {
          * 
          * @return void
          */
-        public function next()
+        public function next(): void
         {
             ++$this->position;
         }
@@ -261,10 +261,10 @@ namespace Asatru\Database {
          * 
          * @return void
          */
-        public function rewind()
+        public function rewind(): void
         {
             $this->position = 0;
-        } 
+        }
     }
 
     /**
