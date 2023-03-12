@@ -118,6 +118,9 @@ class SMTPMailer
             }
             $mail->Port       = env_get('SMTP_PORT');
 
+            //Encoding
+            $mail->CharSet = PHPMailer::CHARSET_UTF8;
+
             //Recipients
             $mail->setFrom($this->fromAddress, $this->fromName);
             $mail->addAddress($this->to);
