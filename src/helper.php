@@ -367,6 +367,22 @@ namespace {
     }
 
     /**
+     * Check if env equals the given value or exists at all
+     * 
+     * @param string $item
+     * @param mixed $value
+     * @return bool
+     */
+    function envck($item, $value = null)
+    {
+        if ($value !== null) {
+            return env_get($item) === $value;
+        } else {
+            return env_exists($item);
+        }
+    }
+
+    /**
      * Helper for controllers abort method
      * 
      * @param $code

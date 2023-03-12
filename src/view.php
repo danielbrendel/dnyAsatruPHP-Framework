@@ -258,6 +258,22 @@ namespace Asatru\View {
 				return str_replace('@isnotset', '<?php if (!isset(', $code) . ')) { ?>';
 			} else if ($this->hasCmd($code, 'endset')) {
 				return str_replace('@endset', '<?php } ?>', $code);
+			} else if ($this->hasCmd($code, 'empty')) {
+				return str_replace('@empty', '<?php if (empty(', $code) . ')) { ?>';
+			} else if ($this->hasCmd($code, 'endempty')) {
+				return str_replace('@endempty', '<?php } ?>', $code);
+			} else if ($this->hasCmd($code, 'notempty')) {
+				return str_replace('@notempty', '<?php if (!empty(', $code) . ')) { ?>';
+			} else if ($this->hasCmd($code, 'endnotempty')) {
+				return str_replace('@endnotempty', '<?php } ?>', $code);
+			} else if ($this->hasCmd($code, 'debug')) {
+				return str_replace('@debug', '<?php if (env(\'APP_DEBUG\')) { ?>', $code);
+			} else if ($this->hasCmd($code, 'enddebug')) {
+				return str_replace('@enddebug', '<?php } ?>', $code);
+			} else if ($this->hasCmd($code, 'env')) {
+				return str_replace('@env', '<?php if (envck', $code) . ') { ?>';
+			} else if ($this->hasCmd($code, 'endenv')) {
+				return str_replace('@endenv', '<?php } ?>', $code);
 			} else if ($this->hasCmd($code, 'end')) {
 				return str_replace('@end', '<?php } ?>', $code);
 			}

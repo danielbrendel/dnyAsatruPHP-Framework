@@ -208,6 +208,23 @@ namespace Asatru\Dotenv {
         }
 
         /**
+         * Check if item exists
+         * 
+         * @param $item
+         * @return bool
+         */
+        public function exists($item)
+        {
+            foreach ($this->vars as $var) {
+                if ($var['varname'] == $item) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
+        /**
          * Return whether there is an error
          * 
          * @return boolean
@@ -251,6 +268,17 @@ namespace {
     function env_get($item, $fallback = null)
     {
         return Asatru\Dotenv\DotEnvParser::instance()->query($item, $fallback);
+    }
+
+    /**
+     * Check if item exists
+     * 
+     * @param $item
+     * @return bool
+     */
+    function env_exists($item)
+    {
+        return Asatru\Dotenv\DotEnvParser::instance()->exists($item);
     }
 
     /**
