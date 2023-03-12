@@ -633,6 +633,8 @@ function createCache()
 					foreach (\$updData as \$key => \$val) {
 						Cache::update(\$key, \$val);
 					}
+
+					Cache::where('id', '=', \$data->get('id'));
 					
 					Cache::go();
 					
