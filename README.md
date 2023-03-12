@@ -62,7 +62,7 @@ that the tests use the app skeleton for several input sources and output. Also b
 sure that a database (for testing it is MySQL) is running and adjust the settings.
 
 ## Requirements
-+ PHP >= 7.4.6
++ PHP ^8.0
 + PHP PDO extension
 + MySQL when database needed
 
