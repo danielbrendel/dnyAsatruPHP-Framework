@@ -17,6 +17,7 @@ namespace {
         //Handle all exceptions here
 
         if ((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG'] === true)) {
+            ob_clean();
             $exception = $e;
             require_once ASATRU_APP_ROOT . '/app/views/error/exception_debug.php';
             unset($exception);
