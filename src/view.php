@@ -274,6 +274,10 @@ namespace Asatru\View {
 				return str_replace('@env', '<?php if (envck', $code) . ') { ?>';
 			} else if ($this->hasCmd($code, 'endenv')) {
 				return str_replace('@endenv', '<?php } ?>', $code);
+			} else if ($this->hasCmd($code, 'php')) {
+				return str_replace('@php', '<?php ', $code);
+			} else if ($this->hasCmd($code, 'endphp')) {
+				return str_replace('@endphp', ' ?>', $code);
 			} else if ($this->hasCmd($code, 'end')) {
 				return str_replace('@end', '<?php } ?>', $code);
 			}
