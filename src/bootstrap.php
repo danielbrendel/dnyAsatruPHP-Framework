@@ -100,6 +100,11 @@ require_once 'mailwrapper.php';
 //Require SMTP mail handler
 require_once 'smtpmailer.php';
 
+//Clear old POST data if approbriate
+if (!isset($_SESSION['asatru_keep_old_post_data'])) {
+    Asatru\Controller\OldPostData::clear();
+}
+
 //Create a new controller instance and handle the current URL
 $controller = new Asatru\Controller\ControllerHandler(ASATRU_APP_ROOT . '/app/config/routes.php');
 $viewComp = $controller->parse($_SERVER['REQUEST_URI']);
@@ -107,6 +112,11 @@ HandleView($viewComp);
 
 //Clear flash messages
 FlashMessage::clearAll();
+
+//Remove flag if set
+if (isset($_SESSION['asatru_keep_old_post_data'])) {
+    unset($_SESSION['asatru_keep_old_post_data']);
+}
 
 //If app is in debug mode then force storage of log
 if ($_ENV['APP_DEBUG']) {

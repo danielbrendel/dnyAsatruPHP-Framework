@@ -341,6 +341,52 @@ class PostValidator {
 }
 
 /**
+ * This components handles temporary POST data storage
+ */
+class OldPostData {
+	/**
+	 * Store POST data in session
+	 * 
+	 * @return void
+	 */
+	public static function store()
+	{
+		if ((isset($_POST)) && (is_array($_POST))) {
+			$_SESSION['asatru_post'] = array();
+			foreach ($_POST as $key => $value) {
+				$_SESSION['asatru_post'][$key] = $value;
+			}
+		}
+	}
+
+	/**
+	 * Store POST data if currently handling a POST route
+	 * 
+	 * @return void
+	 */
+	public static function handle()
+	{
+		if ((isset($_POST)) && (is_array($_POST))) {
+			if (!isset($_SESSION['asatru_post'])) {
+				static::store();
+			}
+		}
+	}
+
+	/**
+	 * Clear session POST data
+	 * 
+	 * @return void
+	 */
+	public static function clear()
+	{
+		if (isset($_SESSION['asatru_post'])) {
+			unset($_SESSION['asatru_post']);
+		}
+	}
+}
+
+/**
  * This components represents a base controller
  */
 abstract class Controller {
@@ -514,6 +560,10 @@ class ControllerHandler {
 				
 				require_once ASATRU_APP_ROOT . '/app/controller/' . $items[0] . '.php';
 				require_once "view.php";
+
+				if (strtolower($this->getRequestMethod()) !== 'get') {
+					OldPostData::handle();
+				}
 				
 				$className = ucfirst($items[0]) . 'Controller';
 				$obj = new $className();
@@ -528,6 +578,8 @@ class ControllerHandler {
 					if (method_exists($obj, 'postDispatch')) {
 						call_user_func(array($obj, 'postDispatch'));
 					}
+
+					$_SESSION['asatru_last_url'] = $_SERVER['REQUEST_URI'];
 				} else {
 					throw new \Exception('Controller handler ' . $items[1]. ' not found');
 				}

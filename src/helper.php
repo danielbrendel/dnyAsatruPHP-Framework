@@ -340,6 +340,12 @@ namespace {
      */
 	function back()
 	{
+        $_SESSION['asatru_keep_old_post_data'] = true; 
+
+        if (isset($_SESSION['asatru_last_url'])) {
+            return redirect($_SESSION['asatru_last_url']);
+        }
+
 		return redirect($_SERVER['REQUEST_URI']);
 	}
 	
@@ -394,5 +400,20 @@ namespace {
         global $controller;
 
         return $controller->abort($code, $ctrl);
+    }
+
+    /**
+     * Retrieve old POST data
+     * 
+     * @param $key
+     * @return mixed
+     */
+    function old($key)
+    {
+        if ((isset($_SESSION['asatru_post'])) && (isset($_SESSION['asatru_post'][$key]))) {
+            return $_SESSION['asatru_post'][$key];
+        }
+
+        return '';
     }
 }
