@@ -34,11 +34,16 @@ namespace Asatru\Config {
          * Query config data
          * 
          * @param string $config The relative path to the config file
+         * @param bool $as_obj If config array shall be returned as object
          * @return array
          */
-        public function query($config)
+        public function query($config, $as_obj = true)
         {
             $content = require($this->path . '/' . $config . '.php');
+
+            if ((is_array($content)) && ($as_obj === true)) {
+                return (object)$content;
+            }
 
             return $content;
         }
@@ -51,12 +56,13 @@ namespace {
     /**
      * Query data of a config file
      * @param string $name The name of the config file
+     * @param bool $as_obj If config array shall be returned as object
      * @return array
      */
-    function config($name)
+    function config($name, $as_obj = true)
     {
         global $objConfigManager;
 
-        return $objConfigManager->query($name);
+        return $objConfigManager->query($name, $as_obj);
     }
 }
