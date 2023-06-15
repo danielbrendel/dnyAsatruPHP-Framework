@@ -416,4 +416,29 @@ namespace {
 
         return '';
     }
+
+    /**
+     * Create a valid slug string
+     * 
+     * @param $content The source string to create the slug from
+     * @param $delimiter Optional to specify a delimiter
+     * @return mixed
+     */
+    function slug($content, $delimiter = '-')
+    {
+        $rules = <<<RULES
+            :: Any-Latin;
+            :: de-ASCII;
+            :: NFD;
+            :: [:Nonspacing Mark:] Remove;
+            :: NFC;
+            :: [^-[:^Punctuation:]] Remove;
+            :: Lower();
+            [:^L:] { [-] > ;
+            [-] } [:^L:] > ;
+            [-[:Separator:]]+ > '$delimiter';
+        RULES;
+
+        return Transliterator::createFromRules($rules)->transliterate(trim($content));
+    }
 }
