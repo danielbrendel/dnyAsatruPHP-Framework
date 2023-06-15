@@ -39,8 +39,8 @@ class Autoloader {
     public function load()
     {
         foreach ($this->data as $item) {
-            if (file_exists(__DIR__ . '/../../app' . $item)) {
-                include_once __DIR__ . '/../../app' . $item;
+            if (file_exists(ASATRU_APP_ROOT . '/app' . $item)) {
+                include_once ASATRU_APP_ROOT . '/app' . $item;
             }
         }
     }
