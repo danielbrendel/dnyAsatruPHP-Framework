@@ -20,6 +20,16 @@ namespace Asatru\Database {
         private $handle = null;
         private $command = null;
         private $name = null;
+        private $column_base = null;
+        private $column_nullable = false;
+        private $column_default = null;
+        private $column_auto_increment = false;
+        private $column_primary_key = false;
+        private $column_unsigned = false;
+        private $column_collation = null;
+        private $column_charset = null;
+        private $column_comment = null;
+        private $column_after = null;
 
         /**
          * Initialize table creation
@@ -70,6 +80,266 @@ namespace Asatru\Database {
         public function append($column)
         {
             $this->handle->exec('ALTER TABLE ' . $this->name . ' ADD ' . $column . ';');
+        }
+
+        /**
+         * Start creating a new column
+         * 
+         * @param $name The name of the column
+         * @param $type The data type of the column
+         * @param $size The data size of the column
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function column($name, $type, $size = null)
+        {
+            if ($this->column_base !== null) {
+                throw new \Exception('Starting new column while the last has not finished yet: ' . $this->column_base);
+            }
+
+            $this->column_base = $name . ' ' . $type;
+
+            if ($size !== null) {
+                $this->column_base .= '(' . $size . ')';
+            }
+
+            return $this;
+        }
+
+        /**
+         * Set columns nullable flag
+         * 
+         * @param $flag Boolean value
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function nullable($flag = true)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_nullable = $flag;
+
+            return $this;
+        }
+
+        /**
+         * Set columns default value
+         * 
+         * @param $value
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function default($value)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_default = $value;
+
+            return $this;
+        }
+
+        /**
+         * Set columns auto_increment flag
+         * 
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function auto_increment()
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_auto_increment = true;
+
+            return $this;
+        }
+
+        /**
+         * Set columns primary key flag
+         * 
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function primary_key()
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_primary_key = true;
+
+            return $this;
+        }
+
+        /**
+         * Set columns unsigned flag
+         * 
+         * @param $flag Boolean value
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function unsigned($flag = true)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_unsigned = $flag;
+
+            return $this;
+        }
+
+        /**
+         * Set columns collation expression
+         * 
+         * @param $collation
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function collation($collation)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_collation = $collation;
+
+            return $this;
+        }
+
+        /**
+         * Set columns charset expression
+         * 
+         * @param $charset
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function charset($charset)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_charset = $charset;
+
+            return $this;
+        }
+
+        /**
+         * Set columns comment expression
+         * 
+         * @param $comment
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function comment($comment)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_comment = $comment;
+
+            return $this;
+        }
+
+        /**
+         * Set a column where the current column shall be inserted after
+         * 
+         * @param $column
+         * @return Asatru\Database\Migration
+         * @throws \Exception
+         */
+        public function after($column)
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $this->column_after = $column;
+
+            return $this;
+        }
+
+        /**
+         * Commit current column creation
+         * 
+         * @return void
+         * @throws \Exception
+         */
+        public function commit()
+        {
+            if ($this->column_base === null) {
+                throw new \Exception('New column has not been started yet');
+            }
+
+            $expression = $this->column_base;
+
+            if ($this->column_charset !== null) {
+                $expression .= ' CHARACTER SET ' . $this->column_charset;
+            }
+
+            if ($this->column_collation !== null) {
+                $expression .= ' COLLATE ' . $this->column_collation;
+            }
+
+            if ($this->column_unsigned) {
+                $expression .= ' UNSIGNED';
+            }
+
+            if ($this->column_nullable) {
+                $expression .= ' NULL';
+            } else {
+                $expression .= ' NOT NULL';
+            }
+
+            if ($this->column_default !== null) {
+                $expression .= ' DEFAULT ';
+
+                if (is_string($this->column_default)) {
+                    $expression .= '`' . $this->column_default . '`';
+                } else {
+                    if (gettype($this->column_default) == 'boolean') {
+                        $expression .= ($this->column_default) ? '1' : '0';
+                    } else {
+                        $expression .= strval($this->column_default);
+                    }
+                }
+            }
+
+            if ($this->column_comment !== null) {
+                $expression .= ' COMMENT \'' . $this->column_comment . '\'';
+            }
+
+            if ($this->column_auto_increment) {
+                $expression .= ' AUTO_INCREMENT';
+            }
+
+            if ($this->column_primary_key) {
+                $expression .= ' PRIMARY KEY';
+            }
+
+            if ($this->column_after !== null) {
+                $expression .= ' AFTER ' . $this->column_after;
+            }
+            
+            $this->add($expression);
+
+            $this->column_base = null;
+            $this->column_nullable = false;
+            $this->column_default = null;
+            $this->column_auto_increment = false;
+            $this->column_primary_key = false;
+            $this->column_unsigned = false;
+            $this->column_collation = null;
+            $this->column_charset = null;
+            $this->column_comment = null;
+            $this->column_after = null;
         }
 
         /**
