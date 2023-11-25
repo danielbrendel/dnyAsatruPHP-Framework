@@ -887,6 +887,11 @@ function handleInput($argv)
         echo "+ migrate:list: Creates only all new created migrations\n";
         echo "+ migrate:drop: Drops all migrations\n";
         echo "+ serve <port>: Spawns a development server. If port is not provided it uses port " . DEVSERV_DEFAULT_PORT . "\n";
+
+        $custom_commands = get_custom_commands();
+        foreach ($custom_commands as $key => $custom_cmd) {
+            echo "+ " . $key . ": " . $custom_cmd['description'] . "\n"; 
+        }
     } else if ($argv[1] === 'make:model') {
         if (!isset($argv[2])) {
             echo "\033[31mYou must specify the model name\033[39m\n";
@@ -992,6 +997,10 @@ function handleInput($argv)
         echo "\033[32mLocal development server started at localhost:" . $port . "\033[39m\n";
         system('php -S localhost:' . $port . ' -t public/', $retval);
     } else {
-        echo "\033[31mCommand " . $argv[1] . " is unknown\033[39m\n";
+        try {
+            handle_custom_command($argv[1]);
+        } catch (\Exception $e) {
+            echo "\033[31mCommand " . $argv[1] . " is unknown\033[39m\n";
+        }
     }
 }
