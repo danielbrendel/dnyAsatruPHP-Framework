@@ -232,6 +232,13 @@ namespace Asatru\Commands {
     }
 
     /**
+     * Command interface
+     */
+    interface Command {
+        function handle($args);
+    }
+
+    /**
      * This component handles the custom commands
      */
     class CustomCommands {
