@@ -63,6 +63,16 @@ namespace Asatru\Logger {
         }
 
         /**
+         * Determine whether logging is enabled or not
+         * 
+         * @return bool
+         */
+        public function isLoggingEnabled()
+        {
+            return ((isset($_ENV['LOG_ENABLE'])) && ($_ENV['LOG_ENABLE']));
+        }
+
+        /**
          * Add new log line
          * 
          * @param int $type The log event type
@@ -71,6 +81,10 @@ namespace Asatru\Logger {
          */
         public function add($type, $line)
         {
+            if (!$this->isLoggingEnabled()) {
+                return;
+            }
+
             $item = ['type' => $type, 'text' => $line];
             array_push($this->log, $item);
         }
@@ -95,6 +109,10 @@ namespace Asatru\Logger {
          */
         public function store()
         {
+            if (!$this->isLoggingEnabled()) {
+                return;
+            }
+            
             $entireStr = '';
 
             foreach ($this->log as $item) {

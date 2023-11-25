@@ -117,7 +117,5 @@ if (isset($_SESSION['asatru_keep_old_post_data'])) {
     unset($_SESSION['asatru_keep_old_post_data']);
 }
 
-//If app is in debug mode then force storage of log
-if ($_ENV['APP_DEBUG']) {
-    storeLog();
-}
+//Attempt to store the current log
+storeLog();
