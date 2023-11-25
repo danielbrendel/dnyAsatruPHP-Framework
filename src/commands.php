@@ -301,6 +301,11 @@ namespace Asatru\Commands {
             require_once ASATRU_APP_ROOT . '/app/commands/' . $this->cmds[$name]['class'] . '.php';
 
             $cls = new $this->cmds[$name]['class'];
+
+            if (!in_array('Asatru\\Commands\\Command', class_implements($cls))) {
+                throw new \Exception('Class for command ' . $name . ' must implement the Asatru\\Commands\\Command interface');
+            }
+
             $cls->handle($objArgs);
         }
 

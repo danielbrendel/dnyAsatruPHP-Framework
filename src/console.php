@@ -292,6 +292,47 @@ function createEvent($name, $initial_handler)
 }
 
 /**
+ * Create a new command class
+ * 
+ * @param string $name The class name
+ * @return boolean
+ */
+function createCommand($name)
+{
+    if (!is_dir(ASATRU_APP_ROOT . '/app/commands')) {
+        mkdir(ASATRU_APP_ROOT . '/app/commands');
+    }
+
+    $content = "<?php
+
+		/*
+			Asatru PHP - Command handler
+		*/
+
+		/**
+		 * Command handler class
+		 */
+		class $name implements Asatru\Commands\Command {
+			/**
+			 * Command handler method
+			 * 
+			 * @param \$args
+			 * @return void
+			 */
+			public function handle(\$args)
+			{
+			}
+		}
+    ";
+
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/commands/' . $name . '.php', $content)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Create authentication model and migration
  * 
  * @return boolean
@@ -880,7 +921,8 @@ function handleInput($argv)
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
         echo "+ make:validator <name> <ident>: Creates a new validator\n";
-        echo "+ make:event <name> <handler> Creates a new event handler\n";
+        echo "+ make:event <name> <handler>: Creates a new event handler\n";
+        echo "+ make:command <name>: Creates a new command\n";
         echo "+ make:auth: Creates new authentication model and migration\n";
         echo "+ make:test <name>: Creates a new test case\n";
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
@@ -957,6 +999,17 @@ function handleInput($argv)
             echo "\033[31mFailed to create the event handler\033[39m\n";
         } else {
             echo "\033[32mThe event handler has been created!\033[39m\n";
+		}
+    } else if ($argv[1] === 'make:command') {
+        if (!isset($argv[2])) {
+            echo "\033[31mYou must specify the class name of the command\033[39m\n";
+            exit(0);
+        }
+
+        if (!createCommand($argv[2])) {
+            echo "\033[31mFailed to create new command class\033[39m\n";
+        } else {
+            echo "\033[32mCommand class has been created!\033[39m\n";
 		}
     } else if ($argv[1] === 'make:auth') {
         if (!createAuth()) {
