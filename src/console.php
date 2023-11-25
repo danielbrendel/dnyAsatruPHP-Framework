@@ -5,7 +5,6 @@
     
     (C) 2019 - 2023 by Daniel Brendel
     
-    Version: 1.0
     Contact: dbrendel1988<at>gmail<dot>com
     GitHub: https://github.com/danielbrendel/
     
@@ -741,7 +740,6 @@ function createTest($name)
             
             (C) 2019 - 2023 by Daniel Brendel
             
-            Version: 1.0
             Contact: dbrendel1988<at>gmail<dot>com
             GitHub: https://github.com/danielbrendel/
             
@@ -883,7 +881,7 @@ function handleInput($argv)
     //Handle console input
 
     if ((!isset($argv[1])) || ($argv[1] === 'help')) {
-        echo "\033[33m" . ASATRU_FW_NAME . " v" . ASATRU_FW_VERSION . " by " . ASATRU_FW_AUTHOR . " (" . ASATRU_FW_CONTACT . ") - CLI interface\n\n\033[39m\n";
+        echo "\033[33m" . ASATRU_FW_NAME . " by " . ASATRU_FW_AUTHOR . " (" . ASATRU_FW_CONTACT . ") - CLI interface\n\n\033[39m\n";
         echo "The following commands are available:\n";
         echo "+ help: Displays this help text\n";
         echo "+ make:model <name> <table>: Creates a new model with migration\n";
