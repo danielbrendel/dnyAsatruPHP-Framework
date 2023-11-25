@@ -1,6 +1,5 @@
 {
     "name": "danielbrendel/asatru-php-framework",
-	"version": "1.0",
     "description": "A lightweight PHP framework",
     "type": "library",
     "license": "MIT",

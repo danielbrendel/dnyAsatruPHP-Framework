@@ -895,6 +895,38 @@ namespace Asatru\Database {
         }
 
         /**
+         * Return the prepared SQL statement
+         * 
+         * @param $withParams optional Specify if params shall be integrated
+         * @return string
+         */
+        public static function toSql($withParams = false)
+        {
+            $select = '';
+            if (self::$getcount !== false) {
+                $select = 'COUNT(*) as count';
+            } else if (self::$aggregate !== '') {
+                $select = self::$aggregate;
+            } else {
+                $select = '*';
+            }
+
+            $query = 'SELECT ' . $select . ' FROM ' . get_called_class() . ' ' . self::$where . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
+
+            $result = ($withParams) ? vsprintf(str_replace('?', '%s', $query), self::$params) : $query;
+
+            self::$where = '';
+            self::$groupBy = '';
+            self::$orderBy = '';
+            self::$limit = '';
+            self::$aggregate = '';
+            self::$getcount = false;
+            self::$params = array();
+
+            return $result;
+        }
+
+        /**
          * Create update set clause
          * 
          * @param string $ident The column name
