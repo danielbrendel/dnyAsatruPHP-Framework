@@ -397,7 +397,7 @@ namespace Asatru\Database {
          * Create object from array
          * 
          * @param array $arr The target array
-         * @eturn void
+         * @return void
          */
         public function __construct($arr)
         {

@@ -22,7 +22,7 @@ namespace Asatru\Lang {
          * Load language file if requested
          * 
          * @param string $lang The locale identifier
-         * @eturn void
+         * @return void
          */
         public function __construct($lang = null)
         {
