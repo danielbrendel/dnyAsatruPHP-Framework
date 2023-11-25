@@ -58,7 +58,7 @@ The source documentation file is located in the /doc directory.
 In order to run the framework tests you have to place the project folder so as
 it would be done with Composer with an App skeleton. This is due to the fact
 that the tests use the app skeleton for several input sources and output. Also be 
-sure that a database (for testing it is MySQL) is running and adjust the settings.
+sure that a database (MySQL for testing) is running and adjust the settings.
 
 ## Requirements
 + PHP ^8.0
