@@ -25,6 +25,9 @@ require_once __DIR__ . '/../src/constants.php';
 //Require the controller component
 require_once __DIR__ . '/../src/controller.php';
 
+//Require the view component
+require_once __DIR__ . '/../src/view.php';
+
 //Require logging
 require_once __DIR__ . '/../src/logger.php';
 
@@ -57,7 +60,6 @@ require_once __DIR__ . '/../src/testing.php';
 //Enable debug mode error handling
 $_ENV['APP_DEBUG'] = true;
 error_reporting(E_ALL);
-
 
 //Check if we shall create/continue a session
 if ((isset($_ENV['APP_SESSION'])) && ($_ENV['APP_SESSION'])) {

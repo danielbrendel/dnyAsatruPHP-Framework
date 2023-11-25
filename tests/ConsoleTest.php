@@ -20,10 +20,9 @@ final class ConsoleTest extends TestCase
 {
     public function testCreateModel()
     {
-        $name = 'Testmodelcreation';
-        $migration = 'example_migration_testcase';
+        $name = 'Testmodel';
 
-        $result = Asatru\Console\createModel($name, $migration);
+        $result = Asatru\Console\createModel($name);
         $this->assertTrue($result);
 
         $scriptFile = require(__DIR__ . '/../../../../app/migrations/' . $name . '.php');
@@ -38,8 +37,7 @@ final class ConsoleTest extends TestCase
         $this->assertEquals(1, $scriptFile);
 
         $newClass = new $name();
-        $this->assertTrue(method_exists($newClass, 'tableName'));
-        $this->assertEquals($migration, $newClass->tableName());
+        $this->assertNotNull($newClass);
 
         unlink(__DIR__ . '/../../../../app/migrations/' . $name . '.php');
         unlink(__DIR__ . '/../../../../app/models/' . $name . '.php');

@@ -17,15 +17,14 @@ namespace Asatru\Console;
  * Create a model with the associated migration
  * 
  * @param string $name The name of the model and migration
- * @param string $table The name of the database table
  * @return boolean
  */
-function createModel($name, $table)
+function createModel($name)
 {
     $content1 = "<?php
 
     /*
-        Asatru PHP - Migration for " . $table . "
+        Asatru PHP - Migration for " . $name . "
     */
 
     /**
@@ -53,7 +52,7 @@ function createModel($name, $table)
          */
         public function up()
         {
-            \$this->database = new Asatru\Database\Migration('" . $table . "', \$this->connection);
+            \$this->database = new Asatru\Database\Migration('" . ucfirst($name) . "', \$this->connection);
             \$this->database->drop();
             \$this->database->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
             \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
@@ -79,22 +78,14 @@ function createModel($name, $table)
     $content2 = "<?php
 
     /*
-        Asatru PHP - Model for ". $table . "
+        Asatru PHP - Model
     */
 
     /**
      * This class extends the base model class and represents your associated table
      */ 
     class " . $name . " extends \Asatru\Database\Model {
-        /**
-         * Return the associated table name of the migration
-         * 
-         * @return string
-         */
-        public static function tableName()
-        {
-            return '" . $table . "';
-        }
+        //
     }";
 
     if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/' . $name . '.php', $content2)) {
@@ -884,7 +875,7 @@ function handleInput($argv)
         echo "\033[33m" . ASATRU_FW_NAME . " by " . ASATRU_FW_AUTHOR . " (" . ASATRU_FW_CONTACT . ") - CLI interface\n\n\033[39m\n";
         echo "The following commands are available:\n";
         echo "+ help: Displays this help text\n";
-        echo "+ make:model <name> <table>: Creates a new model with migration\n";
+        echo "+ make:model <name>: Creates a new model with migration\n";
         echo "+ make:module <name>: Creates a new module for business logics\n";
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
@@ -897,12 +888,12 @@ function handleInput($argv)
         echo "+ migrate:drop: Drops all migrations\n";
         echo "+ serve <port>: Spawns a development server. If port is not provided it uses port " . DEVSERV_DEFAULT_PORT . "\n";
     } else if ($argv[1] === 'make:model') {
-        if (!isset($argv[2]) || (!isset($argv[3]))) {
-            echo "\033[31mYou must specify the model name and the associated table name\033[39m\n";
+        if (!isset($argv[2])) {
+            echo "\033[31mYou must specify the model name\033[39m\n";
             exit(0);
         }
 
-        if (!createModel($argv[2], $argv[3])) {
+        if (!createModel($argv[2])) {
             echo "\033[31mFailed to create model and migration\033[39m\n";
         } else {
             echo "\033[32mModel and migration files have been created!\033[39m\n";

@@ -553,15 +553,13 @@ namespace Asatru\Database {
         private static $params = array();
 
         /**
-         * Get singleton instance (create if not exists)
+         * Create and return current instance
          * 
          * @return Asatru\Database\Model
          */
         public static function getInstance()
         {
-            if (self::$instance === null) {
-                self::$instance = new static;
-            }
+            self::$instance = new static;
 
             return self::$instance;
         }
@@ -620,6 +618,8 @@ namespace Asatru\Database {
                 throw new \Exception('PDO connection must be provided first');
             }
 
+            $qry = str_replace('@THIS', get_called_class(), $qry);
+
             $prp = self::$handle->prepare($qry);
 
             if ($opt !== null) {
@@ -659,7 +659,7 @@ namespace Asatru\Database {
          */
         public static function all()
         {
-            return self::raw('SELECT * FROM ' . static::tableName());
+            return self::raw('SELECT * FROM ' . get_called_class());
         }
 
         /**
@@ -683,7 +683,7 @@ namespace Asatru\Database {
          */
         public static function find($id, $key = 'id')
         {
-            $query = 'SELECT * FROM ' . static::tableName() . ' WHERE ' . $key . ' = ?';
+            $query = 'SELECT * FROM ' . get_called_class() . ' WHERE ' . $key . ' = ?';
 
             return self::raw($query, array($id));
         }
@@ -854,7 +854,7 @@ namespace Asatru\Database {
          */
         public static function first()
         {
-            $query = 'SELECT * FROM ' . static::tableName() . ' ' . self::$where . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
+            $query = 'SELECT * FROM ' . get_called_class() . ' ' . self::$where . ' ' . self::$groupBy . ' ' . self::$orderBy . ' LIMIT 1';
 
             $result = self::raw($query, self::$params);
 
@@ -863,7 +863,7 @@ namespace Asatru\Database {
             self::$orderBy = '';
             self::$aggregate = '';
             self::$params = array();
-
+            
             return $result->get(0);
         }
 
@@ -883,7 +883,7 @@ namespace Asatru\Database {
                 $select = '*';
             }
 
-            $query = 'SELECT ' . $select . ' FROM ' . static::tableName() . ' ' . self::$where . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
+            $query = 'SELECT ' . $select . ' FROM ' . get_called_class() . ' ' . self::$where . ' '  . self::$groupBy . ' ' . self::$orderBy . ' ' . self::$limit;
 
             $result = self::raw($query, self::$params);
 
@@ -941,7 +941,7 @@ namespace Asatru\Database {
         public static function go()
         {
             if (self::$update !== '') {
-                $query = 'UPDATE ' . static::tableName() . ' ' . self::$update . ' ' . self::$where;
+                $query = 'UPDATE ' . get_called_class() . ' ' . self::$update . ' ' . self::$where;
                 $result = static::raw($query, self::$params);
 
                 self::$where = '';
@@ -963,7 +963,7 @@ namespace Asatru\Database {
                 $idents = substr($idents, 0, strlen($idents)-1) . ')';
                 $values = substr($values, 0, strlen($values)-1) . ')';
 
-                $query = 'INSERT INTO ' . static::tableName() . ' ' . $idents . ' ' . $values;
+                $query = 'INSERT INTO ' . get_called_class() . ' ' . $idents . ' ' . $values;
                 $result = static::raw($query, self::$params);
 
                 self::$insert = array();
@@ -982,7 +982,7 @@ namespace Asatru\Database {
          */
         public static function delete()
         {
-            $query = 'DELETE FROM ' . static::tableName() . ' ' . self::$where;
+            $query = 'DELETE FROM ' . get_called_class() . ' ' . self::$where;
 
             $result = self::raw($query, self::$params);
 
@@ -991,9 +991,6 @@ namespace Asatru\Database {
 
             return $result;
         }
-
-        //Return the associated database table
-        abstract public static function tableName();
     }
 
     /**
@@ -1140,7 +1137,7 @@ namespace {
         if (!isset($_ENV['DB_DRIVER'])) {
             throw new \Exception('No database PDO driver specified');
         } else if ($_ENV['DB_DRIVER'] === 'mysql') {
-            $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+            $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'] . ';charset=' . $_ENV['DB_CHARSET'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
         } else {
             throw new \Exception('Database driver ' . $_ENV['DB_DRIVER'] . ' is not supported');
         }
@@ -1154,7 +1151,7 @@ namespace {
             foreach ($models as $file) {
                 if (pathinfo(ASATRU_APP_ROOT . '/app/models/' . $file, PATHINFO_EXTENSION) == 'php') {
                     require_once ASATRU_APP_ROOT . '/app/models/' . $file;
-
+                    
                     $className = pathinfo($file, PATHINFO_FILENAME);
                     $className::__setHandle($objPdo);
                 }

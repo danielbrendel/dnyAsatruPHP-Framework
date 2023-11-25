@@ -13,10 +13,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-class TestModel extends Asatru\Database\Model {
-    public static function tableName() { return 'example_migration'; }
-}
-
 /**
  * TestCase for Asatru\Database
  */
@@ -43,7 +39,7 @@ final class DatabaseTest extends TestCase
 
     public function testMigration()
     {
-        $mig = new Asatru\Database\Migration('example_migration', $this->pdo);
+        $mig = new Asatru\Database\Migration('TestModel', $this->pdo);
         $this->addToAssertionCount(1);
 
         $mig->drop();
@@ -56,7 +52,7 @@ final class DatabaseTest extends TestCase
         $this->addToAssertionCount(4);
 
         $mig->append('test VARCHAR(255) NULL');
-        $result = $this->mdl->raw('INSERT INTO ' . TestModel::tableName() . ' (text, test) VALUES(\'text\', \'test\')');
+        $result = $this->mdl->raw('INSERT INTO @THIS (text, test) VALUES(\'text\', \'test\')');
         $this->assertTrue($result !== false);
 
         $result = TestModel::where('text', '=', 'text')->where('test', '=', 'test')->first();
