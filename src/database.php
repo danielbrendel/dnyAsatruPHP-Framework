@@ -783,8 +783,7 @@ namespace Asatru\Database {
         public static function limit($value)
         {
             if (self::$limit === '') {
-                self::$limit = 'LIMIT ?';
-                array_push(self::$params, $value);
+                self::$limit = 'LIMIT ' . $value;
             }
 
             return self::getInstance();
@@ -800,9 +799,7 @@ namespace Asatru\Database {
         public static function orderBy($ident, $type)
         {
             if (self::$orderBy === '') {
-                self::$orderBy = 'ORDER BY ? ?';
-                array_push(self::$params, $ident);
-                array_push(self::$params, $type);
+                self::$orderBy = 'ORDER BY ' . $ident . ' ' . $type;
             }
 
             return self::getInstance();
@@ -817,8 +814,7 @@ namespace Asatru\Database {
         public static function groupBy($ident)
         {
             if (self::$groupBy === '') {
-                self::$groupBy = 'GROUP BY ?';
-                array_push(self::$params, $ident);
+                self::$groupBy = 'GROUP BY ' . $ident;
             }
 
             return self::getInstance();
