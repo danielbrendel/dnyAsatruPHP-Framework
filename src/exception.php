@@ -15,17 +15,20 @@ namespace {
     $CatchExceptions = function($e) {
         //Handle all exceptions here
 
+        $view = null;
+
         if ((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG'] === true)) {
             ob_clean();
-            $exception = $e;
-            require_once ASATRU_APP_ROOT . '/app/views/error/exception_debug.php';
-            unset($exception);
+            $view = view('error/exception_debug', [], ['exception' => $e]);
         } else {
-            require_once ASATRU_APP_ROOT . '/app/views/error/exception_prod.php';
+            $view = view('error/exception_prod', [], ['exception' => $e]);
         }
+
+        $view->out();
 
         if (function_exists('addLog')) {
             addLog(ASATRU_LOG_ERROR, $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
+            storeLog();
         }
     };
 
