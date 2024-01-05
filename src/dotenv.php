@@ -76,7 +76,7 @@ namespace Asatru\Dotenv {
             $result = $value;
 
             foreach ($this->vars as $var) {
-                if (strstr($value, '${' . $var['varname'] . '}') !== false) {
+                if (($value !== null) && (strstr($value, '${' . $var['varname'] . '}') !== false)) {
                     $result = str_replace('${' . $var['varname'] . '}', $var['varvalue'], $result); 
                 }				
             }
