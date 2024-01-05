@@ -67,7 +67,11 @@ if ((isset($_ENV['SESSION_ENABLE'])) && ($_ENV['SESSION_ENABLE'])) {
         ini_set('session.cookie_lifetime', $_ENV['SESSION_DURATION']);
         ini_set('session.gc_maxlifetime', $_ENV['SESSION_DURATION']);
     }
-    
+
+    if ((isset($_ENV['SESSION_NAME'])) && (is_string($_ENV['SESSION_NAME'])) && (strlen($_ENV['SESSION_NAME']) > 0)) {
+        session_name($_ENV['SESSION_NAME']);
+    }
+
     if (!session_start()) {
         throw new Exception('Failed to create/continue the session');
     }
