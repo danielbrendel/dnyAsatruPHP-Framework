@@ -829,7 +829,7 @@ function createTest($name)
         error_reporting(E_ALL);
         
         //Check if we shall create/continue a session
-        if ((isset(\$_ENV['APP_SESSION'])) && (\$_ENV['APP_SESSION'])) {
+        if ((isset(\$_ENV['SESSION_ENABLE'])) && (\$_ENV['SESSION_ENABLE'])) {
             if (!session_start()) {
                 throw new Exception('Failed to create/continue the session');
             }

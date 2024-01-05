@@ -60,7 +60,16 @@ if ($_ENV['APP_DEBUG'] === false) {
 }
 
 //Check if we shall create/continue a session
-if ((isset($_ENV['APP_SESSION'])) && ($_ENV['APP_SESSION'])) {
+if ((isset($_ENV['SESSION_ENABLE'])) && ($_ENV['SESSION_ENABLE'])) {
+    if ((isset($_ENV['SESSION_DURATION'])) && ($_ENV['SESSION_DURATION']) && (is_numeric($_ENV['SESSION_DURATION']))) {
+        ini_set('session.cookie_lifetime', $_ENV['SESSION_DURATION']);
+        ini_set('session.gc_maxlifetime', $_ENV['SESSION_DURATION']);
+    }
+
+    if ((isset($_ENV['SESSION_NAME'])) && (is_string($_ENV['SESSION_NAME'])) && (strlen($_ENV['SESSION_NAME']) > 0)) {
+        session_name($_ENV['SESSION_NAME']);
+    }
+
     if (!session_start()) {
         throw new Exception('Failed to create/continue the session');
     }
