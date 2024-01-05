@@ -15,6 +15,10 @@ namespace {
     $CatchExceptions = function($e) {
         //Handle all exceptions here
 
+        if (!class_exists('Asatru\\View\\ViewHandler')) {
+            require_once 'view.php';
+        }
+
         $view = null;
 
         if ((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG'] === true)) {
