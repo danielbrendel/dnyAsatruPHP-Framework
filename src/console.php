@@ -1031,17 +1031,17 @@ function handleInput($argv)
         }
     } else if ($argv[1] === 'migrate:fresh') {
         validate_database_enabled();
-        migrate_fresh();
+        migrate_fresh(true);
 
         echo "\033[32mThe database has been freshly migrated!\033[39m\n";
     } else if ($argv[1] === 'migrate:list') {
         validate_database_enabled();
-        migrate_list();
+        migrate_list(true);
 
         echo "\033[32mThe database has been listly migrated!\033[39m\n";
     } else if ($argv[1] === 'migrate:drop') {
         validate_database_enabled();
-        migrate_drop();
+        migrate_drop(true);
 
         echo "\033[32mThe database has been cleared!\033[39m\n";
     } else if ($argv[1] === 'serve') {

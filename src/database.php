@@ -1090,10 +1090,11 @@ namespace Asatru\Database {
         /**
          * Load all migrations if not on the list and put a migrated entity to list
          * 
+         * @param $echo
          * @return void
          * @throws \Exception
          */
-        public function createAll()
+        public function createAll($echo = false)
         {
             $files = scandir(ASATRU_APP_ROOT . '/app/migrations');
             if ($files === false) {
@@ -1111,6 +1112,10 @@ namespace Asatru\Database {
                         $obj = new $className($this->handle);
 
                         if (method_exists($obj, 'up')) {
+                            if ($echo) {
+                                echo "Creating \"{$className}\"\n";
+                            }
+
                             $result = call_user_func(array($obj, 'up'));
                         } else {
                             throw new \Exception('method up() not found in migration ' . $className);
@@ -1127,10 +1132,11 @@ namespace Asatru\Database {
         /**
          * Drop all migrations
          * 
+         * @param $echo
          * @return void
          * @throws \Exception
          */
-        public function dropAll()
+        public function dropAll($echo = false)
         {
             $files = scandir(ASATRU_APP_ROOT . '/app/migrations');
             if ($files === false) {
@@ -1145,6 +1151,10 @@ namespace Asatru\Database {
                     $obj = new $className($this->handle);
                     
                     if (method_exists($obj, 'down')) {
+                        if ($echo) {
+                            echo "Dropping \"{$className}\"\n";
+                        }
+
                         call_user_func(array($obj, 'down'));
                     } else {
                         throw new \Exception('method down() not found in migration ' . $className);
@@ -1189,41 +1199,44 @@ namespace {
         /**
          * Create function for fresh migration
          * 
+         * @param $echo
          * @return void
          */
-        function migrate_fresh()
+        function migrate_fresh($echo = false)
         {
             global $objPdo;
             global $objMigrationLoader;
 
-            $objMigrationLoader->dropAll();
-            $objMigrationLoader->createAll();
+            $objMigrationLoader->dropAll($echo);
+            $objMigrationLoader->createAll($echo);
         }
 
         /**
          * Create function for listed migration
          * 
+         * @param $echo
          * @return void
          */
-        function migrate_list()
+        function migrate_list($echo = false)
         {
             global $objPdo;
             global $objMigrationLoader;
 
-            $objMigrationLoader->createAll();
+            $objMigrationLoader->createAll($echo);
         }
 
         /**
          * Create function for dropping all migrations
          * 
+         * @param $echo
          * @return void
          */
-        function migrate_drop()
+        function migrate_drop($echo = false)
         {
             global $objPdo;
             global $objMigrationLoader;
 
-            $objMigrationLoader->dropAll();
+            $objMigrationLoader->dropAll($echo);
         }
     }
 }
