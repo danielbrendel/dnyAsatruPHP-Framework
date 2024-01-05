@@ -1,6 +1,6 @@
 # Asatru PHP
 
-(C) 2019 - 2023 by Daniel Brendel
+(C) 2019 - 2024 by Daniel Brendel
 
 **Codename**: dnyAsatruPHP\
 **Contact**: dbrendel1988(at)gmail(dot)com\
