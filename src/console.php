@@ -145,7 +145,7 @@ function createController($name)
     /**
      * This class represents your controller
      */
-    class " . ucfirst($name) . "Controller {
+    class " . ucfirst($name) . "Controller extends BaseController {
         //
     }
 ";
