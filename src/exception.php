@@ -22,7 +22,10 @@ namespace {
         $view = null;
 
         if ((isset($_ENV['APP_DEBUG'])) && ($_ENV['APP_DEBUG'] === true)) {
-            ob_clean();
+            if (ob_get_contents()) {
+                ob_clean();
+            }
+            
             $view = view('error/exception_debug', [], ['exception' => $e]);
         } else {
             $view = view('error/exception_prod', [], ['exception' => $e]);

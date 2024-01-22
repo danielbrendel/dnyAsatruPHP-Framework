@@ -41,6 +41,10 @@ namespace Asatru\Lang {
         {
             $this->lang = [];
 
+            if (!is_dir(ASATRU_APP_ROOT . '/app/lang/' . $locale)) {
+                throw new \Exception('Language \'' . $locale . '\' not found.');
+            }
+
             $files = scandir(ASATRU_APP_ROOT . '/app/lang/' . $locale); //Get all files of directory
             foreach($files as $file) {
                 if (!is_dir(ASATRU_APP_ROOT . '/app/lang/' . $locale . '/' . $file)) { //If it's not a directory

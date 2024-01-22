@@ -197,13 +197,7 @@ namespace Asatru\Dotenv {
          */
         public function query($item, $fallback = null)
         {
-            foreach ($this->vars as $var) {
-                if ($var['varname'] == $item) {
-                    return $var['varvalue'];
-                }
-            }
-            
-            return $fallback;
+            return (isset($_ENV[$item])) ? $_ENV[$item] : $fallback;
         }
 
         /**
