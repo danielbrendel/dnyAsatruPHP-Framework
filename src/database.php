@@ -391,6 +391,7 @@ namespace Asatru\Database {
      */
     class Collection implements \Iterator, \Countable {
         private $items = array();
+        private $orig = array();
         private $position = 0;
 
         /**
@@ -402,6 +403,7 @@ namespace Asatru\Database {
         public function __construct($arr)
         {
             $this->position = 0;
+            $this->orig = $arr;
             $this->createFromArray($arr);
         }
 
@@ -445,6 +447,16 @@ namespace Asatru\Database {
             }
 
             return null;
+        }
+
+        /**
+         * Return original array
+         * 
+         * @return array
+         */
+        public function asArray()
+        {
+            return $this->orig;
         }
 
         /**
