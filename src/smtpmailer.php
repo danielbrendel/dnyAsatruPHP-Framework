@@ -27,6 +27,7 @@ class SMTPMailer
     private $message;
     private $fromName;
     private $fromAddress;
+    private $properties;
 
     /**
      * Constructor
@@ -35,6 +36,8 @@ class SMTPMailer
     {
         $this->fromName = env_get('SMTP_FROMNAME');
         $this->fromAddress = env_get('SMTP_FROMADDRESS');
+
+        $this->properties = null;
     }
 
     /**
@@ -92,6 +95,19 @@ class SMTPMailer
     }
 
     /**
+     * Set custom properties
+     * 
+     * @param array $props The properties key-value array
+     * @return Asatru\SMTPMailer\SMTPMailer
+     */
+    public function setProperties($props)
+    {
+        $this->properties = $props;
+
+        return $this;
+    }
+
+    /**
      * Send mail using PHPMailer
      * 
      * @throws Exception
@@ -129,6 +145,13 @@ class SMTPMailer
             $mail->isHTML(true);
             $mail->Subject = $this->subject;
             $mail->Body = $this->message;
+
+            //Set properties if exist
+            if (is_array($this->properties)) {
+                foreach ($this->properties as $key => $value) {
+                    $mail->$key = $value;
+                }
+            }
 
             $mail->send();
         } catch (Exception $e) {
