@@ -1125,7 +1125,7 @@ namespace Asatru\Database {
 
                         if (method_exists($obj, 'up')) {
                             if ($echo) {
-                                echo "Creating \"{$className}\"\n";
+                                echo "\033[93mCreating \"{$className}\"\033[39m\n";
                             }
 
                             $result = call_user_func(array($obj, 'up'));
@@ -1164,7 +1164,7 @@ namespace Asatru\Database {
                     
                     if (method_exists($obj, 'down')) {
                         if ($echo) {
-                            echo "Dropping \"{$className}\"\n";
+                            echo "\033[91mDropping \"{$className}\"\033[39m\n";
                         }
 
                         call_user_func(array($obj, 'down'));
