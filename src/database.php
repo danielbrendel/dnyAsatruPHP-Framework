@@ -1171,11 +1171,19 @@ namespace Asatru\Database {
 
 namespace {
     if ((isset($_ENV['DB_ENABLE'])) && ($_ENV['DB_ENABLE'])) {
+        $dbconattr = [];
+
         //Instantiate PDO connection
         if (!isset($_ENV['DB_DRIVER'])) {
             throw new \Exception('No database PDO driver specified');
         } else if ($_ENV['DB_DRIVER'] === 'mysql') {
-            $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'] . ';charset=' . $_ENV['DB_CHARSET'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+            if ((isset($_ENV['APP_TIMEZONE'])) && (is_string($_ENV['APP_TIMEZONE'])) && (strlen($_ENV['APP_TIMEZONE']) > 0)) {
+                $dbconattr = [
+                    \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone=\'' . date('P') . '\''
+                ];
+            }
+
+            $objPdo = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_DATABASE'] . ';charset=' . $_ENV['DB_CHARSET'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $dbconattr);
         } else {
             throw new \Exception('Database driver ' . $_ENV['DB_DRIVER'] . ' is not supported');
         }

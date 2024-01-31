@@ -52,6 +52,11 @@ if (file_exists(ASATRU_APP_ROOT . '/.env')) {
     env_parse(ASATRU_APP_ROOT . '/.env');
 }
 
+//Set timezone if desired
+if ((isset($_ENV['APP_TIMEZONE'])) && (is_string($_ENV['APP_TIMEZONE'])) && (strlen($_ENV['APP_TIMEZONE']) > 0)) {
+    date_default_timezone_set($_ENV['APP_TIMEZONE']);
+}
+
 //Set error reporting according to debug flag value
 if ($_ENV['APP_DEBUG'] === false) {
     error_reporting(0);
