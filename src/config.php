@@ -41,7 +41,7 @@ namespace Asatru\Config {
             $content = require($this->path . '/' . $config . '.php');
 
             if ((is_array($content)) && ($as_obj === true)) {
-                return (object)$content;
+                return json_decode(json_encode($content));
             }
 
             return $content;
