@@ -63,5 +63,5 @@ sure that a database (MySQL for testing) is running and adjust the settings.
 
 ## Requirements
 + PHP ^8.0
-+ PHP PDO extension
++ Default PHP extensions
 + MySQL when database needed
