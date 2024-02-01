@@ -1164,7 +1164,7 @@ namespace Asatru\Database {
                     
                     if (method_exists($obj, 'down')) {
                         if ($echo) {
-                            echo "\033[91mDropping \"{$className}\"\033[39m\n";
+                            echo "\033[39mDropping \"{$className}\"\033[39m\n";
                         }
 
                         call_user_func(array($obj, 'down'));
