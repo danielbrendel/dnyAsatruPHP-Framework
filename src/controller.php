@@ -516,6 +516,30 @@ class ControllerHandler {
 
 		return null;
 	}
+
+	/**
+	 * Get named route and replace values if exist
+	 * 
+	 * @param $name Name of the route
+	 * @param $values Additional key-value paired array to replace actual values
+	 * @return string|null
+	 */
+	public function getNamedRoute($name, $values = [])
+	{
+		for ($i = 0; $i < count($this->routes); $i++) {
+			if ((isset($this->routes[$i][3])) && ($this->routes[$i][3] === $name)) {
+				$result = $this->routes[$i][0];
+
+				foreach ($values as $key => $value) {
+					$result = str_replace('{' . $key . '}', $value, $result);
+				}
+
+				return $result;
+			}
+		}
+
+		return null;
+	}
 	
 	/**
 	 * Parse the URL and call the associated controller

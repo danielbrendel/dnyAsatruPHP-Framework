@@ -402,6 +402,20 @@ namespace {
     }
 
     /**
+     * Helper for controllers getNamedRoute method
+     * 
+     * @param $name
+     * @param $values
+     * @return mixed
+     */
+    function route($name, $values = [])
+    {
+        global $controller;
+
+        return $controller->getNamedRoute($name, $values);
+    }
+
+    /**
      * Retrieve old POST data
      * 
      * @param $key
