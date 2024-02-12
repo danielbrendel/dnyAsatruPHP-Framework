@@ -678,6 +678,32 @@ class Cache extends \Asatru\Database\Model {
         
         return null;
     }
+
+    /**
+     * Query an entire item
+     * 
+     * @param \$ident
+     * @param \$default
+     * @return mixed
+     */
+    public static function query(\$ident, \$default = null)
+    {
+        \$what = null;
+        if (strpos(\$ident, '.') !== false) {
+            \$what = explode('.', \$ident);
+        }
+
+        \$result = Cache::where('ident', '=', (((is_array(\$what)) && (count(\$what) > 0)) ? \$what[0] : \$ident))->first();
+        if (!\$result) {
+            return \$default;
+        }
+
+        if ((is_array(\$what)) && (count(\$what) > 1)) {
+            return \$result->get(\$what[1]);
+        }
+
+        return \$result->get('value');
+    }
     
     /**
      * Check for item existence
@@ -693,6 +719,28 @@ class Cache extends \Asatru\Database\Model {
         }
         
         return false;
+    }
+
+    /**
+     * Check if item cache time is elapsed
+     * 
+     * @param \$ident
+     * @param \$timeInSeconds
+     * @return bool
+     */
+    public static function elapsed(\$ident, \$timeInSeconds)
+    {
+        if (!Cache::has(\$ident)) {
+            return false;
+        }
+
+        \$data = Cache::where('ident', '=', \$ident)->first();
+
+        \$dtLast = new DateTime(date('Y-m-d H:i:s', strtotime(\$data->get('updated_at'))));
+        \$dtLast->add(new DateInterval('PT' . \$timeInSeconds . 'S'));
+        \$dtNow = new DateTime('now');
+
+        return (\$dtNow >= \$dtLast);
     }
     
     /**
@@ -713,6 +761,34 @@ class Cache extends \Asatru\Database\Model {
         }
         
         return null;
+    }
+
+    /**
+     * Write item to table
+     * 
+     * @param \$ident
+     * @param \$value
+     * @return bool
+     */
+    public static function put(\$ident, \$value)
+    {
+        if (Cache::has(\$ident)) {
+            return false;
+        }
+
+        \$data = array(
+            'ident' => \$ident,
+            'value' => \$value,
+            'updated_at' => date('Y-m-d H:i:s')
+        );
+        
+        foreach (\$data as \$key => \$val) {
+            Cache::insert(\$key, \$val);
+        }
+
+        Cache::go();
+
+        return true;
     }
     
     /**
