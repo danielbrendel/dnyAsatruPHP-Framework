@@ -99,10 +99,31 @@ class " . $name . " extends \Asatru\Database\Model {
  * Create a module
  * 
  * @param string $name The name of the module
+ * @param array $args Optional arguments
  * @return boolean
  */
-function createModule($name)
+function createModule($name, $args = [])
 {
+    $final = '';
+    $base = '';
+    $extends = '';
+
+    foreach ($args as $key => $value) {
+        if ($value === '--base') {
+            $base = 'Base';
+        } else if ($value === '--final') {
+            $final = 'final ';
+        } else if ($value === '--extends') {
+            $from_base = 'Base' . ucfirst($name);
+
+            if ((isset($args[$key + 1])) && (strpos($args[$key + 1], '--') === false)) {
+                $from_base = $args[$key + 1];
+            }
+
+            $extends = ' extends ' . $from_base;
+        }
+    }
+
     $content = "<?php
 
 /*
@@ -112,20 +133,12 @@ function createModule($name)
 /**
  * This class represents your module
  */
-class " . ucfirst($name) . " {
-    public function __construct()
-    {
-        //
-    }
-
-    public function __destruct()
-    {
-        //
-    }
+" . $final . "class " . $base . ucfirst($name) . $extends . " {
+    //
 }
 ";
 
-    return file_put_contents(ASATRU_APP_ROOT . '/app/modules/' . $name . '.php', $content) !== false;
+    return file_put_contents(ASATRU_APP_ROOT . '/app/modules/' . $base . $name . '.php', $content) !== false;
 }
 
 /**
@@ -992,6 +1005,26 @@ function validate_database_enabled()
 }
 
 /**
+ * Generate argument array from start
+ * 
+ * @param array $argv The array with arguments
+ * @param int $start The position from which to generate the array
+ * @return array
+ */
+function generate_arguments($argv, $start)
+{
+    $result = [];
+
+    if (count($argv) > $start) {
+        foreach ($argv as $key => $value) {
+            $result[$key] = $value;
+        }
+    }
+
+    return $result;
+}
+
+/**
  * Process the input of the console
  * 
  * @param array $argv The arguments of the execution
@@ -1006,7 +1039,7 @@ function handleInput($argv)
         echo "The following commands are available:\n";
         echo "+ help: Displays this help text\n";
         echo "+ make:model <name>: Creates a new model with migration\n";
-        echo "+ make:module <name>: Creates a new module for business logics\n";
+        echo "+ make:module <name> <opt:args[]>: Creates a new module for business logics\n";
         echo "+ make:controller <name>: Creates a new controller\n";
         echo "+ make:language <ident>: Creates a new language folder with app.php\n"; 
         echo "+ make:validator <name> <ident>: Creates a new validator\n";
@@ -1041,7 +1074,7 @@ function handleInput($argv)
             exit(0);
         }
 
-        if (!createModule($argv[2])) {
+        if (!createModule($argv[2], generate_arguments($argv, 3))) {
             echo "\033[31mFailed to create module\033[39m\n";
         } else {
             echo "\033[32mModule has been created!\033[39m\n";
