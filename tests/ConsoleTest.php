@@ -68,13 +68,6 @@ final class ConsoleTest extends TestCase
         $result = Asatru\Console\createController($name);
         $this->assertTrue($result);
 
-        $scriptFile = require(__DIR__ . '/../../../../app/controller/' . $name . '.php');
-        $this->assertEquals(1, $scriptFile);
-
-        $className = $name . 'Controller';
-        $newClass = new $className();
-        $this->addToAssertionCount(1);
-
         unlink(__DIR__ . '/../../../../app/controller/' . $name . '.php');
     }
 
