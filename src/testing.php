@@ -15,11 +15,17 @@ namespace Asatru\Testing;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * This components provides extended testing methods
- */
-class Test extends TestCase {
-    protected $ctrlresult = null;
+/** This component is used to test route requests */
+trait RequestTest {
+    /**
+     * @var mixed
+     */
+    public $ctrlresult = null;
+
+    /**
+     * @var float
+     */
+    public $ctrlreqtime = null;
 
     /** HTTP Request methods */
     const REQUEST_GET = 'GET';
@@ -72,9 +78,15 @@ class Test extends TestCase {
             }
         }
 
+        //Store time
+        $starttime = microtime(true);
+
         //Dispatch to controller
         $controller = new \Asatru\Controller\ControllerHandler(ASATRU_APP_ROOT . '/app/config/routes.php');
         $this->ctrlresult = $controller->parse($route);
+
+        //Calculate time difference
+        $this->ctrlreqtime = microtime(true) - $starttime;
 
         return $this;
     }
@@ -88,4 +100,45 @@ class Test extends TestCase {
     {
         return $this->ctrlresult;
     }
+
+    /**
+     * Get response data type of previous route call
+     * 
+     * @return string
+     */
+    public function getDatatype()
+    {
+        if (is_object($this->ctrlresult)) {
+            return get_class($this->ctrlresult);
+        } else {
+            return gettype($this->ctrlresult);
+        }
+    }
+
+    /**
+     * Get response data debug info
+     * 
+     * @return string
+     */
+    public function getDebugInfo()
+    {
+        return print_r($this->ctrlresult, true);
+    }
+
+    /**
+     * Get response time difference
+     * 
+     * @return float
+     */
+    public function getTimeDiff()
+    {
+        return $this->ctrlreqtime;
+    }
+}
+
+/**
+ * This components provides extended testing methods
+ */
+class Test extends TestCase {
+    use RequestTest;
 }

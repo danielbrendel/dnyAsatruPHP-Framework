@@ -61,6 +61,11 @@ it would be done with Composer with an App skeleton. This is due to the fact
 that the tests use the app skeleton for several input sources and output. Also be 
 sure that a database (MySQL for testing) is running and adjust the settings.
 
+Then go to the framework base directory and issue the following command to run the framework tests
+```sh
+"vendor/bin/phpunit" --stderr
+```
+
 ## Requirements
 + PHP ^8.0
 + Default PHP extensions
