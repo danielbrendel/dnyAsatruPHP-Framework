@@ -66,6 +66,18 @@ final class DatabaseTest extends TestCase
     {
         migrate_fresh();
         $this->addToAssertionCount(1);
+
+        $mig = new Asatru\Database\Migration('TestModel', $this->pdo);
+        $this->addToAssertionCount(1);
+
+        $mig->drop();
+        $this->addToAssertionCount(1);
+
+        $mig->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
+        $mig->add('text VARCHAR(260) NULL DEFAULT \'Test\'');
+        $mig->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+        $mig->create();
+        $this->addToAssertionCount(4);
     }
 
     /**
@@ -141,9 +153,9 @@ final class DatabaseTest extends TestCase
         $this->assertEquals(5, $result->get(0)->get('id'));
 
         $result = TestModel::whereBetween('id', 1, 3)->orderBy('id', 'desc')->get();
-        $this->assertEquals(3, $result->get(2)->get('id'));
+        $this->assertEquals(1, $result->get(2)->get('id'));
         $this->assertEquals(2, $result->get(1)->get('id'));
-        $this->assertEquals(1, $result->get(0)->get('id'));
+        $this->assertEquals(3, $result->get(0)->get('id'));
 
         $result = TestModel::where('id', '<>', 4)->whereOr('id', '<>', 5)->limit(2)->get();
         $this->assertEquals(2, $result->count());
