@@ -440,6 +440,16 @@ class ControllerHandler {
 	}
 
 	/**
+	 * Determine if current request is a synchronized GET request
+	 * 
+	 * @return bool
+	 */
+	private function isSynchronizedGetRequest()
+	{
+		return (strtolower($this->getRequestMethod()) === 'get') && ((!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) || (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest'));
+	}
+
+	/**
 	 * Determine whether this route matches the given URL for the given request method
 	 * 
 	 * @param string $url The current URL to be handled
@@ -594,7 +604,9 @@ class ControllerHandler {
 						call_user_func(array($obj, 'postDispatch'));
 					}
 
-					$_SESSION['asatru_last_url'] = $_SERVER['REQUEST_URI'];
+					if ($this->isSynchronizedGetRequest()) {
+						$_SESSION['asatru_last_url'] = $_SERVER['REQUEST_URI'];
+					}
 				} else {
 					throw new \Exception('Controller handler ' . $items[1]. ' not found');
 				}
