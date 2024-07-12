@@ -21,9 +21,9 @@ final class TestingTest extends TestCase
     public function testTestingClass()
     {
         $testing = new Asatru\Testing\Test();
-        $testing->route('GET', '/test/1/another/2', array());
+        $testing->request(Asatru\Testing\Test::REQUEST_GET, '/test/1/another/2', array());
         $this->addToAssertionCount(1);
         $result = $testing->getResponse();
-        $this->assertInstanceOf('Asatru\\View\ViewHandler', $result);
+        $this->assertInstanceOf('Asatru\\View\\ViewHandler', $result);
     }
 }
