@@ -28,10 +28,12 @@ final class CommandsTest extends TestCase
 
     public function testLoadCommands()
     {
+        $argv = ($argv ?? []);
+        $argc = ($argc ?? 0);
         $cmdmgr = new Asatru\Commands\CustomCommands(__DIR__ . '/../../../../app/config/commands.php', $argv);
         $method = self::getMethod('loadCommandConfig');
         $result = $method->invokeArgs($cmdmgr, array(__DIR__ . '/../../../../app/config/commands.php'));
         $this->addToAssertionCount(1);
-        $cmdmgr->handleCommand('cmd:test');
+        $cmdmgr->handleCommand('test:cmd');
     }
 }

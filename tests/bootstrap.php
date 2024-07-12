@@ -85,9 +85,12 @@ if ((isset($_ENV['SESSION_ENABLE'])) && ($_ENV['SESSION_ENABLE'])) {
     }
 }
 
+//Set console argument variables if not exists
+$argv = ($argv ?? []);
+$argc = ($argc ?? 0);
+
 //Require localization
 require_once __DIR__ . '/../src/locale.php';
-
 
 //Require database management
 require_once __DIR__ . '/../src/database.php';
@@ -97,6 +100,9 @@ require_once __DIR__ . '/../src/modules.php';
 
 //Require event manager
 require_once __DIR__ . '/../src/events.php';
+
+//Require command handler
+require_once __DIR__ . '/../src/commands.php';
 
 //Require console
 require_once __DIR__ . '/../src/console.php';
