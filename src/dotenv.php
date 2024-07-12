@@ -185,6 +185,12 @@ namespace Asatru\Dotenv {
          */
         public function clear()
         {
+            foreach ($this->vars as $var) {
+                if (isset($_ENV[$var['varname']])) {
+                    unset($_ENV[$var['varname']]);
+                }
+            }
+
             $this->vars = [];
         }
 
