@@ -67,6 +67,6 @@ Then go to the framework base directory and issue the following command to run t
 ```
 
 ## Requirements
-+ PHP ^8.0
-+ Default PHP extensions
-+ MySQL when database needed
++ PHP ^8.3
++ MariaDB ^10.4
++ Composer ^2.2
