@@ -475,6 +475,8 @@ class Auth_Migration {
  */ 
 class Session extends \Asatru\Database\Model {
     /**
+     * Create an active session of that given user with the given session
+     * 
      * @param \$userId
      * @param \$session
      * @return void
@@ -492,6 +494,8 @@ class Session extends \Asatru\Database\Model {
     }
 
     /**
+     * Ends the given session if active
+     * 
      * @param \$session
      * @return void
      * @throws \Exception
@@ -506,6 +510,8 @@ class Session extends \Asatru\Database\Model {
     }
 
     /**
+     * Returns the data object of the given session if exists
+     * 
      * @param \$session
      * @return mixed
      * @throws \Exception
@@ -520,6 +526,8 @@ class Session extends \Asatru\Database\Model {
     }
 
     /**
+     * Checks if a session of that given user exists
+     * 
      * @param \$userId
      * @param \$session
      * @return bool
@@ -535,6 +543,8 @@ class Session extends \Asatru\Database\Model {
     }
 
     /**
+     * Clears all sessions of that given user
+     * 
      * @param \$userId
      * @return void
      * @throws \Exception
@@ -680,22 +690,6 @@ class Auth extends \Asatru\Database\Model {
     {
         try {
             \$result = Auth::where('id', '=', \$userId)->first();
-        } catch (\Exception \$e) {
-            return null;
-        }
-
-        return \$result;
-    }
-
-    /**
-     * Get user by session
-     * 
-     * @return Asatru\Database\Collection|null User data collection on success, otherwise null
-     */
-    public static function getBySession()
-    {
-        try {
-            \$result = Auth::where('session', '=', session_id())->first();
         } catch (\Exception \$e) {
             return null;
         }

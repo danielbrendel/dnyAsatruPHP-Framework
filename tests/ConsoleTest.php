@@ -108,13 +108,19 @@ final class ConsoleTest extends TestCase
         unlink(__DIR__ . '/../../../../app/validators/' . $name . '.php');
     }
 
-    public function testCreateAuth()
+    public function testCreateAuthSession()
+    {
+        $result = Asatru\Console\createAuth();
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @depends testCreateAuthSession
+     */
+    public function testCheckAuth()
     {
         $name = 'Auth';
         $migration = 'Auth';
-
-        $result = Asatru\Console\createAuth();
-        $this->assertTrue($result);
 
         $scriptFile = require(__DIR__ . '/../../../../app/migrations/' . $name . '.php');
         $this->assertEquals(1, $scriptFile);
@@ -131,14 +137,55 @@ final class ConsoleTest extends TestCase
         $this->assertTrue(method_exists($newClass, 'register'));
         $this->assertTrue(method_exists($newClass, 'login'));
         $this->assertTrue(method_exists($newClass, 'logout'));
-        $this->assertTrue(method_exists($newClass, 'isUserLoggedIn'));
+        $this->assertTrue(method_exists($newClass, 'getAuthUser'));
         $this->assertTrue(method_exists($newClass, 'getByEmail'));
-        $this->assertTrue(method_exists($newClass, 'getBySession'));
-        $this->assertTrue(method_exists($newClass, 'tableName'));
-        $this->assertEquals($migration, $newClass->tableName());
+        $this->assertTrue(method_exists($newClass, 'getById'));
+        $this->assertEquals($migration, get_class($newClass));
+    }
 
-        unlink(__DIR__ . '/../../../../app/migrations/' . $name . '.php');
-        unlink(__DIR__ . '/../../../../app/models/' . $name . '.php');
+    /**
+     * @depends testCheckAuth
+     */
+    public function testCheckSession()
+    {
+        $name = 'Session';
+        $migration = 'Session';
+
+        $scriptFile = require(__DIR__ . '/../../../../app/migrations/' . $name . '.php');
+        $this->assertEquals(1, $scriptFile);
+
+        $className = $name . '_Migration';
+        $newClass = new $className(null);
+        $this->assertTrue(method_exists($newClass, 'up'));
+        $this->assertTrue(method_exists($newClass, 'down'));
+
+        $scriptFile = require(__DIR__ . '/../../../../app/models/' . $name . '.php');
+        $this->assertEquals(1, $scriptFile);
+
+        $newClass = new $name();
+        $this->assertTrue(method_exists($newClass, 'loginSession'));
+        $this->assertTrue(method_exists($newClass, 'logoutSession'));
+        $this->assertTrue(method_exists($newClass, 'findSession'));
+        $this->assertTrue(method_exists($newClass, 'hasSession'));
+        $this->assertTrue(method_exists($newClass, 'clearForUser'));
+        $this->assertEquals($migration, get_class($newClass));
+    }
+
+    /**
+     * @depends testCheckAuth
+     */
+    public function testClearAuthSession()
+    {
+        $sessionName = 'Session';
+        $authName = 'Auth';
+
+        unlink(__DIR__ . '/../../../../app/migrations/' . $sessionName . '.php');
+        unlink(__DIR__ . '/../../../../app/models/' . $sessionName . '.php');
+        $this->addToAssertionCount(2);
+
+        unlink(__DIR__ . '/../../../../app/migrations/' . $authName . '.php');
+        unlink(__DIR__ . '/../../../../app/models/' . $authName . '.php');
+        $this->addToAssertionCount(2);
     }
 
     public function testCreateTest()
