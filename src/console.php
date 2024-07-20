@@ -55,6 +55,7 @@ class " . ucfirst($name) . "_Migration {
         \$this->database = new Asatru\Database\Migration('" . ucfirst($name) . "', \$this->connection);
         \$this->database->drop();
         \$this->database->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
+        \$this->database->add('updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
         \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         \$this->database->create();
     }
@@ -391,6 +392,7 @@ class Auth_Migration {
         \$this->database->add('password VARCHAR(255) NOT NULL');
         \$this->database->add('session VARCHAR(255) NOT NULL');
         \$this->database->add('status INT(1) NOT NULL DEFAULT 0');
+        \$this->database->add('updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
         \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         \$this->database->create();
     }
