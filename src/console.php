@@ -958,16 +958,6 @@ class Cache extends \Asatru\Database\Model {
         
         return false;
     }
-    
-    /**
-     * Return the associated table name of the migration
-     * 
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'Cache';
-    }
 }
     ";
 
