@@ -347,13 +347,67 @@ class $name implements Asatru\Commands\Command {
 }
 
 /**
- * Create authentication model and migration
+ * Create authentication models and migrations
  * 
  * @return boolean
  */
 function createAuth()
 {
-    $content1 = "<?php
+    $contentmig1 = "<?php
+
+/*
+    Asatru PHP - Migration for Session
+*/
+
+/**
+ * Session migration
+ */
+class Session_Migration {
+    private \$database = null;
+    private \$connection = null;
+
+    /**
+     * Store the PDO connection handle
+     * 
+     * @param \PDO \$pdo The PDO connection handle
+     * @return void
+     */
+    public function __construct(\$pdo)
+    {
+        \$this->connection = \$pdo;
+    }
+
+    /**
+     * Called when the table shall be created or modified
+     * 
+     * @return void
+     */
+    public function up()
+    {
+        \$this->database = new Asatru\Database\Migration('Session', \$this->connection);
+        \$this->database->drop();
+        \$this->database->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
+        \$this->database->add('userId INT NOT NULL');
+        \$this->database->add('session VARCHAR(512) NOT NULL');
+        \$this->database->add('status BOOLEAN NOT NULL DEFAULT 0');
+        \$this->database->add('updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
+        \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+        \$this->database->create();
+    }
+
+    /**
+     * Called when the table shall be dropped
+     * 
+     * @return void
+     */
+    public function down()
+    {
+        if (\$this->database)
+            \$this->database->drop();
+    }
+}";
+
+    $contentmig2 = "<?php
 
 /*
     Asatru PHP - Migration for Auth
@@ -369,7 +423,7 @@ class Auth_Migration {
     /**
      * Set PDO connection handle
      * 
-     * @param \\PDO \$pdo The PDO connection handle
+     * @param \PDO \$pdo The PDO connection handle
      * @return void
      */
     public function __construct(\$pdo)
@@ -390,8 +444,6 @@ class Auth_Migration {
         \$this->database->add('email VARCHAR(255) NOT NULL');
         \$this->database->add('username VARCHAR(255) NOT NULL');
         \$this->database->add('password VARCHAR(255) NOT NULL');
-        \$this->database->add('session VARCHAR(255) NOT NULL');
-        \$this->database->add('status INT(1) NOT NULL DEFAULT 0');
         \$this->database->add('updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
         \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         \$this->database->create();
@@ -410,7 +462,94 @@ class Auth_Migration {
 }
     ";
 
-    $content2 = "<?php
+    $contentmdl1 = "<?php
+
+/*
+    Asatru PHP - Model for Session
+
+    Default session model
+*/
+
+/**
+ * Model representing the session table
+ */ 
+class Session extends \Asatru\Database\Model {
+    /**
+     * @param \$userId
+     * @param \$session
+     * @return void
+     * @throws \Exception
+     */
+    public static function loginSession(\$userId, \$session)
+    {
+        try {
+            if (!Session::hasSession(\$userId, \$session)) {
+                Session::insert('userId', \$userId)->insert('session', \$session)->insert('status', 1)->go();
+            }
+        } catch (\Exception \$e) {
+            throw \$e;
+        }
+    }
+
+    /**
+     * @param \$session
+     * @return void
+     * @throws \Exception
+     */
+    public static function logoutSession(\$session)
+    {
+        try {
+            Session::where('session', '=', \$session)->where('status', '=', 1)->delete();
+        } catch (\Exception \$e) {
+            throw \$e;
+        }
+    }
+
+    /**
+     * @param \$session
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function findSession(\$session)
+    {
+        try {
+            return Session::where('session', '=', \$session)->where('status', '=', 1)->first();
+        } catch (\Exception \$e) {
+            throw \$e;
+        }
+    }
+
+    /**
+     * @param \$userId
+     * @param \$session
+     * @return bool
+     * @throws \Exception
+     */
+    public static function hasSession(\$userId, \$session)
+    {
+        try {
+            return Session::where('userId', '=', \$userId)->where('session', '=', \$session)->get()->count();
+        } catch (\Exception \$e) {
+            throw \$e;
+        }
+    }
+
+    /**
+     * @param \$userId
+     * @return void
+     * @throws \Exception
+     */
+    public static function clearForUser(\$userId)
+    {
+        try {
+            Session::where('userId', '=', \$userId)->delete();
+        } catch (\Exception \$e) {
+            throw \$e;
+        }
+    }
+}";
+
+    $contentmdl2 = "<?php
     
 /*
     Asatru PHP - Model for Auth
@@ -458,14 +597,15 @@ class Auth extends \Asatru\Database\Model {
     public static function login(string \$email, string \$password)
     {
         \$byemail = Auth::getByEmail(\$email);
+        
         if (\$byemail->count() === 0)
             return false;
 
-        if (!password_verify(\$password, \$byemail->get(0)->get('password')))
+        if (!password_verify(\$password, \$byemail->get('password')))
             return false;
         
         try {
-            Auth::update('status', 1)->update('session', session_id())->where('email', '=', \$email)->go();
+            Session::loginSession(\$byemail->get('id'), session_id());
         } catch (\Exception \$e) {
             return false;
         }
@@ -476,17 +616,12 @@ class Auth extends \Asatru\Database\Model {
     /**
      * Log the user out
      * 
-     * @param string \$email The user E-Mail address
      * @return boolean
      */
-    public static function logout(string \$email)
+    public static function logout()
     {
-        \$byemail = Auth::getByEmail(\$email);
-        if (\$byemail->count() === 0)
-            return false;
-
         try {
-            Auth::update('status', 0)->update('session', '')->where('email', '=', \$email)->go();
+            Session::logoutSession(session_id());
         } catch (\Exception \$e) {
             return false;
         }
@@ -495,25 +630,27 @@ class Auth extends \Asatru\Database\Model {
     }
 
     /**
-     * Check if a user is currently logged in (either by E-Mail address or by session)
+     * Get current authenticated user of this session if exists
      * 
-     * @param string|null \$email The user E-Mail address
-     * @return boolean
+     * @return Asatru\Database\Collection|null User data collection on success, otherwise null
      */
-    public static function isUserLoggedIn(\$email = null)
+    public static function getAuthUser()
     {
-        \$userdata = null;
+        try {
+            \$session = Session::findSession(session_id());
+            if (!\$session) {
+                return null;
+            }
 
-        if (\$email === null) {
-            \$userdata = Auth::getBySession();
-        } else {
-            \$userdata = Auth::getByEmail(\$email);
+            \$data = Auth::where('id', '=', \$session->get('userId'))->first();
+            if (!\$data) {
+                return null;
+            }
+
+            return \$data;
+        } catch (\Exception \$e) {
+            return null;
         }
-
-        if (\$userdata->count() === 0)
-            return false;
-        
-        return \$userdata->get(0)->get('status') === '1';
     }
 
     /**
@@ -561,11 +698,19 @@ class Auth extends \Asatru\Database\Model {
 }
     ";
 
-    if (!file_put_contents(ASATRU_APP_ROOT . '/app/migrations/Auth.php', $content1)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/migrations/Session.php', $contentmig1)) {
         return false;
     }
 
-    if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/Auth.php', $content2)) {
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/migrations/Auth.php', $contentmig2)) {
+        return false;
+    }
+
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/Session.php', $contentmdl1)) {
+        return false;
+    }
+
+    if (!file_put_contents(ASATRU_APP_ROOT . '/app/models/Auth.php', $contentmdl2)) {
         return false;
     }
 
