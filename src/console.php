@@ -685,16 +685,6 @@ class Auth extends \Asatru\Database\Model {
 
         return \$result;
     }
-
-    /**
-     * Return the associated table name of the migration
-     * 
-     * @return string
-     */
-    public static function tableName()
-    {
-        return 'Auth';
-    }
 }
     ";
 
