@@ -575,7 +575,7 @@ class Auth extends \Asatru\Database\Model {
             return false;
 
         \$byemail = Auth::getByEmail(\$email);
-        if (\$byemail->count() > 0)
+        if ((\$byemail) && (\$byemail->count() > 0))
             return false;
 
         try {
@@ -657,14 +657,31 @@ class Auth extends \Asatru\Database\Model {
      * Get user by email
      * 
      * @param string \$email The users E-Mail address
-     * @return Asatru\Database\Collection|boolean User data collection on success, otherwise false
+     * @return Asatru\Database\Collection|null User data collection on success, otherwise null
      */
     public static function getByEmail(string \$email)
     {
         try {
             \$result = Auth::where('email', '=', \$email)->first();
         } catch (\Exception \$e) {
-            return false;
+            return null;
+        }
+
+        return \$result;
+    }
+
+    /**
+     * Get user by ID
+     * 
+     * @param int \$userId The user ID
+     * @return Asatru\Database\Collection|null User data collection on success, otherwise null
+     */
+    public static function getById(int \$userId)
+    {
+        try {
+            \$result = Auth::where('id', '=', \$userId)->first();
+        } catch (\Exception \$e) {
+            return null;
         }
 
         return \$result;
@@ -673,14 +690,14 @@ class Auth extends \Asatru\Database\Model {
     /**
      * Get user by session
      * 
-     * @return Asatru\Database\Collection|boolean User data collection on success, otherwise false
+     * @return Asatru\Database\Collection|null User data collection on success, otherwise null
      */
     public static function getBySession()
     {
         try {
             \$result = Auth::where('session', '=', session_id())->first();
         } catch (\Exception \$e) {
-            return false;
+            return null;
         }
 
         return \$result;
