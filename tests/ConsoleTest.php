@@ -135,6 +135,7 @@ final class ConsoleTest extends TestCase
 
         $newClass = new $name();
         $this->assertTrue(method_exists($newClass, 'register'));
+        $this->assertTrue(method_exists($newClass, 'confirm'));
         $this->assertTrue(method_exists($newClass, 'login'));
         $this->assertTrue(method_exists($newClass, 'logout'));
         $this->assertTrue(method_exists($newClass, 'getAuthUser'));

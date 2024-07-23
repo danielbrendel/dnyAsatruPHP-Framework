@@ -441,9 +441,10 @@ class Auth_Migration {
         \$this->database = new Asatru\Database\Migration('Auth', \$this->connection);
         \$this->database->drop();
         \$this->database->add('id INT NOT NULL AUTO_INCREMENT PRIMARY KEY');
-        \$this->database->add('email VARCHAR(255) NOT NULL');
-        \$this->database->add('username VARCHAR(255) NOT NULL');
-        \$this->database->add('password VARCHAR(255) NOT NULL');
+        \$this->database->add('email VARCHAR(512) NOT NULL');
+        \$this->database->add('username VARCHAR(512) NOT NULL');
+        \$this->database->add('password VARCHAR(512) NOT NULL');
+        \$this->database->add('account_confirm VARCHAR(512) NOT NULL');
         \$this->database->add('updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
         \$this->database->add('created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
         \$this->database->create();
@@ -588,8 +589,34 @@ class Auth extends \Asatru\Database\Model {
         if ((\$byemail) && (\$byemail->count() > 0))
             return false;
 
+        \$user_password = password_hash(\$password, PASSWORD_DEFAULT);
+        \$account_confirm = md5(\$username . \$email . date('Y-m-d H:i:s') . random_bytes(55));
+
         try {
-            Auth::insert('username', \$username)->insert('email', \$email)->insert('password', password_hash(\$password, PASSWORD_DEFAULT))->go();
+            Auth::insert('username', \$username)->insert('email', \$email)->insert('password', \$user_password)->insert('account_confirm', \$account_confirm)->go();
+        } catch (\Exception \$e) {
+            return false;
+        }
+
+        //To-do: Send a confirmation e-mail with the account confirmation token in order to verify the e-mail address
+
+        return true;
+    }
+
+    /**
+     * Confirm user account
+     * 
+     * @param string \$token Account token that was generated upon registration
+     * @return bool
+     */
+    public static function confirm(\$token)
+    {
+        \$user = Auth::where('account_confirm', '=', \$token)->first();
+        if (!\$user)
+            return false;
+
+        try {
+            Auth::update('account_confirm', '_confirmed')->where('id', '=', \$user->get('id'))->go();
         } catch (\Exception \$e) {
             return false;
         }
@@ -611,9 +638,12 @@ class Auth extends \Asatru\Database\Model {
         if (\$byemail->count() === 0)
             return false;
 
+        if (\$byemail->get('account_confirm') !== '_confirmed')
+            return false;
+
         if (!password_verify(\$password, \$byemail->get('password')))
             return false;
-        
+
         try {
             Session::loginSession(\$byemail->get('id'), session_id());
         } catch (\Exception \$e) {
