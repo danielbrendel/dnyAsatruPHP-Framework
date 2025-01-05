@@ -1368,10 +1368,7 @@ function call($input)
 
     ob_start();
 
-    global $argv;
-    $argv = $tokens;
-
-    reset_custom_commands($argv);
+    reset_custom_commands($tokens);
 
     handleInput($tokens);
     
