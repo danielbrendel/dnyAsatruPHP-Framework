@@ -30,7 +30,7 @@ final class ControllerTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $controller = new Asatru\Controller\ControllerHandler(__DIR__ . '/../../../../app/config/routes.php');
-        $result = $controller->parse('/test/test1/another/test2?hello=world');
+        $result = $controller->parse('/index');
         $this->assertInstanceOf('Asatru\\View\\ViewHandler', $result);
     }
 

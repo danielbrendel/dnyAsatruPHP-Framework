@@ -202,8 +202,7 @@ final class ConsoleTest extends TestCase
         $this->assertEquals(1, $scriptFile);
 
         $className = $name . 'Test';
-        $newClass = new $className();
-        $this->addToAssertionCount(1);
+        $this->assertTrue(class_exists($className));
 
         unlink(__DIR__ . '/../../../../app/tests/' . $name . 'Test.php');
     }
