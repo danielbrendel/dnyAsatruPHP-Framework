@@ -64,6 +64,11 @@ if ($_ENV['APP_DEBUG'] === false) {
     error_reporting(E_ALL);
 }
 
+//Create argv if not exists
+if (!isset($argv)) {
+    $argv = [];
+}
+
 //Check if we shall create/continue a session
 if ((isset($_ENV['SESSION_ENABLE'])) && ($_ENV['SESSION_ENABLE'])) {
     if ((isset($_ENV['SESSION_DURATION'])) && ($_ENV['SESSION_DURATION']) && (is_numeric($_ENV['SESSION_DURATION']))) {
@@ -99,6 +104,12 @@ require_once 'modules.php';
 
 //Require event manager
 require_once 'events.php';
+
+//Require commands manager
+require_once 'commands.php';
+
+//Require console management
+require_once 'console.php';
 
 //Perform autoloading
 $auto = new Asatru\Autoload\Autoloader(ASATRU_APP_ROOT . '/app/config/autoload.php');

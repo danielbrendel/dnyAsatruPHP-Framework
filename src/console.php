@@ -1351,3 +1351,25 @@ function handleInput($argv)
         }
     }
 }
+
+/**
+ * Parse console command expression and execute it
+ * 
+ * @param $input
+ * @return mixed
+ */
+function call($input)
+{
+    $tokens = preg_split('/\s+/', trim('asatru ' . $input));
+
+    ob_start();
+
+    global $argv;
+    $argv = $tokens;
+
+    handleInput($tokens);
+    
+    $output = ob_get_clean();
+
+    return trim($output);
+}
