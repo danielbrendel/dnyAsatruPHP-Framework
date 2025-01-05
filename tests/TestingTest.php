@@ -20,7 +20,7 @@ final class TestingTest extends TestCase
 {
     public function testTestingClass()
     {
-        $testing = new Asatru\Testing\Test();
+        $testing = new Asatru\Testing\Test('TestingTest');
         $testing->request(Asatru\Testing\Test::REQUEST_GET, '/test/1/another/2', array());
         $this->addToAssertionCount(1);
         $result = $testing->getResponse();
