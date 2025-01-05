@@ -277,6 +277,8 @@ namespace Asatru\View {
 				return str_replace('@php', '<?php ', $code);
 			} else if ($this->hasCmd($code, 'endphp')) {
 				return str_replace('@endphp', ' ?>', $code);
+			} else if ($this->hasCmd($code, 'statement')) {
+				return str_replace('@statement', '<?php ', $code) . '; ?>';
 			} else if ($this->hasCmd($code, 'end')) {
 				return str_replace('@end', '<?php } ?>', $code);
 			}
