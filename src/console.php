@@ -1362,6 +1362,10 @@ function call($input)
 {
     $tokens = preg_split('/\s+/', trim('asatru ' . $input));
 
+    foreach ($tokens as &$token) {
+        $token = str_replace('%20', ' ', $token);
+    }
+
     ob_start();
 
     global $argv;
