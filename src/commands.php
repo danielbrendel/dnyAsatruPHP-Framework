@@ -244,6 +244,7 @@ namespace Asatru\Commands {
     class CustomCommands {
         private $cmds = [];
         private $args = [];
+        private $config = '';
 
         /**
          * Create object
@@ -254,7 +255,22 @@ namespace Asatru\Commands {
         public function __construct($config, $args)
         {
             $this->args = $args;
+            $this->config = $config;
+
             $this->loadCommandConfig($config);
+        }
+
+        /**
+         * Reset arguments with new object
+         * 
+         * @param $args
+         * @return void
+         */
+        public function resetArgs($args)
+        {
+            $this->args = $args;
+
+            $this->loadCommandConfig($this->config);
         }
 
         /**
@@ -350,5 +366,19 @@ namespace {
         global $objCustomCommands;
 
         return $objCustomCommands->getAll();
+    }
+
+    /**
+     * Reset custom commands
+     * 
+     * @param $args
+     * @return void
+     * @throws \Exception
+     */
+    function reset_custom_commands($args)
+    {
+        global $objCustomCommands;
+
+        $objCustomCommands->resetArgs($args);
     }
 }

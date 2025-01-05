@@ -1367,6 +1367,8 @@ function call($input)
     global $argv;
     $argv = $tokens;
 
+    reset_custom_commands($argv);
+
     handleInput($tokens);
     
     $output = ob_get_clean();
