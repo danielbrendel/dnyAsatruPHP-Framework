@@ -1163,6 +1163,42 @@ class " . ucfirst($name) . "Test extends Asatru\Testing\Test
 }
 
 /**
+ * List all registered routes
+ * 
+ * @return void
+ */
+function list_registered_routes()
+{
+    $routes_config_file = '/app/config/routes.php';
+
+    $default_color = "\033[39m";
+    $method_colors = [
+        'GET' => "\033[0;34m",
+        'POST' => "\033[0;33m",
+        'PATCH' => "\033[0;33m",
+        'PUT' => "\033[0;33m",
+        'DELETE' => "\033[0;31m",
+        'HEAD' => "\033[0;36m",
+        'OPTIONS' => "\033[0;36m",
+        'ANY' => "\033[0;35m"
+    ];
+
+    $routes = require_once(ASATRU_APP_ROOT . $routes_config_file);
+    foreach ($routes as $route) {
+        $path = $route[0];
+        $method = $route[1];
+        $action = $route[2];
+        $name = (isset($route[3]) ? " (\033[3m" . $route[3] . "\033[0m)" : '');
+
+        $color = (isset($method_colors[$method]) ? $method_colors[$method] : $default_color);
+
+        echo "[" . $color . strtoupper($method) . $default_color . "] " . $path . " -> \033[0;32m" . $action . "\033[39m" . $name . "\n";
+    }
+
+    echo "\n" . strval(count($routes)) . " routes found in " . $routes_config_file . "\n";
+}
+
+/**
  * Validate if database feature is enabled
  * 
  * @return void
@@ -1222,6 +1258,7 @@ function handleInput($argv)
         echo "+ migrate:fresh: Drops all migrations and creates all new\n";
         echo "+ migrate:list: Creates only all new created migrations\n";
         echo "+ migrate:drop: Drops all migrations\n";
+        echo "+ routes:list: Lists all registered routes\n";
         echo "+ serve <port>: Spawns a development server. If port is not provided it uses port " . DEVSERV_DEFAULT_PORT . "\n";
 
         $custom_commands = get_custom_commands();
@@ -1338,6 +1375,8 @@ function handleInput($argv)
         migrate_drop(true);
 
         echo "\033[32mThe database has been cleared!\033[39m\n";
+    } else if ($argv[1] === 'routes:list') {
+        list_registered_routes();
     } else if ($argv[1] === 'serve') {
         $retval = 0;
         $port = isset($argv[2]) ? $argv[2] : DEVSERV_DEFAULT_PORT;
