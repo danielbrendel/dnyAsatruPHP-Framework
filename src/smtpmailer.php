@@ -121,7 +121,7 @@ class SMTPMailer
             $mail->SMTPDebug = SMTP::DEBUG_OFF;
             $mail->isSMTP();
             $mail->Host = env_get('SMTP_HOST');
-            $mail->SMTPAuth = true;
+            $mail->SMTPAuth = env_get('SMTP_AUTH');
             $mail->Username = env_get('SMTP_USERNAME');
             $mail->Password = env_get('SMTP_PASSWORD');
             if (env_get('SMTP_ENCRYPTION') === 'tls') {
