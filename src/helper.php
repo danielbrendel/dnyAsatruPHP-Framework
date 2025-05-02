@@ -431,10 +431,21 @@ namespace {
     }
 
     /**
+     * Return an Asatru\Database\Collection instance from the given array
+     * 
+     * @param array $arr optional The source array to create the Collection instance from
+     * @return Asatru\Database\Collection
+     */
+    function collection(array $arr = [])
+    {
+        return new Asatru\Database\Collection($arr);
+    }
+
+    /**
      * Create a valid slug string
      * 
      * @param $content The source string to create the slug from
-     * @param $delimiter Optional to specify a delimiter
+     * @param $delimiter optional to specify a delimiter
      * @return mixed
      */
     function slug($content, $delimiter = '-')

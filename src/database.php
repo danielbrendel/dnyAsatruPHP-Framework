@@ -425,6 +425,24 @@ namespace Asatru\Database {
         }
 
         /**
+         * Set the value of a given item
+         * 
+         * @param mixed $key The ident of the item
+         * @param mixed $value The value to be written
+         * @return void
+         */
+        public function set($key, $value)
+        {
+            if (isset($this->items[$key])) {
+                $this->items[$key] = $value;
+            }
+
+            if (isset($this->orig[$key])) {
+                $this->orig[$key] = $value;
+            }
+        }
+
+        /**
          * Return amount of items
          * 
          * @return int
