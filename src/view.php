@@ -560,7 +560,7 @@ namespace Asatru\View {
 		 * @param array $header The header if required
 		 * @return void
 		 */
-		public function __construct($content = array(), array $header = null)
+		public function __construct($content = array(), ?array $header = null)
 		{
 			$this->content = $content;
 			$this->header = $header;
@@ -592,7 +592,7 @@ namespace Asatru\View {
 		 * @param array $header If header shall be included
 		 * @return mixed
 		 */
-		protected function csv_encode(array $content = array(), array $header = null)
+		protected function csv_encode(array $content = array(), ?array $header = null)
 		{
 			$handle = fopen('php://memory', 'w+');
 			if ($handle === false) {

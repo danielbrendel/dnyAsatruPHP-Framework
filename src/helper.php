@@ -292,7 +292,7 @@ namespace {
      * @param array $header
      * @return Asatru\View\CsvHandler
      */
-    function csv(array $content, array $header = null)
+    function csv(array $content, ?array $header = null)
     {
         return new Asatru\View\CsvHandler($content, $header);
     }
