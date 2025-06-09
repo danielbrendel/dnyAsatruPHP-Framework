@@ -23,4 +23,5 @@ define('COOKIE_DURATION', 1000 * 60 * 60 * 24 * 365);
 //Default ports
 define('HTTP_DEFAULT_PORT', 80);
 define('HTTPS_DEFAULT_PORT', 443);
+define('DEVSERV_DEFAULT_HOST', 'localhost');
 define('DEVSERV_DEFAULT_PORT', 8000);

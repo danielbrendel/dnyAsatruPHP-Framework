@@ -1340,9 +1340,10 @@ function handleInput($argv)
         echo "\033[32mThe database has been cleared!\033[39m\n";
     } else if ($argv[1] === 'serve') {
         $retval = 0;
-        $port = isset($argv[2]) ? $argv[2] : DEVSERV_DEFAULT_PORT;
-        echo "\033[32mLocal development server started at localhost:" . $port . "\033[39m\n";
-        system('php -S localhost:' . $port . ' -t public/', $retval);
+        $host = isset($argv[2]) ? $argv[2] : DEVSERV_DEFAULT_HOST;
+        $port = isset($argv[3]) ? $argv[3] : DEVSERV_DEFAULT_PORT;
+        echo "\033[32mLocal development server started at " . $host . ":" . $port . "\033[39m\n";
+        system('php -S ' . $host . ':' . $port . ' -t public/', $retval);
     } else {
         try {
             handle_custom_command($argv[1]);
