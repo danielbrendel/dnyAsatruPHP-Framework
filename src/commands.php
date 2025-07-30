@@ -39,9 +39,7 @@ namespace Asatru\Commands {
         {
             $input = trim($input);
 
-            if (strpos($input, '"') !== false) {
-                return $this->filterString($input);
-            } else if (strtolower($input) == 'null') {
+            if (strtolower($input) == 'null') {
                 return null;
             } else if (is_numeric($input)) {
                 return strpos($input, '.') ? floatval($input) : intval($input);
